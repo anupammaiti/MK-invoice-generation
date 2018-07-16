@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Handling Invoice Submission</title>
+    <meta http-equiv="Content-Type"/>
+    <script src="/home.js" type="application/javascript"></script>
+</head>
+<body>
+<h1>Invoice Form</h1>
+
+<form action="empty.html" th:action="@{/}" method="post">
+
+    <!--Using thymeleaf's field to iterate over the array -->
+    <!--TYPE OF INVOICE-->
+    <div>
+    <p>Invoice Type:
+        <select th:field="*{invoiceTypeValues}" id="invoiceType">
+            <option value=""> -- </option>
+            <option th:each="invoiceType : ${invoiceTypeValues}"
+                    th:value="${invoiceType}"
+                    th:text="${invoiceType}">
+            </option>
+        </select>
+    </p>
+    </div>
+    <!--CODE OF PORTFOLIO-->
+    <div>
+        <p>Portfolio:
+            <select th:field="*{portfolios}" id="portfolio">
+                <option value=""> -- </option>
+                <option th:each="code : ${portfolios}"
+                        th:value="${code.portfolioCode}"
+                        th:text="${code.portfolioCode}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--DATE OF INVOICE ISSUE-->
+    <p>Invoice Date: <input type="text"  id="invoiceDate" name="invoiceDate" /></p>
+    <!--THE NUMBER OF INVOICE-->
+    <p>Invoice Number: <input type="text"  id="invoiceNumber" name="invoiceNumber" /></p>
+    <!--VAT EXEMPT-->
+    <div>
+        <p>VAT Exempt:
+            <select th:field="*{isApplicableValues}" id="vatExempt">
+                <option value=""> -- </option>
+                <option th:each="option : ${isApplicableValues}"
+                        th:value="${option}"
+                        th:text="${option}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--REVERSE CHARGE-->
+    <div>
+        <p>Reverse Charge:
+            <select th:field="*{isApplicableValues}" id="reverseCharge">
+                <option value=""> -- </option>
+                <option th:each="option : ${isApplicableValues}"
+                        th:value="${option}"
+                        th:text="${option}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--SERVICE CHARGED-->
+    <div>
+        <p>Service to charge for:
+            <select th:field="*{services}" id="service">
+                <option value=""> -- </option>
+                <option th:each="service : ${services}"
+                        th:value="${service.serviceName}"
+                        th:text="${service.serviceName}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--FREQUENCY, PERIOD, YEAR-->
+    <p>Frequency: <input type="text" id="frequency" name="frequency" /></p>
+    <p>Period: <input type="text" id="period" name="period" /></p>
+    <p>Year: <input type="text" id="year" name="year" /></p>
+    <!--VAT APPLICABLE TO INVOICE-->
+    <div>
+        <p>VAT Applicable:
+            <select th:field="*{isApplicableValues}" id="isApplicable">
+                <option value=""> -- </option>
+                <option th:each="option : ${isApplicableValues}"
+                        th:value="${option}"
+                        th:text="${option}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--THE CURRENT RATE OF VAT-->
+    <div>
+        <p>VAT rate:
+            <select th:field="*{vatRecords}" id="vatId" name="vatId">
+                <option value=""> -- </option>
+                <option th:each="rate : ${vatRecords}"
+                        th:value="${rate.getVatId()}"
+                        th:text="${rate.getVatRate()}">
+                    <!--<select type="hidden" id="vatRate" name="vatRate" th:value="${rate.getVatRate}"></select>-->
+                </option>
+            </select>
+        </p>
+    </div>
+
+    <!--CURRENCY OF PORTFOLIO-->
+    <div>
+        <p>Currency:
+            <select th:field="*{currencies}" id="currency">
+                <option value=""> -- </option>
+                <option th:each="ccy : ${currencies}"
+                        th:value="${ccy.currencyCode}"
+                        th:text="${ccy.currencyCode}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--CHARGE AMOUNT. VAT VALUE AND TOTAL SHOULD BE AUTO-GENERATED-->
+    <p>Amount to charge: <input type="text" id="chargeExcludingVat" name="chargeExcludingVat" /></p>
+    <p>VAT value: <input type="text"  id="vatCharge" name="vatCharge" /></p>
+    <p>Total to charge: <input type="text" id="chargeIncludingVat" name="chargeIncludingVat" /></p>
+    <!--CURRENCY RATE (CURRENTLY ONLY DISPLAYING USD/EUR-->
+    <div>
+        <p>USD/EUR Rate:
+            <select th:field="*{currencyRates}" id="currencyRateId">
+                <option value=""> -- </option>
+                <option th:each="rate : ${currencyRates}"
+                        th:value="${rate.getCurrencyRateId()}"
+                        th:text="${rate.getRate()}">
+                </option>
+            </select>
+        </p>
+    </div>
+    <!--AVAILABLE BANK ACCOUNTS OF COMPANY-->
+    <div>
+        <p>Bank Account to be paid:
+            <select th:field="*{bankAccounts}" id="bankAccount">
+                <option value=""> -- </option>
+                <option th:each="account : ${bankAccounts}"
+                        th:value="${account.getId()}"
+                        th:text="${account.getBank().getName() + ' - ' + account.getName()}">
+                </option>
+            </select>
+        </p>
+    </div>
+
+    <p>
+        <input type="button" id="submitBtn" value="Submit" />
+        <input type="reset" value="Reset" />
+    </p>
+
+</form>
+</body>
+</html>
