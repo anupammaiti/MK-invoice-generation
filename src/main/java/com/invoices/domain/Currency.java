@@ -6,9 +6,13 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * The Currency entity represents the currency that an invoice will be issued in.
+ * E.g: an invoice could be issued in United States Dollars or Euros. (USD, EUR)
+ */
 @Table(name = "currencies")
 @Entity
 @Getter
@@ -21,8 +25,7 @@ public class Currency {
     @Column(name = "currency_id")
     private Long currencyId;
 
-    @Column(name = "currency_code")
-    @NotNull
+    @Column(name = "currency_code", nullable = false)
     private String currencyCode;
 
     @OneToMany(mappedBy = "currency", cascade = CascadeType.ALL)

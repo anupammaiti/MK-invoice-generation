@@ -7,12 +7,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the Bank entity
+ */
 @Service
 public class BankService {
     @Autowired
     private BankRepo bankRepo;
 
     public List<Bank> getAvailableBanks(){
+
         return bankRepo.findAll();
     }
 }

@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the Currency entity
+ */
 @Service
 public class CurrencyService {
     @Autowired
@@ -17,8 +22,8 @@ public class CurrencyService {
     @Getter @Setter
     private Currency currency;
 
-    public Currency getRecord(Currency currency){
-        return currencyRepo.getCurrencyByCurrencyCode(currency.getCurrencyCode());
+    public Currency getRecord(Long id){
+        return currencyRepo.getCurrencyByCurrencyId(id);
     }
 
     public List<Currency> getAvailableCurrencies(){

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 /**
- * vat table in invoices database would be more effective if
- * vat applicable attribute was moved to invoices
+ * @author psoutzis
+ * The repository for the Vat Entity
  */
 @Repository
 public interface VatRepo extends JpaRepository<Vat, Long>,QueryByExampleExecutor<Vat> {

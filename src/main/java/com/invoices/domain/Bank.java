@@ -5,6 +5,13 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This Entity represents banks e.g: Bank of Cyprus, Barclays, etc..
+ * MeritKapital accounts always have a corresponding bank. There can be several
+ * accounts opened in the same bank
+ */
+
 @Entity
 @Table(name = "banks")
 @Getter

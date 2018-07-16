@@ -4,11 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.domain.Example;
 
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * This entity represents a VAT rate. e.g: 0.19 or 0.19078
+ */
 @Entity
 @Table(name = "vat")
 @Getter
@@ -28,8 +30,6 @@ public class Vat {
     @Column(name = "vat_rate")
     private Float vatRate;
 
-    //Defines the list of invoices that apply
-    //the given vatRate
     @OneToMany(mappedBy = "vat", cascade = CascadeType.ALL)
     private List<Invoice> invoiceList;
 }

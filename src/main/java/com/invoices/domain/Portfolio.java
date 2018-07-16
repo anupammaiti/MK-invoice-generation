@@ -9,6 +9,14 @@ import org.springframework.context.annotation.Bean;
 import javax.persistence.*;
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * The entity that represents a client's portfolio.
+ * It has 2 foreign keys. One to indicate the client-owner of the portfolio, which
+ * can not be null.
+ * The other foreign-key indicates the company that this portfolio belongs
+ * to, if and only if the client has his/her own company.
+ */
 @Entity
 @Table(name = "portfolios")
 @Getter
@@ -24,11 +32,13 @@ public class Portfolio {
     @Column(name = "portfolio_code")
     private String portfolioCode;
 
-    //this is a foreign key
-    //OneToMany wheb client is created
     @ManyToOne
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @OneToOne
+    @JoinColumn(name = "company_id")
+    private ClientCompanyInfo clientCompanyInfo;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private List<Invoice> invoiceList;

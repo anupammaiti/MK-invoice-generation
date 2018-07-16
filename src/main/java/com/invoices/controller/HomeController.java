@@ -7,6 +7,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author psoutzis
+ * This Controller is responsible for the creation of an invoice.
+ * It will set all the foreign keys of invoice before saving the actual invoice
+ * to the database.
+ * It will retrieve the appropriate records by using their id or enum.
+ * The id or enum will be sent through a post request to
+ * the controllers, with the home.js script.
+ *
+ * note: In the future user will only be required to insert the amount to charge
+ * the customer. Vat value and total price will be auto-generated( Custody Charges )
+ */
+
 @Controller
 public class HomeController {
 
@@ -16,7 +29,6 @@ public class HomeController {
     @Autowired PortfolioService portfolioService;
     @Autowired ServiceProvidedService serviceProvidedService;
     @Autowired CurrencyService currencyService;
-    @Autowired CurrencyRateService currencyRateService;
     @Autowired VatService vatService;
 
     @GetMapping("/")
@@ -27,7 +39,6 @@ public class HomeController {
         model.addAttribute("portfolios", portfolioService.getPortfolios());
         model.addAttribute("services", serviceProvidedService.getAllServicesProvided());
         model.addAttribute("currencies", currencyService.getAvailableCurrencies());
-        model.addAttribute("currencyRates", currencyRateService.getAvailableRates());
         model.addAttribute("vatRecords", vatService.getVatRecords());
         model.addAttribute("bankAccounts", bankAccountService.getBankAccounts());
 
@@ -40,19 +51,8 @@ public class HomeController {
      */
     @PostMapping(value="/bankAccount")
     public String submitInvoice(@RequestBody BankAccount bankAccount){
-
-        bankAccountService.setBankAccount(bankAccountService.getRecord(bankAccount));
-        return "empty";
-    }
-
-    /**
-     * It will save the parsed values to parameter object
-     * @param currencyRate will use the passed object from the server response body
-     */
-    @PostMapping(value="/currencyRate")
-    public String submitInvoice(@RequestBody CurrencyRate currencyRate){
-        currencyRate = currencyRateService.getCurrencyRateById(currencyRate.getCurrencyRateId());
-        currencyRateService.setCurrencyRate(currencyRate);
+        bankAccount = bankAccountService.getRecord(bankAccount.getId());
+        bankAccountService.setBankAccount(bankAccount);
 
         return "empty";
     }
@@ -63,8 +63,9 @@ public class HomeController {
      */
     @PostMapping(value="/portfolio")
     public String submitInvoice(@RequestBody Portfolio portfolio){
-
+        portfolio = portfolioService.getRecord(portfolio.getId());
         portfolioService.setPortfolio(portfolio);
+
         return "empty";
     }
 
@@ -74,8 +75,9 @@ public class HomeController {
      */
     @PostMapping(value="/currency")
     public String submitInvoice(@RequestBody Currency currency){
-
+        currency = currencyService.getRecord(currency.getCurrencyId());
         currencyService.setCurrency(currency);
+
         return "empty";
     }
 
@@ -85,8 +87,9 @@ public class HomeController {
      */
     @PostMapping(value="/serviceProvided")
     public String submitInvoice(@RequestBody ServiceProvided serviceProvided){
-
+        serviceProvided = serviceProvidedService.getRecord(serviceProvided.getId());
         serviceProvidedService.setServiceProvided(serviceProvided);
+
         return "empty";
     }
 
@@ -113,13 +116,11 @@ public class HomeController {
     @PostMapping(value = "/invoice")
     public String submitInvoice(@RequestBody Invoice invoice){
 
-        //Set all the foreign keys of invoice before saving it to database
-        //By retrieving the matching records from the database.
         invoice.setVat(vatService.getVat());
-        invoice.setServiceProvided(serviceProvidedService.getRecord(serviceProvidedService.getServiceProvided()));
-        invoice.setCurrency(currencyService.getRecord(currencyService.getCurrency()));
-        invoice.setCurrencyRate(currencyRateService.getCurrencyRate());
-        invoice.setPortfolio(portfolioService.getRecord(portfolioService.getPortfolio()));
+        invoice.setServiceProvided(serviceProvidedService.getServiceProvided());
+        invoice.setCurrency(currencyService.getCurrency());
+        //invoice.setCurrencyRates(currencyRateService.getRecord(new CurrencyRates()));
+        invoice.setPortfolio(portfolioService.getPortfolio());
         invoice.setBankAccount(bankAccountService.getBankAccount());
 
         invoiceService.save(invoice); //insert current invoice to db
@@ -139,11 +140,6 @@ public class HomeController {
         if(custodyCharge.getInvoice() != null)
             custodyChargeService.save(custodyCharge);
 
-        return "redirect:/empty.html"; //TODO FIX THIS REDIRECT. CURRENTLY CAUSING AN ERROR
-    }
-
-    /*@GetMapping(value = "/success")
-    public String successMsg(){
         return "empty";
-    }*/
+    }
 }

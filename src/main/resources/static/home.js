@@ -19,7 +19,11 @@ const postData = (url = ``, data = {}) => {
 .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
-//Will send value of objects back as json
+/**
+ * Will send value of objects back as json.
+ * Each post request, will send the data to populate all object instances of
+ * the required entities.
+ */
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('submitBtn').addEventListener('click', function () {
         let invoiceData = {
@@ -30,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
             reverseCharge: document.getElementById('reverseCharge').value,
             frequency: document.getElementById('frequency').value,
             period: document.getElementById('period').value,
-            year: parseInt(document.getElementById('year').value),
+            year: parseInt(document.getElementById('year').value)
         };
 
         let custodyChargeData = {
@@ -42,41 +46,37 @@ document.addEventListener('DOMContentLoaded', function () {
         let vatData = {
             isApplicable:document.getElementById('isApplicable').value,
             vatId: document.getElementById('vatId').value,
-            //vatRate: document.getElementById('vatRate').value
         };
 
         let servicesData = {
-            serviceName: document.getElementById('service').value
-        }
+            id: document.getElementById('service').value
+        };
 
         let currencyData = {
-            currencyCode: document.getElementById('currency').value
-        }
+            currencyId: document.getElementById('currency').value
+        };
 
-        let currencyRateData = {
-            currencyRateId: document.getElementById('currencyRateId').value
-        }
-
-        let portfolioCode = {
-            portfolioCode: document.getElementById('portfolio').value
-        }
+        let portfolio = {
+            id: document.getElementById('portfolio').value
+        };
 
         let bankAccountData = {
             id: document.getElementById('bankAccount').value
-        }
+        };
 
-        postData('/serviceProvided', servicesData)
-        postData('/currency', currencyData)
-        postData('/currencyRate', currencyRateData)
-        postData('/portfolio', portfolioCode)
-        postData('/bankAccount', bankAccountData)
+        postData('/serviceProvided', servicesData);
+        postData('/currency', currencyData);
+        postData('/portfolio', portfolio);
+        postData('/bankAccount', bankAccountData);
         postData('/vat', vatData).then(() =>
         {
             postData('/invoice', invoiceData).then(() =>
             {
-                postData('/fee', custodyChargeData)
+                postData('/fee', custodyChargeData).then(() =>
+                {
+                    window.location = "/success";
+                })
             })
         })
-        //window.location = "/success";
     })
-})
+});

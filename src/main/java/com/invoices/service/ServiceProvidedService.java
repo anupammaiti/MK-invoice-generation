@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the ServiceProvided entity
+ */
 @Service
 public class ServiceProvidedService {
     @Autowired
@@ -16,9 +21,9 @@ public class ServiceProvidedService {
     @Getter @Setter
     private ServiceProvided serviceProvided;
 
-    public ServiceProvided getRecord(ServiceProvided serviceProvided){
+    public ServiceProvided getRecord(Long id){
 
-        return serviceProvidedRepo.findServiceProvidedByServiceName(serviceProvided.getServiceName());
+        return serviceProvidedRepo.findServiceProvidedById(id);
     }
 
     public List<ServiceProvided> getAllServicesProvided() {

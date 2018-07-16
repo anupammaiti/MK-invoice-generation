@@ -9,6 +9,11 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This entity represents the country that a given company is located at.
+ */
+
 @Entity
 @Table(name = "company_location")
 @Getter

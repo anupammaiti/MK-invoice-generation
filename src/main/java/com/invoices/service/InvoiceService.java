@@ -7,6 +7,11 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the Invoice entity
+ */
 @Service
 public class InvoiceService {
 

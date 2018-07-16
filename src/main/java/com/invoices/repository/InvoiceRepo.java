@@ -6,6 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * The repository for the Invoice Entity
+ */
 @Repository
 public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
 }

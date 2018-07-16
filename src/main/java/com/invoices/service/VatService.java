@@ -5,16 +5,15 @@ import com.invoices.repository.VatRepo;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.List;
 
-import static org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.endsWith;
-
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the Vat entity
+ */
 @Service
 public class VatService {
     @Autowired
@@ -34,6 +33,7 @@ public class VatService {
     }
 
     public Vat getVatById(Long id){
+
         return vatRepo.findVatByVatId(id);
     }
 

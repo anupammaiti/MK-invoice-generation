@@ -30,8 +30,8 @@
             <select th:field="*{portfolios}" id="portfolio">
                 <option value=""> -- </option>
                 <option th:each="code : ${portfolios}"
-                        th:value="${code.portfolioCode}"
-                        th:text="${code.portfolioCode}">
+                        th:value="${code.getId()}"
+                        th:text="${code.portfolioCode + ' - ' + code.getClient().getClientName()}">
                 </option>
             </select>
         </p>
@@ -70,7 +70,7 @@
             <select th:field="*{services}" id="service">
                 <option value=""> -- </option>
                 <option th:each="service : ${services}"
-                        th:value="${service.serviceName}"
+                        th:value="${service.getId()}"
                         th:text="${service.serviceName}">
                 </option>
             </select>
@@ -112,7 +112,7 @@
             <select th:field="*{currencies}" id="currency">
                 <option value=""> -- </option>
                 <option th:each="ccy : ${currencies}"
-                        th:value="${ccy.currencyCode}"
+                        th:value="${ccy.getCurrencyId()}"
                         th:text="${ccy.currencyCode}">
                 </option>
             </select>
@@ -123,17 +123,18 @@
     <p>VAT value: <input type="text"  id="vatCharge" name="vatCharge" /></p>
     <p>Total to charge: <input type="text" id="chargeIncludingVat" name="chargeIncludingVat" /></p>
     <!--CURRENCY RATE (CURRENTLY ONLY DISPLAYING USD/EUR-->
-    <div>
-        <p>USD/EUR Rate:
-            <select th:field="*{currencyRates}" id="currencyRateId">
-                <option value=""> -- </option>
-                <option th:each="rate : ${currencyRates}"
-                        th:value="${rate.getCurrencyRateId()}"
-                        th:text="${rate.getRate()}">
-                </option>
-            </select>
-        </p>
-    </div>
+    <!--<div>-->
+        <!--<p>USD/EUR Rate:-->
+            <!--<select th:field="*{currencyRates}" id="currencyRateId">-->
+                <!--<option value=""> &#45;&#45; </option>-->
+                <!--<option th:each="rate : ${currencyRates}"-->
+                        <!--th:value="${rate.getCurrencyRateId()}"-->
+                        <!--th:text="${rate.getRate()}">-->
+                <!--</option>-->
+            <!--</select>-->
+        <!--</p>-->
+    <!--</div>-->
+
     <!--AVAILABLE BANK ACCOUNTS OF COMPANY-->
     <div>
         <p>Bank Account to be paid:

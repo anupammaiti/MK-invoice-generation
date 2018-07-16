@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the BankAccounts entity
+ */
 @Service
 public class BankAccountService {
 
@@ -18,8 +23,8 @@ public class BankAccountService {
     @Getter@Setter
     private BankAccount bankAccount;
 
-    public BankAccount getRecord(BankAccount bankAccount){
-        return bankAccountRepo.getBankAccountById(bankAccount.getId());
+    public BankAccount getRecord(Long id){
+        return bankAccountRepo.getBankAccountById(id);
     }
 
     public List<BankAccount> getBankAccounts(){

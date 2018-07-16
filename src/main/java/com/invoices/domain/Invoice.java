@@ -1,14 +1,13 @@
 package com.invoices.domain;
 
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.DateSerializer;
 import lombok.*;
-
 import javax.persistence.*;
-import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * @author psoutzis
+ * This class represents a record in the invoices table.
+ */
 @Entity
 @Table(name = "invoices")
 @Getter
@@ -60,9 +59,9 @@ public class Invoice {
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "currency_rate_id")
-    private CurrencyRate currencyRate;
+    private CurrencyRates currencyRates;
 
     @ManyToOne
     @JoinColumn(name = "vat_id")

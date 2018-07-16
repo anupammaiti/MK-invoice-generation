@@ -5,16 +5,17 @@ import com.invoices.repository.CustodyChargeRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * @author psoutzis
+ * This class is annotated as a service.
+ * It is the service bean for the CustodyCharge entity
+ */
 @Service
 public class CustodyChargeService {
 
     @Autowired
     private CustodyChargeRepo custodyChargeRepo;
 
-    /*@Autowired
-    public CustodyChargeService(CustodyChargeRepo custodyChargeRepo) {
-        this.custodyChargeRepo = custodyChargeRepo;
-    }*/
 
     public CustodyCharge save(CustodyCharge custodyCharge){
 
