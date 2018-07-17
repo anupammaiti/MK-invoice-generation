@@ -9,7 +9,7 @@
 <body>
 <h1>Invoice Form</h1>
 
-<form action="empty.html" th:action="@{/}" method="post">
+<form action="createSuccess.html" th:action="@{/create}" method="post">
 
     <!--Using thymeleaf's field to iterate over the array -->
     <!--TYPE OF INVOICE-->
@@ -119,9 +119,7 @@
         </p>
     </div>
     <!--CHARGE AMOUNT. VAT VALUE AND TOTAL SHOULD BE AUTO-GENERATED-->
-    <p>Amount to charge: <input type="text" id="chargeExcludingVat" name="chargeExcludingVat" /></p>
-    <p>VAT value: <input type="text"  id="vatCharge" name="vatCharge" /></p>
-    <p>Total to charge: <input type="text" id="chargeIncludingVat" name="chargeIncludingVat" /></p>
+    <p>Amount to charge: <input type="text" id="chargeExcludingVat" name="chargeExcludingVat" /> Enter the fee amount without VAT</p>
     <!--CURRENCY RATE (CURRENTLY ONLY DISPLAYING USD/EUR-->
     <!--<div>-->
         <!--<p>USD/EUR Rate:-->

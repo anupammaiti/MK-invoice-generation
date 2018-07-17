@@ -26,20 +26,20 @@ public class CurrencyRates {
     @Column(name="rate_id")
     private Long currencyRateId;
 
-    @Column(name="EUR/USD")
+    @Column(name="EUR_USD")
     private Float euroToUsd;
 
-    @Column(name="EUR/JPY")
+    @Column(name="EUR_JPY")
     private Float euroToJpy;
 
-    @Column(name="EUR/GBP")
+    @Column(name="EUR_GBP")
     private Float euroToGbp;
 
-    @Column(name="GBP/USD")
-    private Float GbpToUsd;
+    @Column(name="GBP_USD")
+    private Float gbpToUsd;
 
-    @Column(name="JPY/USD")
-    private Float JpyToUsd;
+    @Column(name="JPY_USD")
+    private Float jpyToUsd;
 
     @OneToOne(mappedBy = "currencyRates", cascade = CascadeType.ALL)
     private Invoice invoice;

@@ -38,14 +38,12 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         let custodyChargeData = {
-            chargeExcludingVat: document.getElementById('chargeExcludingVat').value,
-            vatCharge: document.getElementById('vatCharge').value,
-            chargeIncludingVat: document.getElementById('chargeIncludingVat').value
+            chargeExcludingVat: document.getElementById('chargeExcludingVat').value
         };
 
         let vatData = {
             isApplicable:document.getElementById('isApplicable').value,
-            vatId: document.getElementById('vatId').value,
+            vatId: document.getElementById('vatId').value
         };
 
         let servicesData = {

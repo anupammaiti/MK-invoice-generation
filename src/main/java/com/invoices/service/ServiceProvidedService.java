@@ -18,15 +18,13 @@ import java.util.List;
 public class ServiceProvidedService {
     @Autowired
     private ServiceProvidedRepo serviceProvidedRepo;
-    @Getter @Setter
-    private ServiceProvided serviceProvided;
 
     public ServiceProvided getRecord(Long id){
 
         return serviceProvidedRepo.findServiceProvidedById(id);
     }
 
-    public List<ServiceProvided> getAllServicesProvided() {
+    public List<ServiceProvided> getServicesProvided() {
 
         return serviceProvidedRepo.findAll();
     }

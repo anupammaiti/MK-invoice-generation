@@ -20,9 +20,6 @@ public class BankAccountService {
     @Autowired
     private BankAccountRepo bankAccountRepo;
 
-    @Getter@Setter
-    private BankAccount bankAccount;
-
     public BankAccount getRecord(Long id){
         return bankAccountRepo.getBankAccountById(id);
     }

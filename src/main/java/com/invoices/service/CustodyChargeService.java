@@ -16,6 +16,23 @@ public class CustodyChargeService {
     @Autowired
     private CustodyChargeRepo custodyChargeRepo;
 
+    /**
+     * @param baseValue the custody charge excluding VAT
+     * @param vatRate the rate of VAT
+     * @return the "pure" amount of VAT to be paid
+     */
+    public Float calculateVatCharge(float baseValue, float vatRate){
+        return baseValue*vatRate;
+    }
+
+    /**
+     * @param baseValue the custody charge excluding VAT
+     * @param vatValue the "pure" amount of VAT to be paid
+     * @return the total fee to be paid
+     */
+    public Float calculateTotalCharge(float baseValue, float vatValue){
+        return baseValue+vatValue;
+    }
 
     public CustodyCharge save(CustodyCharge custodyCharge){
 

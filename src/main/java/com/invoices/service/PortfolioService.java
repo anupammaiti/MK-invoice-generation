@@ -19,9 +19,6 @@ public class PortfolioService {
     @Autowired
     private PortfolioRepo portfolioRepo;
 
-    @Getter @Setter
-    private Portfolio portfolio;
-
     public Portfolio getRecord(Long id){
 
         return portfolioRepo.getPortfolioById(id);

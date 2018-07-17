@@ -11,11 +11,5 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PdfController {
 
-    @GetMapping(value = "/success")
-    public String successMsg(){
-
-        return "empty";
-    }
-
 
 }

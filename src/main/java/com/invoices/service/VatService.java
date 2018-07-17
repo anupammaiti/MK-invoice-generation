@@ -19,9 +19,6 @@ public class VatService {
     @Autowired
     private VatRepo vatRepo;
 
-    @Getter@Setter
-    private Vat vat;
-
     public Vat save(Vat vat){
 
         return vatRepo.save(vat);
@@ -35,6 +32,10 @@ public class VatService {
     public Vat getVatById(Long id){
 
         return vatRepo.findVatByVatId(id);
+    }
+
+    public Float getVatRate(Vat vat){
+        return vat.getVatRate();
     }
 
     /*

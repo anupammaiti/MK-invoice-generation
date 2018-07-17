@@ -18,9 +18,6 @@ public class InvoiceService {
     @Autowired
     private InvoiceRepo invoiceRepo;
 
-    @Getter@Setter
-    private Invoice invoice;
-
     public Invoice save(Invoice invoice){
 
         return invoiceRepo.save(invoice);

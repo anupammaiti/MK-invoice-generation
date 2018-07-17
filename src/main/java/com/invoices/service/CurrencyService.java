@@ -16,13 +16,12 @@ import java.util.List;
  */
 @Service
 public class CurrencyService {
+
     @Autowired
     private CurrencyRepo currencyRepo;
 
-    @Getter @Setter
-    private Currency currency;
-
     public Currency getRecord(Long id){
+
         return currencyRepo.getCurrencyByCurrencyId(id);
     }
 
