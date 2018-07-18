@@ -28,7 +28,7 @@ import javax.persistence.*;
 public class CustodyCharge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "custody_charge_id")
     private Long id;
 
     @Column(name = "custody_charge_vat")
@@ -40,8 +40,8 @@ public class CustodyCharge {
     @Column(name = "custody_charge_excl_vat")
     private float chargeExcludingVat;
 
-    //Child has to set parent
-    @OneToOne()
-    @JoinColumn(name = "invoice_id")
+    @OneToOne(mappedBy = "custodyCharge", cascade = CascadeType.ALL)
     private Invoice invoice;
+
+    @Transient private Long vatRateId;
 }

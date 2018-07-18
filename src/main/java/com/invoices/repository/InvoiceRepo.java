@@ -12,4 +12,5 @@ import java.util.List;
  */
 @Repository
 public interface InvoiceRepo extends JpaRepository<Invoice, Long> {
+    Invoice getInvoiceById(Long id);
 }

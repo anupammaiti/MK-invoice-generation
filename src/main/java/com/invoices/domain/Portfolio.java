@@ -40,6 +40,6 @@ public class Portfolio {
     @JoinColumn(name = "company_id")
     private ClientCompanyInfo clientCompanyInfo;
 
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "portfolio")
     private List<Invoice> invoiceList;
 }

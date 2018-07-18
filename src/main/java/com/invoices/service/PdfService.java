@@ -31,7 +31,7 @@ public class PdfService {
         Float vatCharge = invoice.getCustodyCharge().getVatCharge();
         Float vatRate = invoice.getVat().getVatRate();
 
-        Float currencyRate = invoice.getCurrencyRates().getEuroToUsd();//TEMPORARY
+        Float currencyRate = invoice.getCurrencyRates().getExchangeRate();
 
         InvoiceTemplate template = new InvoiceTemplate(companyName, address, postcode, city, country,
                 vatNumber, invoiceDate, invoiceNumber, chargeExcludingVat, chargeIncludingVat, vatCharge,

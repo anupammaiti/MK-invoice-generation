@@ -16,6 +16,11 @@ public class CustodyChargeService {
     @Autowired
     private CustodyChargeRepo custodyChargeRepo;
 
+    public void deleteRecord(Long id){
+
+        custodyChargeRepo.deleteById(id);
+    }
+
     /**
      * @param baseValue the custody charge excluding VAT
      * @param vatRate the rate of VAT

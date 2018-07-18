@@ -23,6 +23,24 @@ public class CurrencyRatesService {
     private CurrencyRatesRepo currencyRatesRepo;
     //private ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
 
+    public void deleteRecord(Long id){
+        currencyRatesRepo.deleteById(id);
+    }
+
+    /**
+     * This method will be called whenever an invoice is issued, so the
+     * current exchange rate is fetched and stored to the database, before returning
+     * the currencyRates entity back to the invoice.
+     * @return the record holding current exchange rate
+     */
+    public CurrencyRates getCurrentRateAndSave(CurrencyRates currencyRates){
+        String baseCurrency = currencyRates.getFromCurrency().getCurrencyCode();
+        String targetCurrency = currencyRates.getToCurrency().getCurrencyCode();
+        currencyRates.setExchangeRate(getExchangeRateFor(baseCurrency,targetCurrency));
+        save(currencyRates);
+
+        return currencyRates;
+    }
 
     /**
      * Method will delegate requests to a chain of Exchange providers, until a
@@ -31,35 +49,16 @@ public class CurrencyRatesService {
      * @param targetCurrency The currency to convert to
      * @return a float value of the current exchange rate of given base and target
      */
-    public Float getExchangeRateFor(String baseCurrency, String targetCurrency){
+    private Float getExchangeRateFor(String baseCurrency, String targetCurrency){
         ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
         ExchangeRate rate = provider.getExchangeRate(baseCurrency, targetCurrency);
         NumberValue factor = rate.getFactor();
-        Float f = factor.floatValue();
 
-        return f;
-    }
-    /**
-     * This method will be called whenever an invoice is issued, so the
-     * current exchange rates are fetched and stored to the database, before returning
-     * the currencyRates entity back to the invoice
-     * to hold the fetched exchange rates
-     * @return the record holding current exchange rates
-     */
-    public CurrencyRates getCurrentRates(){
-        CurrencyRates currencyRates = new CurrencyRates();
-        currencyRates.setEuroToGbp(getExchangeRateFor("EUR","GBP"));
-        currencyRates.setEuroToUsd(getExchangeRateFor("EUR", "USD"));
-        currencyRates.setEuroToJpy(getExchangeRateFor("EUR","JPY"));
-        currencyRates.setGbpToUsd(getExchangeRateFor("GBP", "USD"));
-        currencyRates.setJpyToUsd(getExchangeRateFor("JPY", "USD"));
-
-        this.save(currencyRates);
-
-        return currencyRates;
+        return factor.floatValue();
     }
 
     private void save(CurrencyRates currencyRates){
+
         currencyRatesRepo.save(currencyRates);
     }
 

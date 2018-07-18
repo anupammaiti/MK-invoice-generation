@@ -28,6 +28,12 @@ public class Currency {
     @Column(name = "currency_code", nullable = false)
     private String currencyCode;
 
-    @OneToMany(mappedBy = "currency", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "currency")
     private List<Invoice> invoiceList;
+
+    @OneToMany(mappedBy = "fromCurrency")
+    private List<CurrencyRates> exchangeRateFromCurrency;
+
+    @OneToMany(mappedBy = "toCurrency")
+    private List<CurrencyRates> exchangeRateToCurrency;
 }

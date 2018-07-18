@@ -30,6 +30,6 @@ public class Vat {
     @Column(name = "vat_rate")
     private Float vatRate;
 
-    @OneToMany(mappedBy = "vat", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "vat")
     private List<Invoice> invoiceList;
 }

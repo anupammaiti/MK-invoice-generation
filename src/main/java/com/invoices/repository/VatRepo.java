@@ -17,8 +17,8 @@ public interface VatRepo extends JpaRepository<Vat, Long>,QueryByExampleExecutor
 
     /*
     @Query("select v from Vat v where v.vatRate BETWEEN ?1 and ?2")
-    List<Vat> findByVatRate(Float vatRate, Float accuracy);
+    List<Vat> findByAccurateVatRate(Float vatRate, Float accuracy);
     */
-
+    Vat findVatByVatRate(Float rate);
     Vat findVatByVatId(Long id);
 }

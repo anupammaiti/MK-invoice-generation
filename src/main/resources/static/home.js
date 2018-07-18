@@ -23,9 +23,11 @@ const postData = (url = ``, data = {}) => {
  * Will send value of objects back as json.
  * Each post request, will send the data to populate all object instances of
  * the required entities.
+ * TODO if(document.getElementById('<any variable>').value === "") var = null;
  */
 document.addEventListener('DOMContentLoaded', function () {
     document.getElementById('submitBtn').addEventListener('click', function () {
+        this.disabled = true;
         let invoiceData = {
             invoiceType: document.getElementById('invoiceType').value,
             invoiceDate: new Date(document.getElementById('invoiceDate').value),
@@ -34,47 +36,34 @@ document.addEventListener('DOMContentLoaded', function () {
             reverseCharge: document.getElementById('reverseCharge').value,
             frequency: document.getElementById('frequency').value,
             period: document.getElementById('period').value,
-            year: parseInt(document.getElementById('year').value)
-        };
+            year: parseInt(document.getElementById('year').value)};
+
+        let exchangeRateData = {
+            fromCurrencyId: document.getElementById('currency').value,
+            toCurrencyId: document.getElementById('toCurrency').value};
 
         let custodyChargeData = {
-            chargeExcludingVat: document.getElementById('chargeExcludingVat').value
-        };
+            chargeExcludingVat: document.getElementById('chargeExcludingVat').value,
+            vatRateId: document.getElementById('vatId').value};
 
         let vatData = {
             isApplicable:document.getElementById('isApplicable').value,
-            vatId: document.getElementById('vatId').value
-        };
+            vatId: document.getElementById('vatId').value};
+        let servicesData = {id: document.getElementById('service').value};
+        let currencyData = {currencyId: document.getElementById('currency').value};
+        let portfolio = {id: document.getElementById('portfolio').value};
+        let bankAccountData = {id: document.getElementById('bankAccount').value};
 
-        let servicesData = {
-            id: document.getElementById('service').value
-        };
-
-        let currencyData = {
-            currencyId: document.getElementById('currency').value
-        };
-
-        let portfolio = {
-            id: document.getElementById('portfolio').value
-        };
-
-        let bankAccountData = {
-            id: document.getElementById('bankAccount').value
-        };
-
+        postData('/exchangeRate', exchangeRateData);
         postData('/serviceProvided', servicesData);
         postData('/currency', currencyData);
         postData('/portfolio', portfolio);
         postData('/bankAccount', bankAccountData);
-        postData('/vat', vatData).then(() =>
-        {
-            postData('/invoice', invoiceData).then(() =>
-            {
-                postData('/fee', custodyChargeData).then(() =>
-                {
-                    window.location = "/success";
-                })
-            })
+        postData('/fee', custodyChargeData);
+        postData('/vat', vatData).then(() => {
+            postData('/invoice', invoiceData);
+            window.location = "/success";
+            this.disabled = false;
         })
     })
 });

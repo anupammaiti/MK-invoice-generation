@@ -2,6 +2,7 @@ package com.invoices.repository;
 
 import com.invoices.domain.CurrencyRates;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,5 +11,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CurrencyRatesRepo extends JpaRepository<CurrencyRates, Long> {
-    //Method to get latest currency
+    /*Method to get column names
+    @Query("SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'currency_rates'")
+    CurrencyRates getCurrencyRatesByColumnName();*/
 }

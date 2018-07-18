@@ -34,7 +34,7 @@ public class Invoice {
     private Date invoiceDate;
 
     @Column(name = "year_issued")
-    private int year;
+    private Integer year;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "reverse_charge")
@@ -59,7 +59,7 @@ public class Invoice {
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "currency_rate_id")
     private CurrencyRates currencyRates;
 
@@ -71,6 +71,8 @@ public class Invoice {
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-    @OneToOne(mappedBy = "invoice", cascade = CascadeType.ALL)
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "custody_charge_id")
     private CustodyCharge custodyCharge;
 }

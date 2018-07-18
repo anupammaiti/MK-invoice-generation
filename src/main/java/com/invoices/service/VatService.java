@@ -35,7 +35,13 @@ public class VatService {
     }
 
     public Float getVatRate(Vat vat){
+
         return vat.getVatRate();
+    }
+
+    public Vat getRecordByVatRate(Float rate){
+
+        return vatRepo.findVatByVatRate(rate);
     }
 
     /*

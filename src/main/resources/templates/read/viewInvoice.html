@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>View Invoice</title>
+</head>
+<body>
+<div>
+        <span th:text="${invoice.getPortfolio().getClient().getClientName()}">Client</span>
+        <br>
+    <div th:if="${company} != null">
+        <span th:text="${company.getName()}"></span>
+        <br>
+        <span th:text="${company.getAddress()}"></span>
+        <br>
+        <span th:text="${company.getCity()}"></span>
+        <br>
+        <span th:text="${company.getPostcode()}"></span>
+        <br>
+        <span th:text="${company.getVatNumber()}"></span>
+        <br>
+        <span th:text="${company.getCompanyLocation().getCountry()}"></span>
+        <br>
+    </div>
+        <span th:text="${invoice.getInvoiceNumber()}"></span>
+        <br>
+        <span th:text="${invoice.getInvoiceDate()}"></span>
+</div>
+</body>
+</html>
