@@ -142,7 +142,8 @@ public class CreateController {
     @PostMapping(value = "/fee")
     @ResponseBody
     public void submitInvoice(@RequestBody CustodyCharge custodyCharge){
-        Vat v = vatService.getVatById(custodyCharge.getVatRateId());
+        Long vatRateId = custodyCharge.getVatRateId();
+        Vat v = vatService.getVatById(vatRateId);
         Float vatRate = v.getVatRate();
         Float baseValue = custodyCharge.getChargeExcludingVat();
         Float vatCharge = custodyChargeService.calculateVatCharge(baseValue, vatRate);
@@ -166,19 +167,16 @@ public class CreateController {
         CurrencyRates exchangeRate = (CurrencyRates)entities.get("currencyRate");
         exchangeRate = currencyRatesService.getCurrentRateAndSave(exchangeRate);
 
-        CustodyCharge custodyCharge = (CustodyCharge)entities.get("custodyCharge");
-        //custodyChargeService.save(custodyCharge);
-
         invoice.setVat((Vat)entities.get("vat"));
         invoice.setServiceProvided((ServiceProvided)entities.get("service"));
         invoice.setCurrency((Currency)entities.get("currency"));
         invoice.setBankAccount((BankAccount)entities.get("bankAccount"));
         invoice.setPortfolio((Portfolio)entities.get("portfolio"));
-        invoice.setCustodyCharge(custodyCharge);
+        invoice.setCustodyCharge((CustodyCharge)entities.get("custodyCharge"));
         invoice.setCurrencyRates(exchangeRate);
 
-        invoiceService.save(invoice); //insert current invoice to db
-        entities.clear();
+        invoiceService.save(invoice); //finally insert invoice to db
+        entities.clear(); //remove all objects from hashmap
     }
 
     @GetMapping(value = "/success")

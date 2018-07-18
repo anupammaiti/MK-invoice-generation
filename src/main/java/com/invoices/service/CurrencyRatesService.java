@@ -23,9 +23,6 @@ public class CurrencyRatesService {
     private CurrencyRatesRepo currencyRatesRepo;
     //private ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
 
-    public void deleteRecord(Long id){
-        currencyRatesRepo.deleteById(id);
-    }
 
     /**
      * This method will be called whenever an invoice is issued, so the

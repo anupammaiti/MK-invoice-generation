@@ -61,9 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
         postData('/bankAccount', bankAccountData);
         postData('/fee', custodyChargeData);
         postData('/vat', vatData).then(() => {
-            postData('/invoice', invoiceData);
-            window.location = "/success";
-            this.disabled = false;
+            postData('/invoice', invoiceData).then(() => {
+                window.location = "/success";
+                this.disabled = false;
+            })
         })
     })
 });

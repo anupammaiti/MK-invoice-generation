@@ -25,9 +25,8 @@ public class DeleteController {
     @PostMapping("/findAndDelete")
     @ResponseBody
     public void findAndDelete(@RequestBody Invoice invoice){
-        //invoiceService.getInvoiceById(invoice.getId());
-        //invoiceService.
-        invoiceService.deleteRecord(invoice);
+
+        invoiceService.deleteRecord(invoice.getId());
     }
 
     @GetMapping("/deleteInvoice")

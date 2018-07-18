@@ -16,17 +16,13 @@ public class CustodyChargeService {
     @Autowired
     private CustodyChargeRepo custodyChargeRepo;
 
-    public void deleteRecord(Long id){
-
-        custodyChargeRepo.deleteById(id);
-    }
-
     /**
      * @param baseValue the custody charge excluding VAT
      * @param vatRate the rate of VAT
      * @return the "pure" amount of VAT to be paid
      */
     public Float calculateVatCharge(float baseValue, float vatRate){
+
         return baseValue*vatRate;
     }
 
@@ -36,6 +32,7 @@ public class CustodyChargeService {
      * @return the total fee to be paid
      */
     public Float calculateTotalCharge(float baseValue, float vatValue){
+
         return baseValue+vatValue;
     }
 

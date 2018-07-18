@@ -59,7 +59,7 @@ public class Invoice {
     @JoinColumn(name = "currency_id")
     private Currency currency;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "currency_rate_id")
     private CurrencyRates currencyRates;
 
@@ -72,7 +72,7 @@ public class Invoice {
     private Portfolio portfolio;
 
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "custody_charge_id")
     private CustodyCharge custodyCharge;
 }

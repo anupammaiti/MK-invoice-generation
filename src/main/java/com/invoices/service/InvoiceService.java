@@ -26,21 +26,9 @@ public class InvoiceService {
     }
 
     @Transactional
-    public void deleteRecord(Invoice invoice){
-        /*CustodyChargeService custodyChargeService = new CustodyChargeService();
-        CurrencyRatesService currencyRatesService = new CurrencyRatesService();
-        Long custodyChargeId = invoice.getCustodyCharge().getId();
-        Long currencyRatesId = invoice.getCurrencyRates().getCurrencyRateId();
+    public void deleteRecord(Long id){
 
-        custodyChargeService.deleteRecord(custodyChargeId);
-        currencyRatesService.deleteRecord(currencyRatesId);*/
-
-        invoice = getInvoiceById(invoice.getId());
-        List<Invoice> invoiceList = new ArrayList<>();
-        invoiceList.add(invoice);
-        invoiceRepo.deleteInBatch(invoiceList);
-
-        //invoiceRepo.deleteById();
+        invoiceRepo.deleteById(id);
     }
 
     public List<Invoice> getInvoices(){
