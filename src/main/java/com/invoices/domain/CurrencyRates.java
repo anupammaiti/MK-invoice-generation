@@ -37,9 +37,7 @@ public class CurrencyRates {
     @JoinColumn(name = "to_currency")
     private Currency toCurrency;
 
-    @OneToOne(mappedBy = "currencyRates",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToOne(mappedBy = "currencyRates")
     private Invoice invoice;
 
     @Transient private Long fromCurrencyId;

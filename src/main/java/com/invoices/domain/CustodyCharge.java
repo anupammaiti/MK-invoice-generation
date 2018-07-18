@@ -29,7 +29,7 @@ public class CustodyCharge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "custody_charge_id")
-    private Long id;
+    private Long custodyChargeId;
 
     @Column(name = "custody_charge_vat")
     private float vatCharge;
@@ -40,7 +40,7 @@ public class CustodyCharge {
     @Column(name = "custody_charge_excl_vat")
     private float chargeExcludingVat;
 
-    @OneToOne(mappedBy = "custodyCharge", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "custodyCharge")
     private Invoice invoice;
 
     @Transient private Long vatRateId;

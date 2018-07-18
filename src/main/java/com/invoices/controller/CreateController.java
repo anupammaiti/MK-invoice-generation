@@ -4,6 +4,7 @@ import com.invoices.domain.*;
 import com.invoices.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -150,7 +151,7 @@ public class CreateController {
         custodyCharge.setVatCharge(vatCharge);
         custodyCharge.setChargeIncludingVat(chargeInclVat);
 
-        //custodyChargeService.save(custodyCharge);
+        custodyChargeService.save(custodyCharge);
         entities.put("custodyCharge", custodyCharge);
     }
 
@@ -166,7 +167,7 @@ public class CreateController {
         exchangeRate = currencyRatesService.getCurrentRateAndSave(exchangeRate);
 
         CustodyCharge custodyCharge = (CustodyCharge)entities.get("custodyCharge");
-        custodyChargeService.save(custodyCharge);
+        //custodyChargeService.save(custodyCharge);
 
         invoice.setVat((Vat)entities.get("vat"));
         invoice.setServiceProvided((ServiceProvided)entities.get("service"));

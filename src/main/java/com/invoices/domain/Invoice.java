@@ -72,7 +72,7 @@ public class Invoice {
     private Portfolio portfolio;
 
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "custody_charge_id")
     private CustodyCharge custodyCharge;
 }

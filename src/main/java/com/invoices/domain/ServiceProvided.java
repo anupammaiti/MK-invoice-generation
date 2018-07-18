@@ -27,6 +27,6 @@ public class ServiceProvided {
     @NotNull
     private String serviceName;
 
-    @OneToMany(mappedBy = "serviceProvided", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "serviceProvided")
     private List<Invoice> invoiceList;
 }
