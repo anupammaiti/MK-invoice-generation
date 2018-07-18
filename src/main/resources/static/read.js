@@ -31,18 +31,4 @@ document.addEventListener('DOMContentLoaded', function () {
         });
         this.disabled = false;
     });
-
-    //POST REQUEST TO DELETE INVOICE CONTROLLER
-    document.getElementById('deleteButton').addEventListener('click', function (){
-        this.disabled = true;
-        let data = {
-            id: document.getElementById('selectedInvoice').value
-        };
-
-        postData('/findAndDelete', data).then(() =>
-        {
-            //window.location = "/deleteInvoice";
-        });
-        this.disabled = false;
-    });
 });

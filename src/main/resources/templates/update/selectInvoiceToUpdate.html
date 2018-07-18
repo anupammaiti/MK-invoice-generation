@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Delete Invoice</title>
-    <script src="/delete.js" type="application/javascript"></script>
+    <title>Update Invoice</title>
+    <script src="/update.js" type="application/javascript"></script>
 </head>
 <body>
 <form method="post">
-    <h2>SELECT AN INVOICE TO DELETE</h2>
+    <h2>SELECT AN INVOICE TO <span th:text="${action}"></span></h2>
     <div>
-        <p>Select an Invoice to delete:
+        <p>Select an Invoice to <span th:text="${#strings.toLowerCase(action)}"></span> :
             <select th:field="*{invoices}" id="selectedInvoice">
                 <option value=""> -- </option>
                 <option th:each="invoice : ${invoices}"
@@ -21,7 +21,7 @@
         </p>
     </div>
     <br>
-    <input type="button" value="Delete" id="deleteButton"/>
+    <input type="button" value="Update" id="updateButton"/>
 </form>
 </body>
 </html>

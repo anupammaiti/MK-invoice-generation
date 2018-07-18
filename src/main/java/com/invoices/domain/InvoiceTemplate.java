@@ -3,10 +3,8 @@ package com.invoices.domain;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.Entity;
 import java.util.Date;
 
 /**
