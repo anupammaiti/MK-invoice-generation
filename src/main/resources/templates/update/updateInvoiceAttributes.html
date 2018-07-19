@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Update Invoice</title>
+</head>
+<body>
+<div>
+    <h3>Type: </h3><span th:text="${invoice.getInvoiceType()}"></span>
+    <tr><input type="button" value="Edit"/></tr>
+    <br>
+    <h3>Client: </h3><span th:text="${invoice.getPortfolio().getClient().getClientName()}">Client</span>
+    <tr><input type="button" value="Edit"/></tr>
+    <br>
+    <div th:if="${company} != null">
+        <span th:text="${company.getName()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+        <span th:text="${company.getAddress()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+        <span th:text="${company.getCity()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+        <span th:text="${company.getPostcode()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+        <span th:text="${company.getVatNumber()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+        <span th:text="${company.getCompanyLocation().getCountry()}"></span>
+        <tr><input type="button" value="Edit"/></tr>
+        <br>
+    </div>
+    <h3>Invoice Number: </h3><span th:text="${invoice.getInvoiceNumber()}"></span>
+    <tr><input type="button" value="Edit"/></tr>
+    <br>
+    <h3>Date Issued: </h3><span th:text="${invoice.getInvoiceDate()}"></span>
+    <tr><input type="button" value="Edit"/></tr>
+    <br>
+    <h3>Portfolio Number: </h3><span th:text="${invoice.getPortfolio().getPortfolioCode()}"></span>
+    <tr><input type="button" value="Edit"/></tr>
+    <br>
+    <h3>Bank Account: </h3><span th:text="${invoice.getBankAccount().name + ' - ' + invoice.getBankAccount().getBank().getName()}"></span>
+    <tr><input type="button" value="Edit"/></tr>
+
+</div>
+</body>
+</html>

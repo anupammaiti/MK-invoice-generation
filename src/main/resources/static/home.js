@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
         postData('/fee', custodyChargeData);
         postData('/vat', vatData).then(() => {
             postData('/invoice', invoiceData).then(() => {
-                window.location = "/success";
+                window.location = "/success/created";
                 this.disabled = false;
             })
         })

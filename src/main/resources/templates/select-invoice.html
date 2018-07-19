@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete Invoice</title>
+    <script th:src="${script}" type="application/javascript"></script>
+
+</head>
+<body>
+<form method="post">
+    <div th:replace="fragments/find-invoice :: body">Selection of an invoice</div>
+
+    <input type="button" th:value="${buttonValue}" th:id="${buttonId}"/>
+</form>
+</body>
+</html>

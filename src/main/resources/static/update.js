@@ -18,16 +18,16 @@ const postData = (url = ``, data = {}) => {
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    //POST REQUEST TO DELETE INVOICE CONTROLLER
-    document.getElementById('deleteButton').addEventListener('click', function (){
+    //POST REQUEST TO UPDATE INVOICE CONTROLLER
+    document.getElementById('updateButton').addEventListener('click', function () {
         this.disabled = true;
         let data = {
             id: document.getElementById('selectedInvoice').value
         };
 
-        postData('/find/delete', data).then(() =>
+        postData('/find/update', data).then(() =>
         {
-            window.location = "/success/deleted";
+            window.location = '/success/updated';
         });
         this.disabled = false;
     });

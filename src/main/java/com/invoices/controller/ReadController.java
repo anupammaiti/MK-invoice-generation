@@ -13,17 +13,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class ReadController {
     @Autowired InvoiceService invoiceService;
-
     private Invoice invoice;
 
-    @GetMapping("/selectToView")
-    public String selectInvoice(Model model){
-        model.addAttribute("invoices", invoiceService.getInvoices());
 
-        return "read/selectInvoiceToView";
-    }
-
-    @PostMapping("/findToView")
+    @PostMapping("/find/read")
     @ResponseBody
     public void findInvoice(@RequestBody Invoice invoice){
 

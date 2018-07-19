@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<div th:fragment="body">
+    <div>
+        <h2>SELECT AN INVOICE TO <span th:text="${#strings.toUpperCase(action)}"></span></h2>
+    </div>
+    <p>Select an Invoice to <span th:text="${action}"></span>:
+        <select th:field="*{invoices}" id="selectedInvoice">
+            <option value=""> -- </option>
+            <option th:each="invoice : ${invoices}"
+                    th:value="${invoice.getId()}"
+                    th:text="${invoice.getInvoiceNumber() + ' - ' +
+                    invoice.getPortfolio().getClient().getClientName()}">
+            </option>
+        </select>
+    </p>
+    <br>
+</div>
+
+</body>
+</html>

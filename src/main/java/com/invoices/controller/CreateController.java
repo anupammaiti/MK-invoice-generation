@@ -4,7 +4,6 @@ import com.invoices.domain.*;
 import com.invoices.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +39,7 @@ public class CreateController {
 
     private HashMap<String, Object> entities = new HashMap<>();
 
-    @GetMapping("/create")
+    @GetMapping("/select/create")
     public String createInvoice(Model model){
         //adding enum's values to the view, by passing them all as an array
         model.addAttribute("invoiceTypeValues", InvoiceType.values());
@@ -51,7 +50,7 @@ public class CreateController {
         model.addAttribute("vatRecords", vatService.getVatRecords());
         model.addAttribute("bankAccounts", bankAccountService.getBankAccounts());
 
-        return "create/createInvoice";
+        return "create/create-invoice";
     }
 
     /**
@@ -177,11 +176,5 @@ public class CreateController {
 
         invoiceService.save(invoice); //finally insert invoice to db
         entities.clear(); //remove all objects from hashmap
-    }
-
-    @GetMapping(value = "/success")
-    public String successMsg(){
-
-        return "create/createSuccess";
     }
 }

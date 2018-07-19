@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Invoice Submitted</title>
+</head>
+<body>
+<form action="/">
+    <p>Invoice successfully <span th:text="${result}"></span></p>
+    <div>
+        <input type="submit" value="Home" name="submit"/>
+    </div>
+</form>
+</body>
+</html>
