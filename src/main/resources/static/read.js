@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         postData('/find/read', data).then(() =>
         {
-            window.location = "/viewInvoice";
+            window.location = "/invoice/view";
         });
         this.disabled = false;
     });

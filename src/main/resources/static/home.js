@@ -54,17 +54,24 @@ document.addEventListener('DOMContentLoaded', function () {
         let portfolio = {id: document.getElementById('portfolio').value};
         let bankAccountData = {id: document.getElementById('bankAccount').value};
 
-        postData('/exchangeRate', exchangeRateData);
-        postData('/serviceProvided', servicesData);
-        postData('/currency', currencyData);
-        postData('/portfolio', portfolio);
-        postData('/bankAccount', bankAccountData);
-        postData('/fee', custodyChargeData);
-        postData('/vat', vatData).then(() => {
-            postData('/invoice', invoiceData).then(() => {
-                window.location = "/success/created";
-                this.disabled = false;
+        /*
+        Sending the first post request to /portfolio controller
+        where a binary semaphore will ensure atomic access while
+        invoice is inserted
+        */
+        postData('/portfolio', portfolio).then(() => {
+            postData('/exchangeRate', exchangeRateData);
+            postData('/serviceProvided', servicesData);
+            postData('/currency', currencyData);
+            postData('/bankAccount', bankAccountData);
+            postData('/fee', custodyChargeData);
+            postData('/vat', vatData).then(() => {
+                postData('/invoice', invoiceData).then(() => {
+                    window.location = "/success/created";
+                    this.disabled = false;
+                })
             })
         })
+
     })
 });

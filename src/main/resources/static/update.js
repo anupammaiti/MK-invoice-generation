@@ -27,7 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         postData('/find/update', data).then(() =>
         {
-            window.location = '/success/updated';
+            window.location = '/invoice/update';
+            //window.location = '/find/update';
+            // '/success/updated'
         });
         this.disabled = false;
     });

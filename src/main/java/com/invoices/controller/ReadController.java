@@ -23,12 +23,12 @@ public class ReadController {
         this.invoice = invoiceService.getInvoiceById(invoice.getId());
     }
 
-    @GetMapping("/viewInvoice")
+    @GetMapping("/invoice/view")
     public String viewInvoice(Model model){
         model.addAttribute("invoice", invoice);
         model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());
         this.invoice = null;
-        return "read/viewInvoice";
+        return "read/read-invoice";
     }
 
 }

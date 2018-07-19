@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
+import static com.invoices.InvoicesApplication.mutexCreate;
+
 /**
  * @author psoutzis
  * This Controller is responsible for the creation of an invoice.
@@ -22,9 +24,6 @@ import java.util.HashMap;
  * the customer. Vat value and total price will be auto-generated( Custody Charges )
  */
 
-//TODO MAKE A THREAD-SAFE data struct TO STORE OBJECTS
-    //Could send e.g: portfolioData first, and add a mutex semaphore to
-    //portfolio mapping, that will be released in custody charges mapping
 @Controller
 public class CreateController {
 
@@ -55,6 +54,18 @@ public class CreateController {
 
     /**
      * It will save the parsed object in the controller's entity hashmap
+     * @param portfolio will use the passed object from the server response body
+     */
+    @PostMapping(value="/portfolio")
+    @ResponseBody
+    public void submitInvoice(@RequestBody Portfolio portfolio) throws InterruptedException{
+        mutexCreate.acquire();
+        portfolio = portfolioService.getRecord(portfolio.getId());
+        entities.put("portfolio", portfolio);
+    }
+
+    /**
+     * It will save the parsed object in the controller's entity hashmap
      * @param bankAccount will use the passed object from the server response body
      */
     @PostMapping(value="/bankAccount")
@@ -64,16 +75,6 @@ public class CreateController {
         entities.put("bankAccount", bankAccount);
     }
 
-    /**
-     * It will save the parsed object in the controller's entity hashmap
-     * @param portfolio will use the passed object from the server response body
-     */
-    @PostMapping(value="/portfolio")
-    @ResponseBody
-    public void submitInvoice(@RequestBody Portfolio portfolio){
-        portfolio = portfolioService.getRecord(portfolio.getId());
-        entities.put("portfolio", portfolio);
-    }
 
     /**
      * It will save the parsed values to the controller's entity hashmap
@@ -176,5 +177,8 @@ public class CreateController {
 
         invoiceService.save(invoice); //finally insert invoice to db
         entities.clear(); //remove all objects from hashmap
+
+        mutexCreate.release();
+        //release semaphore
     }
 }

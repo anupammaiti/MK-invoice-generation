@@ -12,7 +12,7 @@ public class InvoicesApplication {
 		SpringApplication.run(InvoicesApplication.class, args);
 	}
 
-	public static Semaphore mutex = new Semaphore(1);
+	public static Semaphore mutexCreate = new Semaphore(1);
 
 
 	/*@Bean

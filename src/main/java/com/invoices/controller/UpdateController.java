@@ -23,18 +23,21 @@ public class UpdateController {
     @PostMapping("/find/update")
     @ResponseBody
     public void findToUpdate(@RequestBody Invoice invoice){
-        invoice = invoiceService.getInvoiceById(invoice.getId());
-        invoice.setPeriod("Santa Claus");//JUST A TEST
+        Long invoiceId = invoice.getId();
+        this.invoice = invoiceService.getInvoiceById(invoiceId);
+        /*invoice.setPeriod("Santa Claus");//JUST A TEST
         Portfolio newPortfolio = portfolioService.getRecord(4L);//JUST A TEST
         invoice.setPortfolio(newPortfolio);
-        invoiceService.save(invoice);
+        invoiceService.save(invoice);*/
+
+        //return "forward:/invoice/update";
     }
 
-    @GetMapping("/updateInvoice")
+    @GetMapping("/invoice/update")
     public String updateInvoice (Model model){
         model.addAttribute("invoice", this.invoice);
         model.addAttribute("company", this.invoice.getPortfolio().getClientCompanyInfo());
-        return "update/updateInvoiceAttributes";
+        return "update/update-attributes";
     }
 
 

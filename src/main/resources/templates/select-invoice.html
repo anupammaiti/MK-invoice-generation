@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Delete Invoice</title>
+    <title th:text="${#strings.capitalize(action) + ' Invoice'}">Action that you user chose to take</title>
     <script th:src="${script}" type="application/javascript"></script>
 
 </head>
