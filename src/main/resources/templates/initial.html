@@ -8,24 +8,33 @@
 <body>
     <div>
         <!--Create-->
-        <a href="/create">
-            <input type="button" value="Issue an Invoice"/>
-        </a>
+        <form action="/select/create">
+            <input type="submit" value="Issue an Invoice"/>
+        </form>
 
-    <!--Read-->
-        <a href="/selectToView">
-            <input type="button" value="Find an Invoice" />
-        </a>
+        <!--Read-->
+        <form action="/select/read">
+            <input type="hidden" name="action" value="read"/>
+            <input type="hidden" name="buttonId" value="readButton"/>
+            <input type="hidden" name="script" value="/read.js"/>
+            <input type="submit" value="Find an Invoice"/>
+        </form>
 
-    <!--Update-->
-        <a href="/selectToUpdate">
-            <input type="button" value="Update an Invoice" />
-        </a>
+        <!--Update-->
+        <form action="/select/update" >
+            <input type="hidden" name="action" value="udpate"/>
+            <input type="hidden" name="buttonId" value="updateButton"/>
+            <input type="hidden" name="script" value="/update.js"/>
+            <input type="submit" value="Update an Invoice"/>
+        </form>
 
-    <!--Delete-->
-        <a href="/selectToDelete">
-            <input type="button" value="Delete an Invoice" />
-        </a>
+        <!--Delete-->
+        <form action="/select/delete">
+            <input type="hidden" name="action" value="delete"/>
+            <input type="hidden" name="buttonId" value="deleteButton"/>
+            <input type="hidden" name="script" value="/delete.js"/>
+            <input type="submit" value="Delete an Invoice"/>
+        </form>
     </div>
 
 </body>

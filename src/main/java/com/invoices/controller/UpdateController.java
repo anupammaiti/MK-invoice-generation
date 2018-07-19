@@ -19,25 +19,15 @@ public class UpdateController {
     @Autowired PortfolioService portfolioService;
 
     private Invoice invoice;
-    String[] actions = {"CREATE", "READ", "UPDATE", "DELETE"};
-    @GetMapping("/selectToUpdate")
-    public String selectInvoiceToDelete(Model model){
-        model.addAttribute("invoices", invoiceService.getInvoices());
-        model.addAttribute("action", actions[2]);
 
-        return "update/selectInvoiceToUpdate";
-    }
-
-    @PostMapping("/findToUpdate")
+    @PostMapping("/find/update")
     @ResponseBody
     public void findToUpdate(@RequestBody Invoice invoice){
-        invoice = invoiceService.getInvoiceById(invoice.getId());   ///////////////
-        invoice.setPeriod("Octoberisimo");                          //JUST A TEST//
-        Portfolio newPortfolio = portfolioService.getRecord(4L);//           //
-        invoice.setPortfolio(newPortfolio);                        ///////////////
+        invoice = invoiceService.getInvoiceById(invoice.getId());
+        invoice.setPeriod("Santa Claus");//JUST A TEST
+        Portfolio newPortfolio = portfolioService.getRecord(4L);//JUST A TEST
+        invoice.setPortfolio(newPortfolio);
         invoiceService.save(invoice);
-
-        this.invoice = invoice;
     }
 
     @GetMapping("/updateInvoice")

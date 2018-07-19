@@ -5,32 +5,16 @@ import com.invoices.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class DeleteController {
     @Autowired InvoiceService invoiceService;
 
-    @GetMapping("/selectToDelete")
-    public String selectInvoiceToDelete(Model model){
-        model.addAttribute("invoices", invoiceService.getInvoices());
-
-        return "delete/selectInvoiceToDelete";
-    }
-
-    @PostMapping("/findAndDelete")
+    @PostMapping("/find/delete")
     @ResponseBody
-    public void findAndDelete(@RequestBody Invoice invoice){
+    public void deleteInvoice(@RequestBody Invoice invoice){
 
         invoiceService.deleteRecord(invoice.getId());
-    }
-
-    @GetMapping("/deleteInvoice")
-    public String successfulDelete(){
-
-        return "delete/deleteSuccess";
     }
 }

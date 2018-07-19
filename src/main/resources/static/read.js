@@ -19,13 +19,13 @@ const postData = (url = ``, data = {}) => {
 
 document.addEventListener('DOMContentLoaded', function () {
     //POST REQUEST TO VIEW INVOICE CONTROLLER
-    document.getElementById('viewButton').addEventListener('click', function () {
+    document.getElementById('readButton').addEventListener('click', function () {
         this.disabled = true;
         let data = {
             id: document.getElementById('selectedInvoice').value
         };
 
-        postData('/findToView', data).then(() =>
+        postData('/find/read', data).then(() =>
         {
             window.location = "/viewInvoice";
         });
