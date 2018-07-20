@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${#strings.capitalize(action) + ' Invoice'}">TITLE</title>
+    <script src="/delete.js" type="application/javascript"></script>
+</head>
+
+
+<body>
+<form>
+    <div th:replace="fragments/find-invoice :: body">Selection of an invoice</div>
+
+    <input type="button" value="Delete" id="deleteButton"/>
+</form>
+
+<!--<div id="editPopup" hidden>-->
+    <!--<h3>Type: </h3><span id="type"></span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+    <!--<br>-->
+    <!--<h3>Client: </h3><span id="clientName">Client</span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+    <!--<br>-->
+    <!--<div>-->
+        <!--<span id="companyName"></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+        <!--<span ></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+        <!--<span ></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+        <!--<span ></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+        <!--<span ></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+        <!--<span ></span>-->
+        <!--<tr><input type="button" value="Edit"/></tr>-->
+        <!--<br>-->
+    <!--</div>-->
+    <!--<h3>Invoice Number: </h3><span ></span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+    <!--<br>-->
+    <!--<h3>Date Issued: </h3><span ></span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+    <!--<br>-->
+    <!--<h3>Portfolio Number: </h3><span ></span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+    <!--<br>-->
+    <!--<h3>Bank Account: </h3><span ></span>-->
+    <!--<tr><input type="button" value="Edit"/></tr>-->
+
+<!--</div>-->
+</body>
+</html>

@@ -8,11 +8,15 @@ import java.util.concurrent.Semaphore;
 @SpringBootApplication
 public class InvoicesApplication {
 
+	public static Semaphore mutexCreate = new Semaphore(1);
+
 	public static void main(String[] args) {
+
 		SpringApplication.run(InvoicesApplication.class, args);
 	}
 
-	public static Semaphore mutexCreate = new Semaphore(1);
+
+
 
 
 	/*@Bean

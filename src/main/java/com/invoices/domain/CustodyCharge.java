@@ -1,9 +1,6 @@
 package com.invoices.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
@@ -24,7 +21,6 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class CustodyCharge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +36,9 @@ public class CustodyCharge {
     @Column(name = "custody_charge_excl_vat")
     private float chargeExcludingVat;
 
-    @OneToOne(mappedBy = "custodyCharge")
-    private Invoice invoice;
-
-    @Transient private Long vatRateId;
+    public CustodyCharge(float chargeExcludingVat, float vatCharge, float chargeIncludingVat) {
+        this.vatCharge = vatCharge;
+        this.chargeIncludingVat = chargeIncludingVat;
+        this.chargeExcludingVat = chargeExcludingVat;
+    }
 }

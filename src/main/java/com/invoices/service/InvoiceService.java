@@ -7,7 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,5 +43,20 @@ public class InvoiceService {
     public Invoice getInvoiceById(Long id){
         //
         return invoiceRepo.getInvoiceById(id);
+    }
+
+    public Date convertDate(String datestring) {
+        Date date = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            date = sdf.parse(datestring);
+        }
+        catch(ParseException p){
+            p.printStackTrace();
+            System.out.println("Could not parse date");
+        }
+
+        return date;
     }
 }

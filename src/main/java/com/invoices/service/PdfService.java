@@ -16,6 +16,7 @@ import java.util.Date;
 @Service
 public class PdfService {
 
+    /*
     //TODO Simplify accessor methods
     public InvoiceTemplate generateTemplate(Invoice invoice){
         String companyName = invoice.getPortfolio().getClientCompanyInfo().getName();
@@ -24,7 +25,7 @@ public class PdfService {
         String city = invoice.getPortfolio().getClientCompanyInfo().getCity();
         String country = invoice.getPortfolio().getClientCompanyInfo().getCompanyLocation().getCountry();
         String vatNumber = invoice.getPortfolio().getClientCompanyInfo().getVatNumber();
-        Date invoiceDate = invoice.getInvoiceDate();
+        //Date invoiceDate = invoice.getInvoiceDate();
         String invoiceNumber = invoice.getInvoiceNumber();
         Float chargeExcludingVat = invoice.getCustodyCharge().getChargeExcludingVat();
         Float chargeIncludingVat = invoice.getCustodyCharge().getChargeIncludingVat();
@@ -39,5 +40,5 @@ public class PdfService {
 
         return template;
     }
-
+*/
 }

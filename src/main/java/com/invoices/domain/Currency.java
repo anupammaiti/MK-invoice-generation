@@ -28,12 +28,12 @@ public class Currency {
     @Column(name = "currency_code", nullable = false)
     private String currencyCode;
 
-    @OneToMany(mappedBy = "currency")
+    /*@OneToMany(mappedBy = "currency")
     private List<Invoice> invoiceList;
 
     @OneToMany(mappedBy = "fromCurrency")
     private List<CurrencyRates> exchangeRateFromCurrency;
 
     @OneToMany(mappedBy = "toCurrency")
-    private List<CurrencyRates> exchangeRateToCurrency;
+    private List<CurrencyRates> exchangeRateToCurrency;*/
 }

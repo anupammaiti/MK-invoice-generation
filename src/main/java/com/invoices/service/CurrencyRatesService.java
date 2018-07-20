@@ -1,14 +1,14 @@
 package com.invoices.service;
 
+import com.invoices.domain.Currency;
 import com.invoices.domain.CurrencyRates;
 import com.invoices.repository.CurrencyRatesRepo;
+import com.invoices.utils.ExchangeRateProviderHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.money.NumberValue;
 import javax.money.convert.ExchangeRate;
-import javax.money.convert.ExchangeRateProvider;
-import javax.money.convert.MonetaryConversions;
 
 /**
  * @author psoutzis
@@ -21,8 +21,14 @@ import javax.money.convert.MonetaryConversions;
 public class CurrencyRatesService {
     @Autowired
     private CurrencyRatesRepo currencyRatesRepo;
-    //private ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
 
+
+    private CurrencyRates setBaseAndTarget(Currency from, Currency to, CurrencyRates currencyRates){
+        currencyRates.setFromCurrency(from);
+        currencyRates.setToCurrency(to);
+
+        return currencyRates;
+    }
 
     /**
      * This method will be called whenever an invoice is issued, so the
@@ -30,10 +36,11 @@ public class CurrencyRatesService {
      * the currencyRates entity back to the invoice.
      * @return the record holding current exchange rate
      */
-    public CurrencyRates getCurrentRateAndSave(CurrencyRates currencyRates){
+    private CurrencyRates getCurrentRateAndSave(CurrencyRates currencyRates){
         String baseCurrency = currencyRates.getFromCurrency().getCurrencyCode();
         String targetCurrency = currencyRates.getToCurrency().getCurrencyCode();
-        currencyRates.setExchangeRate(getExchangeRateFor(baseCurrency,targetCurrency));
+        Float exchangeRate = getExchangeRateFor(baseCurrency,targetCurrency);
+        currencyRates.setExchangeRate(exchangeRate);
         save(currencyRates);
 
         return currencyRates;
@@ -47,14 +54,23 @@ public class CurrencyRatesService {
      * @return a float value of the current exchange rate of given base and target
      */
     private Float getExchangeRateFor(String baseCurrency, String targetCurrency){
-        ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
-        ExchangeRate rate = provider.getExchangeRate(baseCurrency, targetCurrency);
+        //ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
+        ExchangeRate rate = ExchangeRateProviderHandler.provider.getExchangeRate(baseCurrency, targetCurrency);
         NumberValue factor = rate.getFactor();
 
         return factor.floatValue();
     }
 
-    private void save(CurrencyRates currencyRates){
+    public CurrencyRates generateExchangeRate(Currency from, Currency to){
+        CurrencyRates currencyRates = new CurrencyRates();
+
+        this.setBaseAndTarget(from, to, currencyRates);
+        this.getCurrentRateAndSave(currencyRates);
+
+        return currencyRates;
+    }
+
+    public void save(CurrencyRates currencyRates){
 
         currencyRatesRepo.save(currencyRates);
     }

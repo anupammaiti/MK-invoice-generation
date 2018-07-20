@@ -1,4 +1,4 @@
-package com.invoices.domain;
+package com.invoices.enumerations;
 
 /**
  * @author psoutzis

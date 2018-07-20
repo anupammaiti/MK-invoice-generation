@@ -1,12 +1,12 @@
 package com.invoices.domain;
 
+import com.invoices.enumerations.IsApplicable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 /**
  * This entity represents a VAT rate. e.g: 0.19 or 0.19078
@@ -30,6 +30,6 @@ public class Vat {
     @Column(name = "vat_rate")
     private Float vatRate;
 
-    @OneToMany(mappedBy = "vat")
-    private List<Invoice> invoiceList;
+    /*@OneToMany(mappedBy = "vat")
+    private List<Invoice> invoiceList;*/
 }

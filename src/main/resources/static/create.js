@@ -1,5 +1,3 @@
-
-console.log('js script')
 const postData = (url = ``, data = {}) => {
     // Default options are marked with *
     return fetch(url, {
@@ -23,12 +21,11 @@ const postData = (url = ``, data = {}) => {
  * Will send value of objects back as json.
  * Each post request, will send the data to populate all object instances of
  * the required entities.
- * TODO if(document.getElementById('<any variable>').value === "") var = null;
  */
 document.addEventListener('DOMContentLoaded', function () {
-    document.getElementById('submitBtn').addEventListener('click', function () {
+    document.getElementById('submitButton').addEventListener('click', function () {
         this.disabled = true;
-        let invoiceData = {
+        let data = {
             invoiceType: document.getElementById('invoiceType').value,
             invoiceDate: new Date(document.getElementById('invoiceDate').value),
             invoiceNumber: document.getElementById('invoiceNumber').value,
@@ -36,42 +33,26 @@ document.addEventListener('DOMContentLoaded', function () {
             reverseCharge: document.getElementById('reverseCharge').value,
             frequency: document.getElementById('frequency').value,
             period: document.getElementById('period').value,
-            year: parseInt(document.getElementById('year').value)};
+            year: parseInt(document.getElementById('year').value),
+            portfolio: parseInt(document.getElementById('portfolio').value),
+            vatApplicable: document.getElementById('vatApplicable').value,
+            vat: parseInt(document.getElementById('vat').value),
+            serviceProvided: parseInt(document.getElementById('serviceProvided').value),
+            bankAccount: parseInt(document.getElementById('bankAccount').value),
+            fromCurrency: parseInt(document.getElementById('fromCurrency').value),
+            toCurrency: parseInt(document.getElementById('toCurrency').value),
+            baseCharge: parseFloat(document.getElementById('baseCharge').value)
+        };
 
-        let exchangeRateData = {
-            fromCurrencyId: document.getElementById('currency').value,
-            toCurrencyId: document.getElementById('toCurrency').value};
-
-        let custodyChargeData = {
-            chargeExcludingVat: document.getElementById('chargeExcludingVat').value,
-            vatRateId: document.getElementById('vatId').value};
-
-        let vatData = {
-            isApplicable:document.getElementById('isApplicable').value,
-            vatId: document.getElementById('vatId').value};
-        let servicesData = {id: document.getElementById('service').value};
-        let currencyData = {currencyId: document.getElementById('currency').value};
-        let portfolio = {id: document.getElementById('portfolio').value};
-        let bankAccountData = {id: document.getElementById('bankAccount').value};
 
         /*
         Sending the first post request to /portfolio controller
         where a binary semaphore will ensure atomic access while
         invoice is inserted
         */
-        postData('/portfolio', portfolio).then(() => {
-            postData('/exchangeRate', exchangeRateData);
-            postData('/serviceProvided', servicesData);
-            postData('/currency', currencyData);
-            postData('/bankAccount', bankAccountData);
-            postData('/fee', custodyChargeData);
-            postData('/vat', vatData).then(() => {
-                postData('/invoice', invoiceData).then(() => {
-                    window.location = "/success/created";
-                    this.disabled = false;
-                })
-            })
+        postData('/generate-invoice', data).then(() => {
+            window.location = "/success/created";
+            this.disabled = false;
         })
-
     })
 });

@@ -29,7 +29,7 @@ public class VatService {
         return vatRepo.findAll();
     }
 
-    public Vat getVatById(Long id){
+    public Vat getRecord(Long id){
 
         return vatRepo.findVatByVatId(id);
     }

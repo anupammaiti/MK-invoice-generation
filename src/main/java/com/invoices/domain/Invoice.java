@@ -1,5 +1,10 @@
 package com.invoices.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.invoices.enumerations.InvoiceFrequency;
+import com.invoices.enumerations.InvoicePeriod;
+import com.invoices.enumerations.InvoiceType;
+import com.invoices.enumerations.IsApplicable;
 import lombok.*;
 import javax.persistence.*;
 import java.util.Date;
@@ -26,8 +31,12 @@ public class Invoice {
 
     @Column(name = "invoice_number", unique = true)
     private String invoiceNumber;
-    private String frequency;
-    private String period;
+
+    @Enumerated(EnumType.STRING)
+    private InvoiceFrequency frequency;
+
+    @Enumerated(EnumType.STRING)
+    private InvoicePeriod period;
 
     @Temporal(TemporalType.DATE)
     @Column(name = "date_issued")
@@ -49,30 +58,37 @@ public class Invoice {
     //corresponding service from Services table
     @ManyToOne
     @JoinColumn(name = "service_id")
+    @JsonIgnore
     private ServiceProvided serviceProvided;
 
     @ManyToOne
     @JoinColumn(name = "bank_acc_id")
+    @JsonIgnore
     private BankAccount bankAccount;
 
     @ManyToOne
     @JoinColumn(name = "currency_id")
+    //@JsonIgnore
     private Currency currency;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "currency_rate_id")
+    @JsonIgnore
     private CurrencyRates currencyRates;
 
     @ManyToOne
     @JoinColumn(name = "vat_id")
+    //@JsonIgnore
     private Vat vat;
 
     @ManyToOne//CAN WE ISSUE MORE THAN 1 INVOICES TO A PORTFOLIO?
     @JoinColumn(name = "portfolio_id")
+    @JsonIgnore
     private Portfolio portfolio;
 
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "custody_charge_id")
+    @JsonIgnore
     private CustodyCharge custodyCharge;
 }

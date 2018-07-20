@@ -21,19 +21,29 @@ public class CustodyChargeService {
      * @param vatRate the rate of VAT
      * @return the "pure" amount of VAT to be paid
      */
-    public Float calculateVatCharge(float baseValue, float vatRate){
+    private Float calculateVatCharge(Float baseValue, Float vatRate){
 
         return baseValue*vatRate;
     }
 
     /**
      * @param baseValue the custody charge excluding VAT
-     * @param vatValue the "pure" amount of VAT to be paid
+     * @param vatCharge the "pure" amount of VAT to be paid
      * @return the total fee to be paid
      */
-    public Float calculateTotalCharge(float baseValue, float vatValue){
+    private Float calculateTotalCharge(Float baseValue, Float vatCharge){
 
-        return baseValue+vatValue;
+        return baseValue+vatCharge;
+    }
+
+    public CustodyCharge generateCustodyCharge(Float baseValue, Float vatRate){
+        Float vatCharge = calculateVatCharge(baseValue, vatRate);
+        Float total = calculateTotalCharge(baseValue, vatCharge);
+
+        CustodyCharge custodyCharge = new CustodyCharge(baseValue, vatCharge, total);
+        this.save(custodyCharge);
+
+        return custodyCharge;
     }
 
     public CustodyCharge save(CustodyCharge custodyCharge){

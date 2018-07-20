@@ -1,12 +1,19 @@
 package com.invoices.controller;
 
 import com.invoices.domain.*;
+import com.invoices.dto.InvoiceDTO;
+import com.invoices.enumerations.InvoiceFrequency;
+import com.invoices.enumerations.InvoicePeriod;
+import com.invoices.enumerations.InvoiceType;
+import com.invoices.enumerations.IsApplicable;
 import com.invoices.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 
 import static com.invoices.InvoicesApplication.mutexCreate;
@@ -18,7 +25,7 @@ import static com.invoices.InvoicesApplication.mutexCreate;
  * to the database.
  * It will retrieve the appropriate records by using their id or enum.
  * The id or enum will be sent through a post request to
- * the controllers, with the home.js script.
+ * the controllers, with the create.js script.
  *
  * note: In the future user will only be required to insert the amount to charge
  * the customer. Vat value and total price will be auto-generated( Custody Charges )
@@ -36,13 +43,13 @@ public class CreateController {
     @Autowired CurrencyRatesService currencyRatesService;
     @Autowired VatService vatService;
 
-    private HashMap<String, Object> entities = new HashMap<>();
-
     @GetMapping("/select/create")
     public String createInvoice(Model model){
         //adding enum's values to the view, by passing them all as an array
         model.addAttribute("invoiceTypeValues", InvoiceType.values());
         model.addAttribute("isApplicableValues", IsApplicable.values());
+        model.addAttribute("frequencyValues", InvoiceFrequency.values());
+        model.addAttribute("periodValues", InvoicePeriod.values());
         model.addAttribute("portfolios", portfolioService.getPortfolios());
         model.addAttribute("services", serviceProvidedService.getServicesProvided());
         model.addAttribute("currencies", currencyService.getAvailableCurrencies());
@@ -52,133 +59,32 @@ public class CreateController {
         return "create/create-invoice";
     }
 
-    /**
-     * It will save the parsed object in the controller's entity hashmap
-     * @param portfolio will use the passed object from the server response body
-     */
-    @PostMapping(value="/portfolio")
+    @PostMapping(value = "/generate-invoice")
     @ResponseBody
-    public void submitInvoice(@RequestBody Portfolio portfolio) throws InterruptedException{
-        mutexCreate.acquire();
-        portfolio = portfolioService.getRecord(portfolio.getId());
-        entities.put("portfolio", portfolio);
-    }
+    protected void generateInvoice(@RequestBody InvoiceDTO invoiceDTO) {
 
-    /**
-     * It will save the parsed object in the controller's entity hashmap
-     * @param bankAccount will use the passed object from the server response body
-     */
-    @PostMapping(value="/bankAccount")
-    @ResponseBody
-    public void submitInvoice(@RequestBody BankAccount bankAccount){
-        bankAccount = bankAccountService.getRecord(bankAccount.getId());
-        entities.put("bankAccount", bankAccount);
-    }
+        IsApplicable vatApplicable = IsApplicable.valueOf(invoiceDTO.getVatApplicable());
+        Portfolio portfolio = portfolioService.getRecord(invoiceDTO.getPortfolio());
+        BankAccount bankAccount = bankAccountService.getRecord(invoiceDTO.getBankAccount());
+        Currency currency = currencyService.getRecord(invoiceDTO.getFromCurrency());
+        Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());
+        ServiceProvided service = serviceProvidedService.getRecord(invoiceDTO.getServiceProvided());
 
-
-    /**
-     * It will save the parsed values to the controller's entity hashmap
-     * @param currency will use the passed object from the server response body
-     */
-    @PostMapping(value="/currency")
-    @ResponseBody
-    public void submitInvoice(@RequestBody Currency currency){
-        currency = currencyService.getRecord(currency.getCurrencyId());
-        entities.put("currency", currency);
-    }
-
-    /**
-     * It will save the parsed object in the controller's entity hashmap
-     * @param serviceProvided will use the passed object from the server response body
-     */
-    @PostMapping(value="/serviceProvided")
-    @ResponseBody
-    public void submitInvoice(@RequestBody ServiceProvided serviceProvided){
-        serviceProvided = serviceProvidedService.getRecord(serviceProvided.getId());
-        entities.put("service", serviceProvided);
-    }
-
-    /**
-     * It will save the vat object in the controller's entity hashmap
-     * @param vat will use the passed object from the server response body
-     */
-    @PostMapping(value = "/vat")
-    @ResponseBody
-    public void checkVat(@RequestBody Vat vat){
-        if(vat.getVatId()!=null && vat.getIsApplicable()!=IsApplicable.NO)
-            vat =  vatService.getVatById(vat.getVatId());
-
-        else if(vat.getIsApplicable() == IsApplicable.NO){
+        Vat vat;
+        if(vatApplicable == IsApplicable.NO)
             vat = vatService.getRecordByVatRate(0F);
-        }
+        else
+            vat = vatService.getRecord(invoiceDTO.getVat());
+        CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(currency, toCurrency);
+        CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(invoiceDTO.getBaseCharge(), vat.getVatRate());
 
-        else if(vat.getVatId()==null)
-            vatService.save(vat);
+        Invoice invoice = new Invoice(null, InvoiceType.valueOf(invoiceDTO.getInvoiceType()),
+                invoiceDTO.getInvoiceNumber(), InvoiceFrequency.valueOf(invoiceDTO.getFrequency()),
+                InvoicePeriod.valueOf(invoiceDTO.getPeriod()), invoiceDTO.getInvoiceDate(),
+                invoiceDTO.getYear(), IsApplicable.valueOf(invoiceDTO.getReverseCharge()),
+                IsApplicable.valueOf(invoiceDTO.getVatExempt()), service, bankAccount, currency,
+                currencyRates, vat, portfolio, custodyCharge);
 
-        entities.put("vat", vat);
-    }
-
-    /**
-     * It will save the currencyRate object in the controller's entity hashmap
-     * @param currencyRate will use the passed object from the server response body
-     */
-    @PostMapping(value = "/exchangeRate")
-    @ResponseBody
-    public void checkVat(@RequestBody CurrencyRates currencyRate){
-        Currency from = currencyService.getRecord(currencyRate.getFromCurrencyId());
-        Currency to = currencyService.getRecord(currencyRate.getToCurrencyId());
-
-        currencyRate.setFromCurrency(from);
-        currencyRate.setToCurrency(to);
-
-        entities.put("currencyRate", currencyRate);
-    }
-
-    /**
-     * add the charges that will be made to the client
-     * checks if an invoice has been parsed correctly first
-     * @param custodyCharge will use the passed object from the server response body
-     */
-    @PostMapping(value = "/fee")
-    @ResponseBody
-    public void submitInvoice(@RequestBody CustodyCharge custodyCharge){
-        Long vatRateId = custodyCharge.getVatRateId();
-        Vat v = vatService.getVatById(vatRateId);
-        Float vatRate = v.getVatRate();
-        Float baseValue = custodyCharge.getChargeExcludingVat();
-        Float vatCharge = custodyChargeService.calculateVatCharge(baseValue, vatRate);
-        Float chargeInclVat = custodyChargeService.calculateTotalCharge(baseValue, vatCharge);
-
-        custodyCharge.setVatCharge(vatCharge);
-        custodyCharge.setChargeIncludingVat(chargeInclVat);
-
-        custodyChargeService.save(custodyCharge);
-        entities.put("custodyCharge", custodyCharge);
-    }
-
-    /**
-     * Method will get vat from body and add the object in Invoice object
-     * Will check if same vat rate exists in database, if not, it will save it.
-     * @param invoice will use the passed object from the server response body
-     */
-    @PostMapping(value = "/invoice")
-    @ResponseBody
-    public void submitInvoice(@RequestBody Invoice invoice){
-        CurrencyRates exchangeRate = (CurrencyRates)entities.get("currencyRate");
-        exchangeRate = currencyRatesService.getCurrentRateAndSave(exchangeRate);
-
-        invoice.setVat((Vat)entities.get("vat"));
-        invoice.setServiceProvided((ServiceProvided)entities.get("service"));
-        invoice.setCurrency((Currency)entities.get("currency"));
-        invoice.setBankAccount((BankAccount)entities.get("bankAccount"));
-        invoice.setPortfolio((Portfolio)entities.get("portfolio"));
-        invoice.setCustodyCharge((CustodyCharge)entities.get("custodyCharge"));
-        invoice.setCurrencyRates(exchangeRate);
-
-        invoiceService.save(invoice); //finally insert invoice to db
-        entities.clear(); //remove all objects from hashmap
-
-        mutexCreate.release();
-        //release semaphore
+        invoiceService.save(invoice);
     }
 }
