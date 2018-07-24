@@ -7,12 +7,37 @@
 </head>
 <body>
 <div>
-    <h3>Type: </h3><span th:text="${invoice.getInvoiceType()}" id="invoiceType"></span>
-    <tr><input type="checkbox" value="Edit" id="invoiceTypeBox"/></tr>
+    <!--INVOICE ID-->
+    <tr><input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/></tr>
+    <!--INVOICE TYPE-->
+    <h3>Type: </h3><span th:text="${invoice.getInvoiceType()}"></span>
+        <input type="checkbox" name="editBox" value="Edit" id="invoiceTypeBox"/>
+        <div id="invoiceTypeDiv" hidden>
+            <p>New Type<select id="invoiceType" name="newValue">
+                <option th:each="invoiceType : ${invoiceTypeValues}"
+                        th:selected="${invoiceType} == ${invoice.getInvoiceType()}"
+                        th:value="${invoiceType}"
+                        th:text="${invoiceType}">
+                </option>
+            </select>
+            </p>
+        </div>
     <br>
-    <h3>Client: </h3><span th:text="${invoice.getPortfolio().getClient().getClientName()}">Client</span>
-    <tr><input type="checkbox" value="Edit"/></tr>
+    <!--CLIENT NAME-->
+    <h3>Portfolio: </h3><span th:text="${invoice.getPortfolio().getClient().getClientName()}"></span>
+    <input type="checkbox" name=editBox value="Edit" id="portfolioBox"/>
+    <div id="portfolioDiv" hidden>
+        <p>New Portfolio:<select id="portfolio" name="newValue">
+            <option th:each="code : ${portfolios}"
+                    th:selected="${code.getId()} == ${invoice.getPortfolio().getId()}"
+                    th:value="${code.getId()}"
+                    th:text="${code.portfolioCode + ' - ' + code.getClient().getClientName()}">
+            </option>
+        </select>
+        </p>
+    </div>
     <br>
+    <h3>Company</h3>
     <div th:if="${company} != null">
         <span th:text="${company.getName()}"></span>
         <br>

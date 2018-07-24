@@ -8,15 +8,9 @@ import com.invoices.enumerations.InvoiceType;
 import com.invoices.enumerations.IsApplicable;
 import com.invoices.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Date;
-import java.util.HashMap;
-
-import static com.invoices.InvoicesApplication.mutexCreate;
 
 /**
  * @author psoutzis
@@ -61,7 +55,7 @@ public class CreateController {
 
     @PostMapping(value = "/generate-invoice")
     @ResponseBody
-    protected void generateInvoice(@RequestBody InvoiceDTO invoiceDTO) {
+    public void generateInvoice(@RequestBody InvoiceDTO invoiceDTO) {
 
         IsApplicable vatApplicable = IsApplicable.valueOf(invoiceDTO.getVatApplicable());
         Portfolio portfolio = portfolioService.getRecord(invoiceDTO.getPortfolio());

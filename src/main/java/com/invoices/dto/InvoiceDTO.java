@@ -14,13 +14,13 @@ public class InvoiceDTO {
     private String invoiceNumber;
     private String frequency;
     private String period;
-    private long bankAccount;
-    private long portfolio;
-    private long fromCurrency;
-    private long serviceProvided;
-    private long vat;
-    private long toCurrency;
-    private float baseCharge;
-    private int year;
+    private Long bankAccount;
+    private Long portfolio;
+    private Long fromCurrency;
+    private Long serviceProvided;
+    private Long vat;
+    private Long toCurrency;
+    private Float baseCharge;
+    private Integer year;
 
 }

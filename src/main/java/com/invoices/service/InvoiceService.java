@@ -1,6 +1,9 @@
 package com.invoices.service;
 
 import com.invoices.domain.Invoice;
+import com.invoices.domain.Portfolio;
+import com.invoices.dto.UpdateInvoiceDTO;
+import com.invoices.enumerations.InvoiceType;
 import com.invoices.repository.CustodyChargeRepo;
 import com.invoices.repository.InvoiceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import java.util.List;
 public class InvoiceService {
 
     @Autowired private InvoiceRepo invoiceRepo;
+    @Autowired private PortfolioService portfolioService;
 
     public void save(Invoice invoice){
 
@@ -58,5 +62,15 @@ public class InvoiceService {
         }
 
         return date;
+    }
+
+    public Invoice updateInvoiceAttributes(UpdateInvoiceDTO updateInvoiceDTO){
+        Invoice invoice = getInvoiceById(Long.valueOf(updateInvoiceDTO.getId()));
+        if(updateInvoiceDTO.getInvoiceType()!= null)
+            invoice.setInvoiceType(InvoiceType.valueOf(updateInvoiceDTO.getInvoiceType()));
+        if(updateInvoiceDTO.getPortfolio() != null)
+            invoice.setPortfolio(portfolioService.getRecord(Long.valueOf(updateInvoiceDTO.getPortfolio())));
+
+        return invoice;
     }
 }
