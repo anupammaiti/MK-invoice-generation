@@ -54,7 +54,6 @@ public class CurrencyRatesService {
      * @return a float value of the current exchange rate of given base and target
      */
     private Float getExchangeRateFor(String baseCurrency, String targetCurrency){
-        //ExchangeRateProvider provider = MonetaryConversions.getExchangeRateProvider();
         ExchangeRate rate = ExchangeRateProviderHandler.provider.getExchangeRate(baseCurrency, targetCurrency);
         NumberValue factor = rate.getFactor();
 

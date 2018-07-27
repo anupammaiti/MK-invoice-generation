@@ -1,10 +1,6 @@
 package com.invoices.service;
 
-import com.invoices.domain.Invoice;
-import com.invoices.domain.InvoiceTemplate;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 /**
  * @author psoutzis

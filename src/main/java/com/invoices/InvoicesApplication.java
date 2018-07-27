@@ -1,10 +1,7 @@
 package com.invoices;
 
-import com.invoices.utils.ExchangeRateProviderHandler;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import java.util.concurrent.Semaphore;
 
 @SpringBootApplication
 public class InvoicesApplication {

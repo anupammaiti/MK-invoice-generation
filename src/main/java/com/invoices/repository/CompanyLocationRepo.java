@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
  * The repository for the CompanyLocation Entity
  */
 @Repository
-public interface CompanyLocationRepo extends
-        JpaRepository<CompanyLocation, Long> {
+public interface CompanyLocationRepo extends JpaRepository<CompanyLocation, Long> {
+
+    CompanyLocation findCompanyLocationByCountry(String country);
 }

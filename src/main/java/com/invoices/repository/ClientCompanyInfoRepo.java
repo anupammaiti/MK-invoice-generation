@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
  * The repository for the ClientCompanyInfo Entity
  */
 @Repository
-public interface ClientCompanyInfoRepo extends
-        JpaRepository<ClientCompanyInfo, Long> {
+public interface ClientCompanyInfoRepo extends JpaRepository<ClientCompanyInfo, Long> {
+
+    ClientCompanyInfo findClientCompanyInfoByVatNumber(String vatNumber);
 }

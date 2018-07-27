@@ -58,37 +58,30 @@ public class Invoice {
     //corresponding service from Services table
     @ManyToOne
     @JoinColumn(name = "service_id")
-    @JsonIgnore
     private ServiceProvided serviceProvided;
 
     @ManyToOne
     @JoinColumn(name = "bank_acc_id")
-    @JsonIgnore
     private BankAccount bankAccount;
 
     @ManyToOne
     @JoinColumn(name = "currency_id")
-    //@JsonIgnore
     private Currency currency;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "currency_rate_id")
-    @JsonIgnore
     private CurrencyRates currencyRates;
 
     @ManyToOne
     @JoinColumn(name = "vat_id")
-    //@JsonIgnore
     private Vat vat;
 
-    @ManyToOne//CAN WE ISSUE MORE THAN 1 INVOICES TO A PORTFOLIO?
+    @ManyToOne
     @JoinColumn(name = "portfolio_id")
-    @JsonIgnore
     private Portfolio portfolio;
 
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "custody_charge_id")
-    @JsonIgnore
     private CustodyCharge custodyCharge;
 }

@@ -25,12 +25,4 @@ public class Client {
 
     @Column(name = "client_name")
     private String clientName;
-
-    //maps client to their company(s)
-    @OneToMany
-    @JoinColumn(name = "company_id")
-    private List <ClientCompanyInfo> clientCompanyInfoList;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List <Portfolio> portfolioList;
 }

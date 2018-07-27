@@ -32,14 +32,11 @@ public class Portfolio {
     @Column(name = "portfolio_code")
     private String portfolioCode;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "company_id")
     private ClientCompanyInfo clientCompanyInfo;
-
-    @OneToMany(mappedBy = "portfolio")
-    private List<Invoice> invoiceList;
 }

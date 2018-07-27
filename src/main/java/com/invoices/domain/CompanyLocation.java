@@ -28,9 +28,4 @@ public class CompanyLocation {
 
     @NotNull
     private String country;
-
-    //List of companies located at given country
-    //e.g: List(MeritKapital, MeritServus, DiRoss,...) for country=Cyprus
-    @OneToMany(mappedBy = "companyLocation")
-    private List<ClientCompanyInfo> clientCompanyInfoList;
 }

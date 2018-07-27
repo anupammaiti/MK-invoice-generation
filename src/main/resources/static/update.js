@@ -45,25 +45,60 @@ const getData = (url = ``) => {
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.getElementsByName('editBox');
     for(let i=0; i<checkboxes.length; i++){
-        let elementId = (checkboxes[i].id).slice(0,-3);
-        let divId = elementId+'Div';
-        let defaultValue = document.getElementById(elementId).value;
-        checkboxes[i].onclick = function () {
-            if(checkboxes[i].checked){
-                document.getElementById(divId).style.display = 'block';
+        //This conditional is entered only if the checkbox will trigger a "set" of inputs
+        if((checkboxes[i].id).endsWith('Group'))
+        {
+            let divId = (checkboxes[i].id).replace('Group', 'Div');
+            let divElement = document.getElementById(divId);
+            let groupValues = divElement.children;
+            let group = [];
+            for(let k=0; k<groupValues.length; k++){
+                let obj = {id: (groupValues[k].firstChild).id, defaultValue: (groupValues[k].firstChild).value};
+                group.push(obj);
             }
-            else {
-                document.getElementById(divId).style.display = 'none';
-                document.getElementById(elementId).value = defaultValue;
+            checkboxes[i].onclick = function () {
+                if(checkboxes[i].checked){
+                    divElement.style.display = 'block';
+                }
+                else {
+                    divElement.style.display = 'none';
+                    group.forEach((obj) =>{
+                        document.getElementById(obj.id).value = obj.defaultValue;
+                    });
+                }
+            }
+        }
+        //This conditional will be entered if the checkbox will trigger 1 input, manual or otherwise
+        else {
+            let elementId = (checkboxes[i].id).slice(0,-3);
+            let divId = elementId+'Div';
+            let manualId = elementId+'Manual';
+            let defaultValue = document.getElementById(elementId).value;
+            checkboxes[i].onclick = function () {
+                if(checkboxes[i].checked){
+                    document.getElementById(divId).style.display = 'block';
+                }
+                else {
+                    document.getElementById(divId).style.display = 'none';
+                    document.getElementById(elementId).value = defaultValue;
+                    let elem = document.getElementById(manualId);
+                    if(elem !== 'undefined' && elem !== null)
+                        document.getElementById(manualId).value = '';
+                }
             }
         }
     }
     document.getElementById('updateButton').addEventListener('click', function () {
         this.disabled = true;
         const newValues = document.getElementsByName('newValue');
+        const groupValues = document.getElementsByName('groupValue');
         let myData = {};
         for(let i=0; i<newValues.length; i++) {
             let elementId = newValues[i].id;
+            myData[elementId] = document.getElementById(elementId).value
+        }
+        for(let i=0; i<groupValues.length; i++) {
+            let elementId = groupValues[i].id;
             myData[elementId] = document.getElementById(elementId).value
         }
         myData.id = document.getElementById('invoiceId').value;

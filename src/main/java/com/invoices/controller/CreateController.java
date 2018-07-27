@@ -39,7 +39,6 @@ public class CreateController {
 
     @GetMapping("/select/create")
     public String createInvoice(Model model){
-        //adding enum's values to the view, by passing them all as an array
         model.addAttribute("invoiceTypeValues", InvoiceType.values());
         model.addAttribute("isApplicableValues", IsApplicable.values());
         model.addAttribute("frequencyValues", InvoiceFrequency.values());
@@ -70,7 +69,9 @@ public class CreateController {
         else
             vat = vatService.getRecord(invoiceDTO.getVat());
         CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(currency, toCurrency);
-        CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(invoiceDTO.getBaseCharge(), vat.getVatRate());
+        CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
+                invoiceDTO.getBaseCharge(),
+                vat.getVatRate());
 
         Invoice invoice = new Invoice(null, InvoiceType.valueOf(invoiceDTO.getInvoiceType()),
                 invoiceDTO.getInvoiceNumber(), InvoiceFrequency.valueOf(invoiceDTO.getFrequency()),

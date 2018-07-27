@@ -26,7 +26,6 @@ import java.util.List;
 public class InvoiceService {
 
     @Autowired private InvoiceRepo invoiceRepo;
-    @Autowired private PortfolioService portfolioService;
 
     public void save(Invoice invoice){
 
@@ -65,11 +64,11 @@ public class InvoiceService {
     }
 
     public Invoice updateInvoiceAttributes(UpdateInvoiceDTO updateInvoiceDTO){
+
         Invoice invoice = getInvoiceById(Long.valueOf(updateInvoiceDTO.getId()));
-        if(updateInvoiceDTO.getInvoiceType()!= null)
-            invoice.setInvoiceType(InvoiceType.valueOf(updateInvoiceDTO.getInvoiceType()));
-        if(updateInvoiceDTO.getPortfolio() != null)
-            invoice.setPortfolio(portfolioService.getRecord(Long.valueOf(updateInvoiceDTO.getPortfolio())));
+        invoice.setInvoiceType(InvoiceType.valueOf(updateInvoiceDTO.getInvoiceType()));
+        invoice.setPortfolio(updateInvoiceDTO.getUpdatePortfolio());
+        invoice.getPortfolio().setClientCompanyInfo(updateInvoiceDTO.getClientCompanyInfo());
 
         return invoice;
     }

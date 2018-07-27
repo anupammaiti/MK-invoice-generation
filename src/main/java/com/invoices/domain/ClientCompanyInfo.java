@@ -34,15 +34,12 @@ public class ClientCompanyInfo {
     private String postcode;
 
     //mapping to client that owns company
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "client_id")
     private Client client;
 
-    @OneToOne(mappedBy = "clientCompanyInfo", cascade = CascadeType.ALL)
-    private Portfolio portfolio;
-
     //mapping to company_location
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private CompanyLocation companyLocation;
 }
