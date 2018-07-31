@@ -88,6 +88,8 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     }
+
+    //Script will set value of variable as null, if it is equal to an empty string
     document.getElementById('updateButton').addEventListener('click', function () {
         this.disabled = true;
         const newValues = document.getElementsByName('newValue');
@@ -95,20 +97,29 @@ document.addEventListener('DOMContentLoaded', function () {
         let myData = {};
         for(let i=0; i<newValues.length; i++) {
             let elementId = newValues[i].id;
-            myData[elementId] = document.getElementById(elementId).value
+            let input = document.getElementById(elementId).value;
+            if(input==='')
+                myData[elementId] = null;
+            else
+                myData[elementId] = input;
         }
         for(let i=0; i<groupValues.length; i++) {
             let elementId = groupValues[i].id;
-            myData[elementId] = document.getElementById(elementId).value
+            let input = document.getElementById(elementId).value;
+            if(input==='')
+                myData[elementId] = null;
+            else
+                myData[elementId] = input;
         }
-        myData.id = document.getElementById('invoiceId').value;
+        myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
+        myData.companyId = parseInt(document.getElementById('companyId').value);
+
         console.log(myData);
 
         postData('/find/update/execute', myData).then(() =>
         {
             window.location = '/success/updated';
         });
-
         this.disabled = false;
 
     });

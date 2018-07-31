@@ -5,7 +5,13 @@ import com.invoices.domain.CompanyLocation;
 import com.invoices.domain.Portfolio;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.lang.Nullable;
 
+/**
+ * @author psoutzis
+ * A Data Transfer Object (DTO), that will be used to temporarily hold the data
+ * relevant to an invoice update.
+ */
 @Getter
 public class UpdateInvoiceDTO {
     /*private String invoiceDate;
@@ -16,17 +22,15 @@ public class UpdateInvoiceDTO {
     private String frequency;
     private String period;
     */
+    private Long invoiceId;
+    private Long companyId;
     private String companyAddress;
     private String companyCity;
     private String companyCountry;
     private String companyName;
     private String companyPostcode;
     private String companyVatNumber;
-    private String id;
     private String portfolio;
     private String invoiceType;
-
-    @Setter private ClientCompanyInfo clientCompanyInfo;
-    @Setter private Portfolio updatePortfolio;
 
 }

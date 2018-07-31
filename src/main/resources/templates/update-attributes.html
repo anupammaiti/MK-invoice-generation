@@ -8,7 +8,7 @@
 <body>
 <div>
     <!--INVOICE ID-->
-    <tr><input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/></tr>
+    <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
     <!--INVOICE TYPE-->
     <h3>Type: </h3><span th:text="${invoice.getInvoiceType()}"></span>
         <input type="checkbox" name="editBox" value="Edit" id="invoiceTypeBox"/>
@@ -38,8 +38,9 @@
         </p>
     </div>
     <br>
-    <h3>Company <input type="checkbox" name=editBox value="Edit" id="companyGroup"/></h3>
     <div th:if="${company} != null">
+        <h3>Company <input type="checkbox" name=editBox value="Edit" id="companyGroup"/></h3>
+        <input type="hidden" id="companyId" th:value="${company.getId()}"/>
         <span th:text="${company.getName()}"></span>
         <br>
         <span th:text="${company.getAddress()}"></span>
@@ -52,7 +53,6 @@
         <br>
         <span th:text="${company.getCompanyLocation().getCountry()}"></span>
         <br>
-
         <div id="companyDiv" hidden>
             <p><input type="text" id="companyName" name="groupValue" th:value="${company.getName()}"> Name</p>
             <p><input type="text" id="companyAddress" name="groupValue" th:value="${company.getAddress()}"> Address</p>

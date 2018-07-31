@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface ClientCompanyInfoRepo extends JpaRepository<ClientCompanyInfo, Long> {
 
     ClientCompanyInfo findClientCompanyInfoByVatNumber(String vatNumber);
+    ClientCompanyInfo findClientCompanyInfoById(Long id);
 }

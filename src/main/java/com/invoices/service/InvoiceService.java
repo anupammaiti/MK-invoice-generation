@@ -1,7 +1,6 @@
 package com.invoices.service;
 
-import com.invoices.domain.Invoice;
-import com.invoices.domain.Portfolio;
+import com.invoices.domain.*;
 import com.invoices.dto.UpdateInvoiceDTO;
 import com.invoices.enumerations.InvoiceType;
 import com.invoices.repository.CustodyChargeRepo;
@@ -39,17 +38,18 @@ public class InvoiceService {
     }
 
     public List<Invoice> getInvoices(){
-        //
+
         return invoiceRepo.findAll();
     }
 
     public Invoice getInvoiceById(Long id){
-        //
+
         return invoiceRepo.getInvoiceById(id);
     }
 
     public Date convertDate(String datestring) {
         Date date = null;
+        //Ask what the preferred date format is.
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
@@ -63,12 +63,18 @@ public class InvoiceService {
         return date;
     }
 
-    public Invoice updateInvoiceAttributes(UpdateInvoiceDTO updateInvoiceDTO){
+    public Invoice updateInvoice(UpdateInvoiceDTO updateInvoiceDTO,
+                                 Portfolio portfolio/*,
+                                 BankAccount bankAccount,
+                                 ServiceProvided serviceProvided,
+                                 CurrencyRates currencyRates,
+                                 Vat vat,
+                                 CustodyCharge custodyCharge,
+                                 Currency currency*/){
 
-        Invoice invoice = getInvoiceById(Long.valueOf(updateInvoiceDTO.getId()));
+        Invoice invoice = getInvoiceById(updateInvoiceDTO.getInvoiceId());
         invoice.setInvoiceType(InvoiceType.valueOf(updateInvoiceDTO.getInvoiceType()));
-        invoice.setPortfolio(updateInvoiceDTO.getUpdatePortfolio());
-        invoice.getPortfolio().setClientCompanyInfo(updateInvoiceDTO.getClientCompanyInfo());
+        invoice.setPortfolio(portfolio);
 
         return invoice;
     }

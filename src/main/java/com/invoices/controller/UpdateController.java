@@ -1,10 +1,6 @@
 package com.invoices.controller;
 
-import com.invoices.domain.ClientCompanyInfo;
-import com.invoices.domain.CompanyLocation;
-import com.invoices.domain.Invoice;
-import com.invoices.domain.Portfolio;
-import com.invoices.dto.InvoiceDTO;
+import com.invoices.domain.*;
 import com.invoices.dto.UpdateInvoiceDTO;
 import com.invoices.enumerations.InvoiceFrequency;
 import com.invoices.enumerations.InvoicePeriod;
@@ -16,6 +12,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author psoutzis
+ * This class is a controller of the web-app that's responsible,
+ * for managing the HTTP requests about invoice updates
+ */
 @Controller
 public class UpdateController {
 
@@ -28,6 +29,12 @@ public class UpdateController {
     @Autowired CompanyLocationService companyLocationService;
     @Autowired ClientCompanyInfoService clientCompanyInfoService;
 
+    /**
+     *
+     * @param id the id of the invoice to update.
+     * @param model is the model that will hold data to be displayed by the view
+     * @return the page where the user will make their invoice-changes at
+     */
     @PostMapping(value = "/find/update")
     public String findToUpdate(@RequestParam ("id") String id, Model model){
         Long invoiceId = Long.valueOf(id);
@@ -48,22 +55,25 @@ public class UpdateController {
         return "update-attributes";
     }
 
-    @PostMapping("/find/update/execute")//TODO FIX UPDATE CONTROLLER
+    /**
+     * Method that listens for the HTTP request to apply the selected updates
+     * @param updateInvoiceDTO a Data Transfer Object (DTO) to hold all data
+     * relevant to the incoming update request.
+     */
+    @PostMapping("/find/update/execute")
     @ResponseBody
     public void executeUpdate(@RequestBody UpdateInvoiceDTO updateInvoiceDTO){
-        Long portfolioId = Long.valueOf(updateInvoiceDTO.getPortfolio());//Convert from String to Long
-        Portfolio portfolio = portfolioService.getRecord(portfolioId);
-        updateInvoiceDTO.setUpdatePortfolio(portfolio);//set portfolio to update
-
+        Portfolio portfolio = portfolioService.getRecord(Long.valueOf(updateInvoiceDTO.getPortfolio()));
+        Client client = portfolio.getClient();
         CompanyLocation location = companyLocationService.getRecordAndSave(updateInvoiceDTO.getCompanyCountry());
-        ClientCompanyInfo clientCompanyInfo = new ClientCompanyInfo();
-        clientCompanyInfoService.setClientCompanyInfoFields(clientCompanyInfo, updateInvoiceDTO);
-        clientCompanyInfo.setCompanyLocation(location);
-        clientCompanyInfo.setClient(portfolio.getClient());
-        clientCompanyInfo = clientCompanyInfoService.getRecordAndSave(clientCompanyInfo);//CHECK IF EXISTS
-        updateInvoiceDTO.setClientCompanyInfo(clientCompanyInfo);
+        ClientCompanyInfo tempCompany = clientCompanyInfoService.getRecord(updateInvoiceDTO.getCompanyId());
+        tempCompany.setClient(client);
+        tempCompany.setCompanyLocation(location);
+        ClientCompanyInfo company = clientCompanyInfoService
+                .detectChangesAndApply(updateInvoiceDTO,tempCompany);
 
-        Invoice invoice = invoiceService.updateInvoiceAttributes(updateInvoiceDTO);
+        portfolio.setClientCompanyInfo(company);
+        Invoice invoice = invoiceService.updateInvoice(updateInvoiceDTO, portfolio);
         invoiceService.save(invoice);
     }
 

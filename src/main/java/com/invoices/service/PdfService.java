@@ -133,13 +133,19 @@ public class PdfService {
         numberAndDate.add(invoiceDate).add(linebreak);
 
         List companyInfoList = defaultList();
-        ListItem companyName = getBoldElement(company.getName(), "");
-        companyInfoList.add(companyName);
-        companyInfoList.add(company.getAddress());
-        companyInfoList.add(company.getCity()+" "+company.getPostcode());
-        companyInfoList.add(company.getCompanyLocation().getCountry());
-        ListItem vatNumber = getBoldElement("VAT No: ",company.getVatNumber());
-        companyInfoList.add(vatNumber).add(linebreak);
+        if(company!=null) {
+            ListItem companyName = getBoldElement(company.getName(), "");
+            companyInfoList.add(companyName);
+            companyInfoList.add(company.getAddress());
+            companyInfoList.add(company.getCity()+" "+company.getPostcode());
+            companyInfoList.add(company.getCompanyLocation().getCountry());
+            ListItem vatNumber = getBoldElement("VAT No: ",company.getVatNumber());
+            companyInfoList.add(vatNumber).add(linebreak);
+        }
+        else{
+            ListItem clientName = getBoldElement(invoice.getPortfolio().getClient().getClientName(), "");
+            companyInfoList.add(clientName).add(linebreak);
+        }
 
         List descriptionList = defaultList();
         ListItem description = new ListItem();
@@ -232,7 +238,7 @@ public class PdfService {
         column2Item.add(column2From);
         column2Item.add(column2To);
         column2List.add(column2Item);
-        column2List.setFixedPosition(adjacentListLeft,bottomPos, elementWidth);
+        column2List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
 
         adjacentListLeft += leftGrowth;
 
@@ -241,7 +247,7 @@ public class PdfService {
         column3Item.add(column3From);
         column3Item.add(column3To);
         column3List.add(column3Item);
-        column3List.setFixedPosition(adjacentListLeft,bottomPos, elementWidth);
+        column3List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
 
         xRateItem.add(xRateTitleParagraph);
         xRateItem.add(xRateBodyParagraph);

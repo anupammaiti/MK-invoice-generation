@@ -22,9 +22,9 @@ public class PdfController {
     @Autowired PdfService pdfService;
     private final String PDF_PARENT = "C:/Users/psoutzis/Desktop/myFolder/projects/invoices/src/main/resources/PDFs";
 
-    @GetMapping(value = "/pdf-generation")
+    @GetMapping(value = "/generate-pdf")
     @ResponseBody
-    public void generatePdf() throws IOException {
+    public void generatePdf() {
         Invoice customInvoice = invoiceService.getInvoiceById(48L);
 
         Document pdf = pdfService.createPdf(customInvoice, PDF_PARENT);
