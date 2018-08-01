@@ -9,7 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class HomeController {
-
+    //TODO ADD VALIDATION TO ALL CONTROLLER METHODS; maybe add security?
+    //TODO ADD FUNCTIONALITY SO USER CAN INSERT INVOICE DESCRIPTION?
     @Autowired private InvoiceService invoiceService;
 
     @GetMapping("/")

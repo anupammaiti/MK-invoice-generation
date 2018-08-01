@@ -63,19 +63,47 @@ public class PdfService {
     }
 
     /**
+     * @param parentPath The parent directory of the PDF.
+     * @param documentNumber The unique number that will be used to generate this pdf's name.
+     * @return The path to this document.
+     */
+    public String generatePdfPath(String parentPath, String documentNumber){
+        documentNumber = documentNumber.trim();
+        parentPath = !parentPath.endsWith("/") ? parentPath+"/" : parentPath;
+
+        String path = parentPath + "invoice_" + documentNumber + ".pdf";
+
+        return path;
+    }
+
+    /**
+     * Method will replace all whitespace or leading trail from customName with the '_' sign
+     * @param parentPath The parent directory of the file.
+     * @param customName The name that the file will receive.
+     * @param extension The file extension
+     * @return The full path to this file
+     */
+    public String generateCustomPath(String parentPath, String customName, String extension){
+        customName = customName.replaceAll(" ","_" );
+        extension = extension.toLowerCase();
+        extension = !extension.startsWith(".") ? "."+extension : extension;
+        parentPath = !parentPath.endsWith("/") ? parentPath+"/" : parentPath;
+
+        String path = parentPath + customName + extension;
+
+        return path;
+    }
+
+    /**
      * The method that creates the PDF document.
      * If the pages must have a white background (default), just remove the addEvenHandler() line.
      * @param invoice The invoice to model as a PDF file.
-     * @param pdfPath The path where the pdf file is going to be stored.
+     * @param filename The path where the pdf file is going to be stored.
      * @return the finalized object of type Document, which is the pdf file that was created at
      * the beginning of the method.
      */
-    public Document createPdf(Invoice invoice, String pdfPath) {
+    public Document createPdf(Invoice invoice, String filename) {
         Document document = null;
-        pdfPath = !pdfPath.endsWith("/") ? pdfPath+"/" : pdfPath;
-        String extension = ".pdf";
-        String filename = pdfPath + "invoice_"+invoice.getInvoiceNumber() + extension;
-
         try
         {
             OutputStream outputStream = new FileOutputStream(new File(filename));
@@ -291,8 +319,7 @@ public class PdfService {
     }
 
     /**
-     *
-     * @return a new Lis() object, with no symbol in front of each element.
+     * @return a new List() object, with no symbol in front of each element.
      */
     private List defaultList(){
 

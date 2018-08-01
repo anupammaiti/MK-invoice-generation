@@ -4,27 +4,12 @@
     <meta charset="UTF-8">
     <title>View Invoice</title>
 </head>
-<body>
+<body bgcolor="#FFE5CC">
 <div>
-        <span th:text="${invoice.getPortfolio().getClient().getClientName()}">Client</span>
-        <br>
-    <div th:if="${company} != null">
-        <span th:text="${company.getName()}"></span>
-        <br>
-        <span th:text="${company.getAddress()}"></span>
-        <br>
-        <span th:text="${company.getCity()}"></span>
-        <br>
-        <span th:text="${company.getPostcode()}"></span>
-        <br>
-        <span th:text="${company.getVatNumber()}"></span>
-        <br>
-        <span th:text="${company.getCompanyLocation().getCountry()}"></span>
-        <br>
-    </div>
-        <span th:text="${invoice.getInvoiceNumber()}"></span>
-        <br>
-        <span th:text="${invoice.getInvoiceDate()}"></span>
+        <div th:replace="fragments/selected-invoice :: numberAndDate"></div>
+        <div th:replace="fragments/selected-invoice :: company"></div>
+        <div th:replace="fragments/selected-invoice :: description"></div>
+        <div th:replace="fragments/selected-invoice :: charge"></div>
     <br>
     <br>
     <br>

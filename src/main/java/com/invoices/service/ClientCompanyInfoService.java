@@ -32,11 +32,12 @@ public class ClientCompanyInfoService {
 
     /**
      * This method will compare a ClientCompanyInfo's attributes(variables) with a DTO's, to
-     * find differences. In case differences are found, the company will either be updated in database
-     * and on the invoice, or the new company will be stored in databased and will replace current company
-     * on the invoice. In case company is deleted, it will remove it from the invoice.
-     * In the case that current company is replaced by either a new company or deleted entirely,
-     * the program will keep the old company in database (for future reference).
+     * find differences. In case differences are found, the company will either be updated in the database
+     * and on the invoice, or the new company will be stored in the database and will replace the current company
+     * on the invoice. In case company is deleted, it will be removed from the invoice.
+     * In the case that the current company is replaced by either a new company or is deleted entirely,
+     * the program will keep the old company in the database for future reference(s).
+     *
      * @param updateData the DTO that holds new data (or data to remain the same for that matter).
      * @param company the ClientCompanyInfo(company) object of the invoice to be updated.
      * @return the ClientCompanyInfo object to set to the updated invoice.
