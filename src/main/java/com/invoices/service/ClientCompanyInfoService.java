@@ -1,9 +1,6 @@
 package com.invoices.service;
 
-import com.invoices.domain.Client;
 import com.invoices.domain.ClientCompanyInfo;
-import com.invoices.domain.CompanyLocation;
-import com.invoices.domain.Portfolio;
 import com.invoices.dto.UpdateInvoiceDTO;
 import com.invoices.repository.ClientCompanyInfoRepo;
 import org.springframework.beans.factory.annotation.Autowired;

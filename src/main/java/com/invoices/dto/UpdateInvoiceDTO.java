@@ -1,11 +1,6 @@
 package com.invoices.dto;
 
-import com.invoices.domain.ClientCompanyInfo;
-import com.invoices.domain.CompanyLocation;
-import com.invoices.domain.Portfolio;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.lang.Nullable;
 
 /**
  * @author psoutzis

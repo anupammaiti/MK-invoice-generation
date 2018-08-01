@@ -1,11 +1,14 @@
 package com.invoices.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.invoices.enumerations.InvoiceFrequency;
 import com.invoices.enumerations.InvoicePeriod;
 import com.invoices.enumerations.InvoiceType;
 import com.invoices.enumerations.IsApplicable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.util.Date;
 

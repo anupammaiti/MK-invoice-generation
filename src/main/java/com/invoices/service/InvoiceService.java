@@ -1,9 +1,9 @@
 package com.invoices.service;
 
-import com.invoices.domain.*;
+import com.invoices.domain.Invoice;
+import com.invoices.domain.Portfolio;
 import com.invoices.dto.UpdateInvoiceDTO;
 import com.invoices.enumerations.InvoiceType;
-import com.invoices.repository.CustodyChargeRepo;
 import com.invoices.repository.InvoiceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

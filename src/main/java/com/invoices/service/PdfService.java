@@ -1,10 +1,9 @@
 package com.invoices.service;
 
-import com.invoices.utils.ExchangeRateProviderHandler;
-import org.springframework.stereotype.Service;
 import com.invoices.domain.ClientCompanyInfo;
 import com.invoices.domain.CustodyCharge;
 import com.invoices.domain.Invoice;
+import com.invoices.utils.ExchangeRateProviderHandler;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -14,13 +13,12 @@ import com.itextpdf.kernel.events.PdfDocumentEvent;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
-
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
-import com.itextpdf.layout.element.List;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;

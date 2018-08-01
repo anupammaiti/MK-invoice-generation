@@ -1,7 +1,8 @@
 package com.invoices.domain;
 
-import lombok.*;
-import org.springframework.lang.Nullable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 

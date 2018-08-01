@@ -3,8 +3,6 @@ package com.invoices.service;
 import com.invoices.domain.Vat;
 import com.invoices.enumerations.IsApplicable;
 import com.invoices.repository.VatRepo;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -2,8 +2,6 @@ package com.invoices.service;
 
 import com.invoices.domain.Currency;
 import com.invoices.repository.CurrencyRepo;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

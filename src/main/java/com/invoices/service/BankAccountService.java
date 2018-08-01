@@ -2,8 +2,6 @@ package com.invoices.service;
 
 import com.invoices.domain.BankAccount;
 import com.invoices.repository.BankAccountRepo;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +19,7 @@ public class BankAccountService {
     private BankAccountRepo bankAccountRepo;
 
     public BankAccount getRecord(Long id){
+
         return bankAccountRepo.getBankAccountById(id);
     }
 
