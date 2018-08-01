@@ -17,15 +17,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author psoutzis
- * This Controller is responsible for the creation of an invoice.
- * It will set all the foreign keys of invoice before saving the actual invoice
- * to the database.
- * It will retrieve the appropriate records by using their id or enum.
- * The id or enum will be sent through a post request to
- * the controllers, with the create.js script.
- *
- * note: In the future user will only be required to insert the amount to charge
- * the customer. Vat value and total price will be auto-generated( Custody Charges )
+ * This Controller is responsible for the creation of an invoice, based on
+ * user input.
  */
 
 @Controller
@@ -40,6 +33,10 @@ public class CreateController {
     @Autowired CurrencyRatesService currencyRatesService;
     @Autowired VatService vatService;
 
+    /**
+     * @param model will all required objects/attributes to the view
+     * @return the page where user can create an invoice
+     */
     @GetMapping("/select/create")
     public String createInvoice(Model model){
         model.addAttribute("invoiceTypeValues", InvoiceType.values());
@@ -55,6 +52,12 @@ public class CreateController {
         return "create/create-invoice";
     }
 
+    /**
+     * This method will listen for a post request and will receive all relevant attributes for the
+     * creation of an invoice in JSON format.
+     * The method will finally save the invoice to the database.
+     * @param invoiceDTO a Data Transfer Object (DTO), to hold all necessary information to create an invoice.
+     */
     @PostMapping(value = "/generate-invoice")
     @ResponseBody
     public void generateInvoice(@RequestBody InvoiceDTO invoiceDTO) {

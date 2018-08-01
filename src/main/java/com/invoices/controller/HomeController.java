@@ -7,6 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * @author Petros Soutzis
+ * This class is the controller responsible for handling requests for
+ * actions like creating or deleting an invoice. It will map to the
+ * appropriate controller method.
+ */
 @Controller
 public class HomeController {
     //TODO ADD VALIDATION TO ALL CONTROLLER METHODS; maybe add security?

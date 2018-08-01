@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/**
+ * @author Petros Soutzis
+ * Controller class responsible for deleting an invoice from that database.
+ */
 @Controller
 public class DeleteController {
     @Autowired InvoiceService invoiceService;

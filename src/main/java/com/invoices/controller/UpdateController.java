@@ -16,9 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @author psoutzis
- * This class is a controller of the web-app that's responsible,
- * for managing the HTTP requests about invoice updates
+ * @author psoutzis, email: soutzis.petros@gmail.com
+ * This class is a controller responsible for managing the HTTP requests about invoice updates.
+ * Updates made to an invoice, will be automatically propagated all the respective tables in the database,
+ * by using the Hibernate framework.
  */
 @Controller
 public class UpdateController {
