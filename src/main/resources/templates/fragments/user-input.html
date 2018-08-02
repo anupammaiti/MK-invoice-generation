@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--FRAGMENTS THAT WILL PRODUCE A DROP DOWN FROM ALL RECORDS IN DATABASE-->
+<div th:fragment="portfolio">
+    <select th:id="${name}" name="newValue">
+        <option th:each="element : ${portfolios}"
+                th:selected="${element.getId()} == ${invoice.getPortfolio().getId()}"
+                th:value="${element.getId()}"
+                th:text="${element.portfolioCode + ' - ' + element.getClient().getClientName()}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="serviceProvided">
+    <select th:id="${name}" name="newValue">
+        <option th:each="service : ${services}"
+                th:selected="${service.getServiceName()} == ${invoice.getServiceProvided().getServiceName()}"
+                th:value="${service.getId()}"
+                th:text="${service.getServiceName()}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="fromCurrency">
+    <select th:id="${name}" name="newValue">
+        <option th:each="ccy : *{currencies}"
+                th:selected="${invoice.getCurrencyRates().getFromCurrency().getCurrencyId()} == ${ccy.getCurrencyId()}"
+                th:value="${ccy.getCurrencyId()}"
+                th:text="${ccy.getCurrencyCode()}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="toCurrency">
+    <select th:id="${name}" name="newValue">
+        <option th:each="ccy : *{currencies}"
+                th:selected="${invoice.getCurrencyRates().getToCurrency().getCurrencyId()} == ${ccy.getCurrencyId()}"
+                th:value="${ccy.getCurrencyId()}"
+                th:text="${ccy.getCurrencyCode()}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="bankAccount">
+    <select th:id="${name}" name="newValue">
+        <option th:each="account : ${bankAccounts}"
+                th:selected="${invoice.getBankAccount().getId()} == ${account.getId()}"
+                th:value="${account.getId()}"
+                th:text="${account.getBank().getName() + ' - ' + account.getName()}">
+        </option>
+    </select>
+</div>
+<!--------------------------------end-of-database-List-Fragments----------------------------------------->
+
+<!--ENUM-FRAGMENTS -> THAT WILL PRODUCE A DROPDOWN MENU BASED ON ENUMS-->
+<div th:fragment="invoiceType">
+    <select th:id="${name}" name="newValue">
+        <option th:each="invoiceType : ${invoiceTypeValues}"
+                th:selected="${invoiceType} == ${invoice.getInvoiceType()}"
+                th:value="${invoiceType}"
+                th:text="${invoiceType}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="frequency">
+    <select th:id="${name}" name="newValue">
+        <option th:each="frequency : ${frequencyValues}"
+                th:selected="${frequency} == ${invoice.getFrequency()}"
+                th:value="${frequency}"
+                th:text="${frequency.getDescription()}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="period">
+    <select th:id="${name}" name="newValue">
+        <option th:each="period : ${periodValues}"
+                th:selected="${period} == ${invoice.getPeriod()}"
+                th:value="${period}"
+                th:text="${period.getDescription()}">
+        </option>
+    </select>
+</div>
+
+<!--selected example: invoice.getVatExempt() It is the value from current invoice-->
+<div th:fragment="binaryChoice">
+    <select th:id="${name}" name="newValue">
+        <option th:each="option : ${isApplicableValues}"
+                th:selected="${option} == ${selected}"
+                th:value="${option}"
+                th:text="${option}">
+        </option>
+    </select>
+</div>
+<!----------------------------------end-of-Enum-Fragments-------------------------------------------------->
+
+<!--MANUAL TEXT INPUT AND CUSTOMISED FRAGMENTS-->
+<div th:fragment="simpleTextInput">
+    <input type="text" th:id="${name}" name="newValue" value="">
+</div>
+
+<div th:fragment="exchangeRate">
+    <input type="text" th:id="${name}" name="newValue" value="">
+    <i><span>Enter custom rate or press "<u>Fetch</u>" to get current rate</span></i>
+</div>
+
+<div th:fragment="date">
+    <input type="text" th:id="${name}" name="newValue" value="">
+    <i><span> Enter new date in <u>this</u> format: <b>"yyyy/mm/dd"</b></span></i>
+</div>
+
+<div th:fragment="vatRate">
+    <input type="text" th:id="${name}" name="newValue" value="">
+    <span> Enter rate like: <i>"<u>0.19</u>"</i> or <i>"<u>0.1805</u>"</i></span>
+</div>
+<!-----------------------------end-of-manual-input-fragments-------------------------------------------->
+
+</body>
+</html>

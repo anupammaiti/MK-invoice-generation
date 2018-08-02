@@ -67,10 +67,6 @@ public class Invoice {
     @JoinColumn(name = "bank_acc_id")
     private BankAccount bankAccount;
 
-    @ManyToOne
-    @JoinColumn(name = "currency_id")
-    private Currency currency;
-
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "currency_rate_id")
     private CurrencyRates currencyRates;

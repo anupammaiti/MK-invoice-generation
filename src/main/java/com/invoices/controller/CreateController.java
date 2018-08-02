@@ -65,12 +65,12 @@ public class CreateController {
         IsApplicable vatApplicable = IsApplicable.valueOf(invoiceDTO.getVatApplicable());
         Portfolio portfolio = portfolioService.getRecord(invoiceDTO.getPortfolio());
         BankAccount bankAccount = bankAccountService.getRecord(invoiceDTO.getBankAccount());
-        Currency currency = currencyService.getRecord(invoiceDTO.getFromCurrency());
-        Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());
         ServiceProvided service = serviceProvidedService.getRecord(invoiceDTO.getServiceProvided());
         Vat vat = vatService.determineVat(vatApplicable, invoiceDTO.getVat());
 
-        CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(currency, toCurrency);
+        Currency fromCurrency = currencyService.getRecord(invoiceDTO.getFromCurrency());
+        Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());
+        CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(fromCurrency, toCurrency);
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
                 invoiceDTO.getBaseCharge(),
                 vat.getVatRate());
@@ -79,7 +79,7 @@ public class CreateController {
                 invoiceDTO.getInvoiceNumber(), InvoiceFrequency.valueOf(invoiceDTO.getFrequency()),
                 InvoicePeriod.valueOf(invoiceDTO.getPeriod()), invoiceDTO.getInvoiceDate(),
                 invoiceDTO.getYear(), IsApplicable.valueOf(invoiceDTO.getReverseCharge()),
-                IsApplicable.valueOf(invoiceDTO.getVatExempt()), service, bankAccount, currency,
+                IsApplicable.valueOf(invoiceDTO.getVatExempt()), service, bankAccount,
                 currencyRates, vat, portfolio, custodyCharge);
 
         invoiceService.save(invoice);

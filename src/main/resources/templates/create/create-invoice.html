@@ -129,7 +129,7 @@
 
     <!--CURRENCY OF PORTFOLIO-->
     <div>
-        <p>Currency:
+        <p>Currency for invoice to be issued in:
             <select id="fromCurrency">
                 <option value=""> -- </option>
                 <option th:each="ccy : ${currencies}"
@@ -144,7 +144,7 @@
 
     <!--EXCHANGE RATE-->
     <div>
-        <p>Fetch Exchange Rate For Which Currency?:
+        <p>Currency to be converted to:
             <select id="toCurrency">
                 <option value=""> -- </option>
                 <option th:each="ccy : ${currencies}"

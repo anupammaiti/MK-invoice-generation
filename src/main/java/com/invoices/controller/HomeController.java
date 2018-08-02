@@ -7,6 +7,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+//TODO ADD VALIDATION TO ALL CONTROLLER METHODS; maybe add security?
+//TODO ADD FUNCTIONALITY SO USER CAN INSERT INVOICE DESCRIPTION?
+//TODO add functionality for vat exempt
+/*TODO add functionality for reverse charge - See this explanation:
+    You issue an invoice without VAT and you state ‘VAT reverse-charged’ on the invoice.*/
+
 /**
  * @author Petros Soutzis
  * This class is the controller responsible for handling requests for
@@ -15,8 +21,6 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @Controller
 public class HomeController {
-    //TODO ADD VALIDATION TO ALL CONTROLLER METHODS; maybe add security?
-    //TODO ADD FUNCTIONALITY SO USER CAN INSERT INVOICE DESCRIPTION?
     @Autowired private InvoiceService invoiceService;
 
     @GetMapping("/")

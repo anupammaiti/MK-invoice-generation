@@ -4,42 +4,57 @@
     <meta charset="UTF-8">
     <title>Update Invoice</title>
     <script src="/update.js" type="application/javascript"></script>
+    <script src="/money.js" type="application/javascript"></script>
 </head>
 <body>
 <div>
     <!--INVOICE ID-->
     <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
-    <!--INVOICE TYPE-->
-    <h3>Type: </h3><span th:text="${invoice.getInvoiceType()}"></span>
-        <input type="checkbox" name="editBox" value="Edit" id="invoiceTypeBox"/>
-        <div id="invoiceTypeDiv" hidden>
-            <p>New Type -> <select id="invoiceType" name="newValue">
-                <option th:each="invoiceType : ${invoiceTypeValues}"
-                        th:selected="${invoiceType} == ${invoice.getInvoiceType()}"
-                        th:value="${invoiceType}"
-                        th:text="${invoiceType}">
-                </option>
-            </select>
-                <input type="text" id="invoiceTypeManual" name="manual" value=""> <- Or enter manually
-            </p>
-        </div>
-    <br>
-    <!--CLIENT NAME-->
-    <h3>Portfolio: </h3><span th:text="${invoice.getPortfolio().getClient().getClientName()}"></span>
-    <input type="checkbox" name=editBox value="Edit" id="portfolioBox"/>
-    <div id="portfolioDiv" hidden>
-        <p>New Portfolio:<select id="portfolio" name="newValue">
-            <option th:each="code : ${portfolios}"
-                    th:selected="${code.getId()} == ${invoice.getPortfolio().getId()}"
-                    th:value="${code.getId()}"
-                    th:text="${code.portfolioCode + ' - ' + code.getClient().getClientName()}">
-            </option>
-        </select>
-        </p>
+
+    <!--INVOICE NUMBER-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'Invoice Number',
+         displayToUser = ${invoice.getInvoiceNumber()},
+         name = 'invoiceNumber',
+         fragment = 'simpleTextInput'
+       )">
     </div>
     <br>
+
+    <!--INVOICE DATE-->
+    <!--date is changed from format: '2015-12-30' to format '2015/12/30'-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'Date',
+         displayToUser = ${#strings.multipleReplace(invoice.getInvoiceDate(),'-','/')},
+         name = 'invoiceDate',
+         fragment = 'date'
+       )">
+    </div>
+    <br>
+
+    <!--INVOICE TYPE-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Type',
+         displayToUser = ${invoice.getInvoiceType()},
+         name = 'invoiceType'
+       )">
+    </div>
+    <br>
+
+    <!--CLIENT'S PORTFOLIO-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Portfolio',
+         displayToUser = ${invoice.getPortfolio().getClient().getClientName()},
+         name = 'portfolio'
+        )">
+    </div>
+    <br>
+
+    <!--COMPANY, ONLY IF EXISTS-->
     <div th:if="${company} != null">
-        <h3>Company <input type="checkbox" name=editBox value="Edit" id="companyGroup"/></h3>
+        <b>Company</b>
+        <input type="checkbox" name=editBox value="Edit" id="companyGroup"/>
+        <br>
         <input type="hidden" id="companyId" th:value="${company.getId()}"/>
         <span th:text="${company.getName()}"></span>
         <br>
@@ -67,13 +82,123 @@
                 </option>
             </select> Country</p>
         </div>
-
     </div>
-    <!--<h3>Invoice Number: </h3><span th:text="${invoice.getInvoiceNumber()}"></span>-->
-    <!--<tr><input type="checkbox" value="Edit"/></tr>-->
-    <!--<br>-->
-    <!--<h3>Bank Account: </h3><span th:text="${invoice.getBankAccount().name + ' - ' + invoice.getBankAccount().getBank().getName()}"></span>-->
-    <!--<tr><input type="checkbox" value="Edit"/></tr>-->
+
+    <!--VAT EXEMPT-->
+    <div th:replace="fragments/update-choices :: chooseBinary
+       ( description = 'VAT Exempt',
+         displayToUser = ${invoice.getVatExempt()},
+         selected = ${invoice.getVatExempt()},
+         name = 'vatExempt'
+       )">
+    </div>
+    <br>
+
+    <!--REVERSE CHARGE-->
+    <div th:replace="fragments/update-choices :: chooseBinary
+       ( description = 'Reverse Charge VAT',
+         displayToUser = ${invoice.getReverseCharge()},
+         selected = ${invoice.getReverseCharge()},
+         name = 'reverseCharge'
+       )">
+    </div>
+    <br>
+
+    <!--SERVICE PROVIDED-->
+    <!--Service will be transformed from all-capital-letters to capitalized first letter for each word-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Service',
+         displayToUser = ${#strings.capitalizeWords(#strings.toLowerCase(invoice.getServiceProvided().getServiceName()))},
+         name = 'serviceProvided'
+        )">
+    </div>
+    <br>
+
+    <!--FREQUENCY-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Frequency',
+         displayToUser = ${#strings.capitalizeWords(#strings.toLowerCase(invoice.getFrequency().getDescription()))},
+         name = 'frequency'
+        )">
+    </div>
+    <br>
+
+    <!--PERIOD-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Period',
+         displayToUser = ${#strings.capitalizeWords(#strings.toLowerCase(invoice.getPeriod().getDescription()))},
+         name = 'period'
+        )">
+    </div>
+    <br>
+
+    <!--INVOICE YEAR-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'Year',
+         displayToUser = ${invoice.getYear()},
+         name = 'year',
+         fragment = 'simpleTextInput'
+       )">
+    </div>
+    <br>
+
+    <!--VAT APPLICABLE TO INVOICE-->
+    <div th:replace="fragments/update-choices :: chooseBinary
+       ( description = 'VAT Applicable to Invoice',
+         displayToUser = ${invoice.getVat().getIsApplicable()},
+         selected = ${invoice.getVat().getIsApplicable()},
+         name = 'vatApplicable'
+       )">
+    </div>
+    <br>
+
+    <!--VAT RATE-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'VAT Rate',
+         displayToUser = ${invoice.getVat().getVatRate()},
+         name = 'vatRate',
+         fragment = 'vatRate'
+       )">
+    </div>
+    <br>
+
+    <!--CURRENCY OF PORTFOLIO-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Default Currency',
+         displayToUser = ${invoice.getCurrencyRates().getFromCurrency().getCurrencyCode()},
+         name = 'fromCurrency'
+        )">
+    </div>
+    <br>
+
+    <!--CURRENCY TO CONVERT TO-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Converted Currency',
+         displayToUser = ${invoice.getCurrencyRates().getToCurrency().getCurrencyCode()},
+         name = 'toCurrency'
+        )">
+    </div>
+    <br>
+
+    <!--CUSTOM EXCHANGE RATE-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'Exchange Rate',
+         displayToUser = ${invoice.getCurrencyRates().getExchangeRate()},
+         name = 'exchangeRate',
+         fragment = 'exchangeRate'
+       )">
+    </div>
+    <br>
+
+    <!--MERITKAPITAL BANK ACCOUNTS-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Bank Account to be paid',
+         displayToUser = ${invoice.getBankAccount().getBank().getName()+' - '+invoice.getBankAccount().getName()},
+         name = 'bankAccount'
+        )">
+    </div>
+    <br>
+
     <br><br><br>
     <td><input type="button" value="Update" id="updateButton"></td>
 

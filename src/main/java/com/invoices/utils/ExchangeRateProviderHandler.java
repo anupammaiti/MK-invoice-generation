@@ -20,7 +20,6 @@ import java.util.Locale;
  */
 @Component
 public class ExchangeRateProviderHandler {
-
     //This is the static object that hold exchange rate data
     public static ExchangeRateProvider provider;
 

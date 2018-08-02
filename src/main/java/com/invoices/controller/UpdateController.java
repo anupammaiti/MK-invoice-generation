@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Updates made to an invoice, will be automatically propagated all the respective tables in the database,
  * by using the Hibernate framework.
  */
+
+//TODO when user enters manual vat rate, count number of characters and add appropriate precision to findByVatRate method
 @Controller
 public class UpdateController {
 
@@ -34,10 +36,10 @@ public class UpdateController {
     @Autowired ClientCompanyInfoService clientCompanyInfoService;
 
     /**
-     *
      * @param id the id of the invoice to update.
      * @param model is the model that will hold data to be displayed by the view
      * @return the page where the user will make their invoice-changes at
+     * WARNING: Html and JavaScript code depends on the NAMING of MODEL VARIABLES. Renaming could lead to bugs.
      */
     @PostMapping(value = "/find/update")
     public String findToUpdate(@RequestParam ("id") String id, Model model){

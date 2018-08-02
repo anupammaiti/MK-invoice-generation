@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<!--Replace [description, displayToUser, name] for list choices. (chooseFromList)-->
+<!--Replace [description, displayToUser, selected, name] for binary list choices. e.g. YES/NO (chooseBinary)-->
+
+<div th:fragment="chooseFromList">
+    <b><span th:text="${description}"></span></b>
+    <input type="checkbox" name=editBox value="Edit" th:id="${name+'Box'}"/>
+    <br>
+    <span th:text="${displayToUser}"></span>
+    <div th:id="${name+'Div'}" hidden>
+        <br>
+        <b><span th:text="${'New '+description}"></span></b>
+        <br>
+        <div th:replace="fragments/user-input.html :: ${name}"></div>
+    </div>
+</div>
+
+<div th:fragment="simpleText">
+    <b><span th:text="${description}"></span></b>
+    <input type="checkbox" name=editBox value="Edit" th:id="${name+'Box'}"/>
+    <br>
+    <span th:text="${displayToUser}"></span>
+    <div th:id="${name+'Div'}" hidden>
+        <br>
+        <b><span th:text="${'New '+description}"></span></b>
+        <br>
+        <div th:replace="fragments/user-input.html :: ${fragment}"></div>
+    </div>
+</div>
+
+<div th:fragment="chooseBinary">
+    <b><span th:text="${description}"></span></b>
+    <input type="checkbox" name=editBox value="Edit" th:id="${name+'Box'}"/>
+    <br>
+    <span th:text="${displayToUser}"></span>
+    <div th:id="${name+'Div'}" hidden>
+        <br>
+        <b><span th:text="${'Change to:'}"></span></b>
+        <br>
+        <div th:replace="fragments/user-input.html :: binaryChoice"></div>
+    </div>
+</div>
+
+
+</body>
+</html>
