@@ -103,9 +103,10 @@
 </div>
 
 <div th:fragment="exchangeRate">
+    <span><i>(OPTIONAL)</i></span><br>
     <input type="text" th:id="${name}" name="newValue" th:value="${invoice.getCurrencyRates().getExchangeRate()}">
-    <i><span>Enter rate manually, or press "<u>Fetch</u>" to get updated rate for the selected currencies</span></i>&emsp;
-    <input type="button" id="exchangeRateButton" value="Fetch">
+    <i><span>(<b><u>NOTE</u></b>: If you changed any currency, you are not obliged to enter the rate manually,
+        it will be automatically generated.)</span></i>&emsp;
 </div>
 
 <div th:fragment="date">
