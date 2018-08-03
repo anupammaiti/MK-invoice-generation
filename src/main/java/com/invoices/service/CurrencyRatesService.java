@@ -22,28 +22,38 @@ public class CurrencyRatesService {
     @Autowired
     private CurrencyRatesRepo currencyRatesRepo;
 
-
-    private CurrencyRates setBaseAndTarget(Currency from, Currency to, CurrencyRates currencyRates){
-        currencyRates.setFromCurrency(from);
-        currencyRates.setToCurrency(to);
+    public CurrencyRates generateExchangeRate(Currency from, Currency to,CurrencyRates currencyRates){
+        setBaseAndTarget(from, to, currencyRates);
+        setCurrentRate(currencyRates);
+        save(currencyRates);
 
         return currencyRates;
     }
 
+    public CurrencyRates generateExchangeRate(Currency from, Currency to,CurrencyRates currencyRates, Float rate){
+        setBaseAndTarget(from, to, currencyRates);
+        currencyRates.setExchangeRate(rate);
+        save(currencyRates);
+
+        return currencyRates;
+    }
+
+    private void setBaseAndTarget(Currency from, Currency to, CurrencyRates currencyRates){
+        currencyRates.setFromCurrency(from);
+        currencyRates.setToCurrency(to);
+    }
+
     /**
      * This method will be called whenever an invoice is issued, so the
-     * current exchange rate is fetched and stored to the database, before returning
-     * the currencyRates entity back to the invoice.
+     * current exchange rate is added to the passed CurrencyRates object.
+     * @param currencyRates the object to store at, the fx rate that will be fetched.
      * @return the record holding current exchange rate
      */
-    private CurrencyRates getCurrentRateAndSave(CurrencyRates currencyRates){
+    private void setCurrentRate(CurrencyRates currencyRates){
         String baseCurrency = currencyRates.getFromCurrency().getCurrencyCode();
         String targetCurrency = currencyRates.getToCurrency().getCurrencyCode();
         Float exchangeRate = getExchangeRateFor(baseCurrency,targetCurrency);
         currencyRates.setExchangeRate(exchangeRate);
-        save(currencyRates);
-
-        return currencyRates;
     }
 
     /**
@@ -60,16 +70,7 @@ public class CurrencyRatesService {
         return factor.floatValue();
     }
 
-    public CurrencyRates generateExchangeRate(Currency from, Currency to){
-        CurrencyRates currencyRates = new CurrencyRates();
-
-        this.setBaseAndTarget(from, to, currencyRates);
-        this.getCurrentRateAndSave(currencyRates);
-
-        return currencyRates;
-    }
-
-    public void save(CurrencyRates currencyRates){
+    private void save(CurrencyRates currencyRates){
 
         currencyRatesRepo.save(currencyRates);
     }

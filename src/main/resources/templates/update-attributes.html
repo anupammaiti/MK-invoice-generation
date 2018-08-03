@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>Update Invoice</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/update.js" type="application/javascript"></script>
     <script src="/money.js" type="application/javascript"></script>
 </head>
 <body>
 <div>
+    <!--TODO a) Compare, in client-side, VAT rate input by user with DB and if exists, throw validation error -->
+    <!--TODO b) If user changes one of the currencies and doesn't input an exchange rate, generate automatically-->
     <!--INVOICE ID-->
     <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
 
@@ -16,7 +19,8 @@
        ( description = 'Invoice Number',
          displayToUser = ${invoice.getInvoiceNumber()},
          name = 'invoiceNumber',
-         fragment = 'simpleTextInput'
+         fragment = 'simpleTextInput',
+         value = ${invoice.getInvoiceNumber()}
        )">
     </div>
     <br>
@@ -83,6 +87,7 @@
             </select> Country</p>
         </div>
     </div>
+    <br>
 
     <!--VAT EXEMPT-->
     <div th:replace="fragments/update-choices :: chooseBinary
@@ -137,7 +142,8 @@
        ( description = 'Year',
          displayToUser = ${invoice.getYear()},
          name = 'year',
-         fragment = 'simpleTextInput'
+         fragment = 'simpleTextInput',
+         value = ${invoice.getYear()}
        )">
     </div>
     <br>
@@ -153,11 +159,10 @@
     <br>
 
     <!--VAT RATE-->
-    <div th:replace="fragments/update-choices :: simpleText
+    <div th:replace="fragments/update-choices :: chooseFromList
        ( description = 'VAT Rate',
          displayToUser = ${invoice.getVat().getVatRate()},
-         name = 'vatRate',
-         fragment = 'vatRate'
+         name = 'vatRate'
        )">
     </div>
     <br>
@@ -180,12 +185,23 @@
     </div>
     <br>
 
-    <!--CUSTOM EXCHANGE RATE-->
+    <!--EXCHANGE RATE-->
     <div th:replace="fragments/update-choices :: simpleText
        ( description = 'Exchange Rate',
          displayToUser = ${invoice.getCurrencyRates().getExchangeRate()},
          name = 'exchangeRate',
          fragment = 'exchangeRate'
+       )">
+    </div>
+    <br>
+
+    <!--CUSTODY CHARGE-->
+    <div th:replace="fragments/update-choices :: simpleText
+       ( description = 'Amount to Charge',
+         displayToUser = ${invoice.getCustodyCharge().getChargeExcludingVat()},
+         name = 'custodyCharge',
+         fragment = 'simpleTextInput',
+         value = ${invoice.getCustodyCharge().getChargeExcludingVat()}
        )">
     </div>
     <br>

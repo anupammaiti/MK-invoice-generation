@@ -1,9 +1,11 @@
 package com.invoices.service;
 
-import com.invoices.domain.Invoice;
-import com.invoices.domain.Portfolio;
+import com.invoices.domain.*;
 import com.invoices.dto.UpdateInvoiceDTO;
+import com.invoices.enumerations.InvoiceFrequency;
+import com.invoices.enumerations.InvoicePeriod;
 import com.invoices.enumerations.InvoiceType;
+import com.invoices.enumerations.IsApplicable;
 import com.invoices.repository.InvoiceRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,9 +47,10 @@ public class InvoiceService {
         return invoiceRepo.getInvoiceById(id);
     }
 
-    public Date convertDate(String datestring) {
+    private Date convertDate(String datestring) {
         Date date = null;
         //Ask what the preferred date format is.
+        datestring = datestring.contains("/") ? datestring.replaceAll("/","-" ) : datestring;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         try {
@@ -61,19 +64,32 @@ public class InvoiceService {
         return date;
     }
 
-    public Invoice updateInvoice(UpdateInvoiceDTO updateInvoiceDTO,
-                                 Portfolio portfolio/*,
-                                 BankAccount bankAccount,
+    public void updateInvoice(Long id,
+                                 UpdateInvoiceDTO dto,
+                                 Portfolio portfolio,
                                  ServiceProvided serviceProvided,
-                                 CurrencyRates currencyRates,
+                                 BankAccount bankAccount,
                                  Vat vat,
                                  CustodyCharge custodyCharge,
-                                 Currency currency*/){
+                                 CurrencyRates currencyRates){
 
-        Invoice invoice = getInvoiceById(updateInvoiceDTO.getInvoiceId());
-        invoice.setInvoiceType(InvoiceType.valueOf(updateInvoiceDTO.getInvoiceType()));
+        Invoice invoice = getInvoiceById(id);
+        invoice.setInvoiceType(InvoiceType.valueOf(dto.getInvoiceType()));
+        invoice.setVatExempt(IsApplicable.valueOf(dto.getVatExempt()));
+        invoice.setReverseCharge(IsApplicable.valueOf(dto.getReverseCharge()));
+        invoice.setFrequency(InvoiceFrequency.valueOf(dto.getFrequency()));
+        invoice.setPeriod(InvoicePeriod.valueOf(dto.getPeriod()));
+        invoice.setYear(Integer.valueOf(dto.getYear()));
+        invoice.setInvoiceDate(convertDate(dto.getInvoiceDate()));
+        invoice.setInvoiceNumber(dto.getInvoiceNumber());
+
         invoice.setPortfolio(portfolio);
+        invoice.setServiceProvided(serviceProvided);
+        invoice.setBankAccount(bankAccount);
+        invoice.setVat(vat);
+        invoice.setCustodyCharge(custodyCharge);
+        invoice.setCurrencyRates(currencyRates);
 
-        return invoice;
+        save(invoice);
     }
 }

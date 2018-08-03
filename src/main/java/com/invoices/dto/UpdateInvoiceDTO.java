@@ -9,23 +9,44 @@ import lombok.Getter;
  */
 @Getter
 public class UpdateInvoiceDTO {
-    /*private String invoiceDate;
+    /* foreign keys - unique id */
+    private Long invoiceId;
+    private Long companyId;
+    private String portfolio;
+    private String fromCurrency;
+    private String toCurrency;
+    private String serviceProvided;
+    private String vatRate;
+    private String bankAccount;
+    /* ************************* */
+
+    /* date of invoice */
+    private String invoiceDate;
+    /* ************** */
+
+    /* enumerations */
     private String vatExempt;
     private String reverseCharge;
     private String vatApplicable;
-    private String invoiceNumber;
+    private String invoiceType;
     private String frequency;
     private String period;
-    */
-    private Long invoiceId;
-    private Long companyId;
+    /* *********** */
+
+    /* company info */
     private String companyAddress;
     private String companyCity;
     private String companyCountry;
     private String companyName;
     private String companyPostcode;
     private String companyVatNumber;
-    private String portfolio;
-    private String invoiceType;
+    /* *********** */
 
+    /* Other */
+    private String invoiceNumber;
+    private String year;
+    private String vatRateManual;
+    private String custodyCharge;
+    private String exchangeRate;
+    /* ***** */
 }

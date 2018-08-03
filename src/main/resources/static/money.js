@@ -10,6 +10,8 @@
  * For details, examples and documentation:
  * http://openexchangerates.github.io/money.js/
  */
+const API_ID = '5f115a801bac495aae54adada565272f';
+
 (function(root, undefined) {
 
 	// Create a safe reference to the money.js object for use below.
@@ -164,3 +166,34 @@
 
 	// Root will be `window` in browser or `global` on the server:
 }(this));
+
+/**
+ * Currently using https://openexchangerates.org free account, which limits to 1000 http requests
+ * per month. Changing to a paid plan is recommended if more requests are needed.
+ */
+document.addEventListener('DOMContentLoaded', function () {
+		$.getJSON('https://openexchangerates.org/api/latest.json?app_id='+API_ID,
+    	function(data) {
+        	// Check money.js has finished loading:
+        	if ( typeof fx !== "undefined" && fx.rates ) {
+        	    fx.rates = data.rates;
+        	    fx.base = data.base;
+        	}
+        	else {
+        	    // If not, apply to fxSetup global:
+        	    var fxSetup = {
+        	        rates : data.rates,
+        	        base : data.base
+        	    }
+        	}
+
+        	const fetchFxRates = document.getElementById('exchangeRateButton');
+        	fetchFxRates.onclick = function () {
+        		let base = $('#fromCurrency option:selected').text();
+        		let target = $('#toCurrency option:selected').text();
+        		let rate = document.getElementById('exchangeRate');
+        		rate.value = fx.convert(1, {from: base, to: target});
+
+        	}
+	});
+});

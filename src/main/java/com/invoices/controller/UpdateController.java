@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * by using the Hibernate framework.
  */
 
-//TODO when user enters manual vat rate, count number of characters and add appropriate precision to findByVatRate method
 @Controller
 public class UpdateController {
 
@@ -34,6 +33,8 @@ public class UpdateController {
     @Autowired VatService vatService;
     @Autowired CompanyLocationService companyLocationService;
     @Autowired ClientCompanyInfoService clientCompanyInfoService;
+    @Autowired CustodyChargeService custodyChargeService;
+    @Autowired CurrencyRatesService currencyRatesService;
 
     /**
      * @param id the id of the invoice to update.
@@ -63,24 +64,38 @@ public class UpdateController {
 
     /**
      * Method that listens for the HTTP request to apply the selected updates
-     * @param updateInvoiceDTO a Data Transfer Object (DTO) to hold all data
+     * @param dto a Data Transfer Object (DTO) to hold all data
      * relevant to the incoming update request.
      */
     @PostMapping("/find/update/execute")
     @ResponseBody
-    public void executeUpdate(@RequestBody UpdateInvoiceDTO updateInvoiceDTO){
-        Portfolio portfolio = portfolioService.getRecord(Long.valueOf(updateInvoiceDTO.getPortfolio()));
+    public void executeUpdate(@RequestBody UpdateInvoiceDTO dto){
+        Invoice invoice = invoiceService.getInvoiceById(dto.getInvoiceId());
+
+        Portfolio portfolio = portfolioService.getRecord(Long.valueOf(dto.getPortfolio()));
         Client client = portfolio.getClient();
-        CompanyLocation location = companyLocationService.getRecordAndSave(updateInvoiceDTO.getCompanyCountry());
-        ClientCompanyInfo tempCompany = clientCompanyInfoService.getRecord(updateInvoiceDTO.getCompanyId());
+        CompanyLocation location = companyLocationService.getRecordAndSave(dto.getCompanyCountry());
+        ClientCompanyInfo tempCompany = clientCompanyInfoService.getRecord(dto.getCompanyId());
         tempCompany.setClient(client);
         tempCompany.setCompanyLocation(location);
         ClientCompanyInfo company = clientCompanyInfoService
-                .detectChangesAndApply(updateInvoiceDTO,tempCompany);
-
+                .detectChangesAndApply(dto,tempCompany);
+        //set updated (or not) company to portfolio
         portfolio.setClientCompanyInfo(company);
-        Invoice invoice = invoiceService.updateInvoice(updateInvoiceDTO, portfolio);
-        invoiceService.save(invoice);
+
+        Vat vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate(), dto.getVatRateManual());
+        ServiceProvided serviceProvided = serviceProvidedService.getRecord(Long.valueOf(dto.getServiceProvided()));
+        BankAccount bankAccount = bankAccountService.getRecord(Long.valueOf(dto.getBankAccount()));
+        CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
+                Float.valueOf(dto.getCustodyCharge()), vat.getVatRate(),invoice.getCustodyCharge());
+        Currency fromCurrency = currencyService.getRecord(Long.valueOf(dto.getFromCurrency()));
+        Currency toCurrency = currencyService.getRecord(Long.valueOf(dto.getToCurrency()));
+        Float exchangeRate = Float.valueOf(dto.getExchangeRate());
+        CurrencyRates currencyRates= currencyRatesService.generateExchangeRate(
+                fromCurrency,toCurrency,invoice.getCurrencyRates(), exchangeRate);
+
+        invoiceService.updateInvoice(
+                invoice.getId(), dto, portfolio, serviceProvided, bankAccount, vat, custodyCharge,currencyRates);
     }
 
 

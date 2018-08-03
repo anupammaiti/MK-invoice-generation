@@ -25,7 +25,6 @@ const postData = (url = ``, data = {}) => {
  * Id of element is retrieved by removing the string 'Box' from the Id of current checkbox.
  * IF user checks box, they can edit value of corresponding element. If they uncheck the box,
  * element will be assigned its initial value.
- * TODO if manual contains data, then send that data
  */
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.getElementsByName('editBox');
@@ -54,22 +53,41 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         }
-        //This conditional will be entered if the checkbox will trigger 1 input, manual or otherwise
-        //Checkbox id is the same as element Id, but has the string 'Box' to the end. e.g. 'portfolioBox'
-        else {
-            let elementId = (checkboxes[i].id).slice(0,-3); //invoiceNumber
-            let divId = elementId+'Div'; //invoiceNumberDiv
-            //MANUAL ID COMMENTED OUT, MIGHT BE USED WHEN USER CAN CHOOSE BOTH FROM MANUAL OR DROPDOWN LIST
-            // if(document.getElementById(elementId) === null  || document.getElementById(elementId)==='undefined')
-            //     elementId = elementId+'Manual'; //invoiceNumberManual
-            let defaultValue = document.getElementById(elementId).value;
+
+        else if((checkboxes[i].id).endsWith('Text')){
+            let elementId = (checkboxes[i].id).slice(0,-4); //e.g. invoiceNumber
+            let divId = elementId+'Div'; //e.g. invoiceNumberDiv
+            let element = document.getElementById(elementId);
+            let defaultValue = element.value;
+
             checkboxes[i].onclick = function () {
                 if(checkboxes[i].checked){
+                    element.value = '';
                     document.getElementById(divId).style.display = 'block';
                 }
                 else {
                     document.getElementById(divId).style.display = 'none';
-                    document.getElementById(elementId).value = defaultValue;
+                    element.value = defaultValue;
+                }
+            }
+        }
+        //This conditional will be entered if the checkbox will trigger 1 input, manual or otherwise
+        //Checkbox id is the same as element Id, but has the string 'Box' to the end. e.g. 'portfolioBox'
+        else {
+            let elementId = (checkboxes[i].id).slice(0,-3); //e.g. invoiceNumber
+            let divId = elementId+'Div'; //e.g. invoiceNumberDiv
+            let manualId = elementId+'Manual';//e.g. invoiceNumberManual
+            let element = document.getElementById(elementId);
+            let defaultValue = element.value;
+
+            checkboxes[i].onclick = function () {
+                if(checkboxes[i].checked)
+                    document.getElementById(divId).style.display = 'block';
+                else {
+                    document.getElementById(divId).style.display = 'none';
+                    element.value = defaultValue;
+                    if(document.getElementById(manualId)!== null)
+                        document.getElementById(manualId).value = '';
                 }
             }
         }
@@ -77,27 +95,41 @@ document.addEventListener('DOMContentLoaded', function () {
 
     //Script will set value of variable as null, if it is equal to an empty string
     document.getElementById('updateButton').addEventListener('click', function () {
-        this.disabled = true;
+        let myData = {};
         const newValues = document.getElementsByName('newValue');
         const groupValues = document.getElementsByName('groupValue');
-        let myData = {};
-        for(let i=0; i<newValues.length; i++) {
-            let elementId = newValues[i].id;
-            let input = document.getElementById(elementId).value;
-            if(input==='')
-                myData[elementId] = null;
-            else
-                myData[elementId] = input;
+        const manualValues = document.getElementsByName('manualValue');
+
+        function setValuesToObj(arrayElement){
+            let elementId = arrayElement.id;
+            myData[elementId] = document.getElementById(elementId).value;
         }
-        for(let i=0; i<groupValues.length; i++) {
-            let elementId = groupValues[i].id;
+
+        //Function will detect manual values, and if they are set, it will set the
+        //non-manual values to null.
+        function setManualValuesToObj(arrayElement){
+            const keyword = 'Manual';
+            let manualElementId = arrayElement.id;
+            console.log('manualElementId: '+manualElementId);
+            let elementId = manualElementId.slice(0,-keyword.length);
+            console.log('elementId: '+elementId);
+            let manualInput = document.getElementById(manualElementId).value;
+            console.log('manualInput: '+manualInput);
             let input = document.getElementById(elementId).value;
-            if(input==='')
-                myData[elementId] = null;
-            else
+
+            if(manualInput===''){
                 myData[elementId] = input;
+                myData[manualElementId] = null;
+            }
+            else{
+                myData[manualElementId] = manualInput;
+                myData[elementId] = null;
+            }
         }
-        //ADD LOOP HERE FOR MANUAL INPUT. IF MANUAL IS SET, IT WILL OVERRIDE SELECTION
+
+        newValues.forEach(setValuesToObj);
+        groupValues.forEach(setValuesToObj);
+        manualValues.forEach(setManualValuesToObj);
         myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
         myData.companyId = parseInt(document.getElementById('companyId').value);
 
@@ -107,7 +139,5 @@ document.addEventListener('DOMContentLoaded', function () {
         {
             window.location = '/success/updated';
         });
-        this.disabled = false;
-
     });
 });

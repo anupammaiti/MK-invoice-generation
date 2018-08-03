@@ -40,7 +40,7 @@ public class ReadController {
         Float target = ExchangeRateProviderHandler
                 .convertToCurrency(charge.getChargeIncludingVat(),xRate.getExchangeRate());
         //creating a new CustodyCharge object for converted currency
-        CustodyCharge convertedCharge = new CustodyCharge(base,vatValue,target);
+        CustodyCharge convertedCharge = new CustodyCharge(null,base,vatValue,target);
 
         model.addAttribute("invoice", invoice);
         model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());
@@ -54,25 +54,4 @@ public class ReadController {
         return "read/read-invoice";
     }
 
-
-
-    /*
-    @PostMapping(value = "/find/read")
-    public String findInvoice(@RequestParam("id") String invoiceIdString, RedirectAttributes flash){
-        Long invoiceId = Long.valueOf(invoiceIdString);
-        Invoice invoice = invoiceService.getInvoiceById(invoiceId);
-        flash.addFlashAttribute("invoice", invoice);
-
-        return "redirect:/find/read";
-    }
-
-    @GetMapping(value = "/find/read")
-    public String viewInvoice(@ModelAttribute("invoice") Invoice attr, Model model){
-        final Invoice invoice = attr;
-        model.addAttribute("invoice", invoice);
-        model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());
-
-        return "read/read-invoice";
-    }
-     */
 }

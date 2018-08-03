@@ -36,17 +36,17 @@ public class CustodyChargeService {
         return baseValue+vatCharge;
     }
 
-    public CustodyCharge generateCustodyCharge(Float baseValue, Float vatRate){
+    public CustodyCharge generateCustodyCharge(Float baseValue, Float vatRate, CustodyCharge custodyCharge){
         Float vatCharge = calculateVatCharge(baseValue, vatRate);
         Float total = calculateTotalCharge(baseValue, vatCharge);
+        CustodyCharge generatedCustodyCharge = new CustodyCharge(
+                custodyCharge.getCustodyChargeId(),vatCharge, total, baseValue);
+        save(generatedCustodyCharge);
 
-        CustodyCharge custodyCharge = new CustodyCharge(baseValue, vatCharge, total);
-        this.save(custodyCharge);
-
-        return custodyCharge;
+        return generatedCustodyCharge;
     }
 
-    public CustodyCharge save(CustodyCharge custodyCharge){
+    private CustodyCharge save(CustodyCharge custodyCharge){
 
         return custodyChargeRepo.save(custodyCharge);
     }

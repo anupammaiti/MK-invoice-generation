@@ -99,22 +99,33 @@
 
 <!--MANUAL TEXT INPUT AND CUSTOMISED FRAGMENTS-->
 <div th:fragment="simpleTextInput">
-    <input type="text" th:id="${name}" name="newValue" value="">
+    <input type="text" th:id="${name}" name="newValue" th:value="${value}">
 </div>
 
 <div th:fragment="exchangeRate">
-    <input type="text" th:id="${name}" name="newValue" value="">
-    <i><span>Enter custom rate or press "<u>Fetch</u>" to get current rate</span></i>
+    <input type="text" th:id="${name}" name="newValue" th:value="${invoice.getCurrencyRates().getExchangeRate()}">
+    <i><span>Enter rate manually, or press "<u>Fetch</u>" to get updated rate for the selected currencies</span></i>&emsp;
+    <input type="button" id="exchangeRateButton" value="Fetch">
 </div>
 
 <div th:fragment="date">
-    <input type="text" th:id="${name}" name="newValue" value="">
+    <input type="text" th:id="${name}" name="newValue" th:value="${invoice.getInvoiceDate()}">
     <i><span> Enter new date in <u>this</u> format: <b>"yyyy/mm/dd"</b></span></i>
 </div>
 
 <div th:fragment="vatRate">
-    <input type="text" th:id="${name}" name="newValue" value="">
-    <span> Enter rate like: <i>"<u>0.19</u>"</i> or <i>"<u>0.1805</u>"</i></span>
+    <select th:id="${name}" name="newValue">
+        <option th:each="option : ${vatRecords}"
+                th:selected="${option.getVatId()} == ${invoice.getVat().getVatId()}"
+                th:value="${option.getVatId()}"
+                th:text="${option.getVatRate()}">
+        </option>
+    </select>
+    <span> Choose VAT rate from dropdown list</span><br><br>
+    <input type="text" th:id="${name+'Manual'}" name="manualValue" value="">
+    <span> Or enter rate manually, like: <i>"<u>0.19</u>"</i> or <i>"<u>0.1805</u>"</i></span><br>
+    <span><i>(<u>Note</u>: If you enter rate manually, it will override your selection from the dropdown list).</i></span>
+
 </div>
 <!-----------------------------end-of-manual-input-fragments-------------------------------------------->
 
