@@ -22,22 +22,32 @@ public class CurrencyRatesService {
     @Autowired
     private CurrencyRatesRepo currencyRatesRepo;
 
-    public CurrencyRates generateExchangeRate(Currency from, Currency to,CurrencyRates currencyRates){
-        setBaseAndTarget(from, to, currencyRates);
-        setCurrentRate(currencyRates);
-        save(currencyRates);
-
-        return currencyRates;
-    }
-
+    /**
+     * If CurrencyRates id is null, a new record will be saved to database.
+     * @param from The currency to convert from
+     * @param to The currency to convert to
+     * @param currencyRates The CurrencyRates object to use its mutators and finally return.
+     * @param rate The exchange rate to save to CurrencyRates object. If this is null, exchange rate is automatically
+     *             generated, using getExchangeRateFor(from, to) method.
+     * @return The initialized CurrencyRates record, that is now stored in the database.
+     */
     public CurrencyRates generateExchangeRate(Currency from, Currency to,CurrencyRates currencyRates, Float rate){
         setBaseAndTarget(from, to, currencyRates);
-        currencyRates.setExchangeRate(rate);
+        if(rate!=null)
+            currencyRates.setExchangeRate(rate);
+        else
+            setCurrentRate(currencyRates);
         save(currencyRates);
 
         return currencyRates;
     }
 
+    /**
+     * Method will take a parameter CurrencyRates and add a Currency From and a Currency To
+     * @param from the Currency object to save to the CurrencyRates object. (Currency to convert from)
+     * @param to the Currency object to save to the CurrencyRates object. (Currency to convert to)
+     * @param currencyRates the CurrencyRates object to modify
+     */
     private void setBaseAndTarget(Currency from, Currency to, CurrencyRates currencyRates){
         currencyRates.setFromCurrency(from);
         currencyRates.setToCurrency(to);
@@ -70,6 +80,10 @@ public class CurrencyRatesService {
         return factor.floatValue();
     }
 
+    /**
+     * Method will insert a CurrencyRates object to the database
+     * @param currencyRates The CurrencyRates object to save
+     */
     private void save(CurrencyRates currencyRates){
 
         currencyRatesRepo.save(currencyRates);

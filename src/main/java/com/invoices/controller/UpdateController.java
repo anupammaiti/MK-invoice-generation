@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * This class is a controller responsible for managing the HTTP requests about invoice updates.
  * Updates made to an invoice, will be automatically propagated all the respective tables in the database,
  * by using the Hibernate framework.
+ * @TODO user input for vat must be limited to 3 digits after decimal
  */
 
 @Controller
@@ -83,14 +84,14 @@ public class UpdateController {
         //set updated (or not) company to portfolio
         portfolio.setClientCompanyInfo(company);
 
-        Vat vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate(), dto.getVatRateManual());
+        Vat vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
         ServiceProvided serviceProvided = serviceProvidedService.getRecord(Long.valueOf(dto.getServiceProvided()));
         BankAccount bankAccount = bankAccountService.getRecord(Long.valueOf(dto.getBankAccount()));
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
                 Float.valueOf(dto.getCustodyCharge()), vat.getVatRate(),invoice.getCustodyCharge());
         Currency fromCurrency = currencyService.getRecord(Long.valueOf(dto.getFromCurrency()));
         Currency toCurrency = currencyService.getRecord(Long.valueOf(dto.getToCurrency()));
-        Float exchangeRate = Float.valueOf(dto.getExchangeRate());
+        Float exchangeRate = dto.getExchangeRate()==null ? null : Float.valueOf(dto.getExchangeRate());
         CurrencyRates currencyRates= currencyRatesService.generateExchangeRate(
                 fromCurrency,toCurrency,invoice.getCurrencyRates(), exchangeRate);
 

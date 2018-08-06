@@ -118,7 +118,7 @@
     <select th:id="${name}" name="newValue">
         <option th:each="option : ${vatRecords}"
                 th:selected="${option.getVatId()} == ${invoice.getVat().getVatId()}"
-                th:value="${option.getVatId()}"
+                th:value="${option.getVatRate()}"
                 th:text="${option.getVatRate()}">
         </option>
     </select>

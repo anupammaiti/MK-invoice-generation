@@ -16,7 +16,6 @@ public class UpdateInvoiceDTO {
     private String fromCurrency;
     private String toCurrency;
     private String serviceProvided;
-    private String vatRate;
     private String bankAccount;
     /* ************************* */
 
@@ -45,7 +44,7 @@ public class UpdateInvoiceDTO {
     /* Other */
     private String invoiceNumber;
     private String year;
-    private String vatRateManual;
+    private String vatRate;
     private String custodyCharge;
     private String exchangeRate;
     /* ***** */

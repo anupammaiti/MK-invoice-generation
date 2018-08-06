@@ -1,11 +1,15 @@
-const PROVIDER = 'https://openexchangerates.org/api/latest.json?app_id=';
-const PROVIDER_ACCESS_KEY = '5f115a801bac495aae54adada565272f';
 const checkboxKeyword = 'Box';
 const manualInputKeyword = 'Manual';
 const textInputKeyword = 'Text';
 const groupedValuesKeyword = 'Group';
 const divKeyword = 'Div';
 
+/**
+ * Will send an object passed as parameter, as a POST http request to the specified url.
+ * @param url The url to send an http request to.
+ * @param data The object to send with the request.
+ * @return {Promise<string | never | void>}
+ */
 const postData = (url = ``, data = {}) => {
     // Default options are marked with *
     return fetch(url, {
@@ -25,6 +29,12 @@ const postData = (url = ``, data = {}) => {
         .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
+/**
+ *
+ * @param array
+ * @param data
+ * @param doc
+ */
 function setValuesToObj(array = [], data={}, doc){
     array.forEach(function(arrayElement){
         let elementId = arrayElement.id;
@@ -34,8 +44,18 @@ function setValuesToObj(array = [], data={}, doc){
     return data;
 }
 
-//Function will detect manual values, and if they are set, it will set the
-//non-manual values to null.
+/**
+ * Function will fetch elements that contain a 'keyword' in their id
+ * and add them to an object passed as parameter. Elements with this keyword are
+ * elements elements that accept both text input from the user and a selection from a drop down list.
+ * If a text input is set, the function will use that value to populate the object, otherwise
+ * If it is not set, the value from the dropdown list will be used.
+ * @param array An array of elements to get their value.
+ * @param data An object to be populated with the fetched elements' values.
+ * @param doc The HTML document that contains the elements.
+ * @param keyword
+ * @return data An object containing the values of all elements whose id contain the keyword parameter
+ */
 function setManualValuesToObj(array=[], data={}, doc, keyword){
     array.forEach(function(arrayElement){
         let manualElementId = arrayElement.id;
@@ -43,14 +63,7 @@ function setManualValuesToObj(array=[], data={}, doc, keyword){
         let manualInput = doc.getElementById(manualElementId).value;
         let input = doc.getElementById(elementId).value;
 
-        if(manualInput===''){
-            data[elementId] = input;
-            data[manualElementId] = null;
-        }
-        else{
-            data[manualElementId] = manualInput;
-            data[elementId] = null;
-        }
+        data[elementId] = manualInput==='' ? data[elementId] = input : data[elementId] = manualInput;
     });
 
     return data;
@@ -66,7 +79,10 @@ function setCheckboxFunctionality(checkboxes=[]){
             let groupValues = divElement.children;
             let groupElements = [];
             for(let k=0; k<groupValues.length; k++){
-                let obj = {id: (groupValues[k].firstChild).id, defaultValue: (groupValues[k].firstChild).value};
+                let obj = {
+                    id: (groupValues[k].firstChild).id,
+                    defaultValue: (groupValues[k].firstChild).value
+                };
                 groupElements.push(obj);
             }
             checkboxes[i].onclick = function () {
@@ -132,54 +148,38 @@ function setCheckboxFunctionality(checkboxes=[]){
 
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.getElementsByName('editBox');
-    const defaultFromCurrency = document.getElementById('fromCurrency').value;
-    const defaultToCurrency = document.getElementById('toCurrency').value;
     const defaultExchangeRate = document.getElementById('exchangeRate').value;
 
-    $.getJSON(PROVIDER + PROVIDER_ACCESS_KEY, function(data) {
-            // Check money.js has finished loading:
-            if ( typeof fx !== "undefined" && fx.rates ) {
-                fx.rates = data.rates;
-                fx.base = data.base;
-            }
-            else {
-                let fxSetup = {
-                    rates : data.rates,
-                    base : data.base
-                }
-            }
+    setCheckboxFunctionality(checkboxes);
 
-            setCheckboxFunctionality(checkboxes);
+    //Script will set value of variable as null, if it is equal to an empty string
+    document.getElementById('updateButton').addEventListener('click', function () {
+        let myData = {};
+        const newValues = document.getElementsByName('newValue');
+        const groupValues = document.getElementsByName('groupValue');
+        const manualValues = document.getElementsByName('manualValue');
 
-            //Script will set value of variable as null, if it is equal to an empty string
-            document.getElementById('updateButton').addEventListener('click', function () {
-                let myData = {};
-                const newValues = document.getElementsByName('newValue');
-                const groupValues = document.getElementsByName('groupValue');
-                const manualValues = document.getElementsByName('manualValue');
+        //validation
+        if(!$('#custodyCharge').val()){
+            alert('empty field');
+            $('#custodyCharge').focus();
+            return;
+        }
+        myData = setValuesToObj(newValues,myData,document);
+        myData = setValuesToObj(groupValues,myData,document);
+        myData = setManualValuesToObj(manualValues,myData,document, manualInputKeyword);
+        if (myData.exchangeRate === defaultExchangeRate)
+            myData.exchangeRate = null;
 
-                myData = setValuesToObj(newValues,myData,document);
-                myData = setValuesToObj(groupValues,myData,document);
-                myData = setManualValuesToObj(manualValues,myData,document, manualInputKeyword);
+        //Always get hidden ids of invoice and company
+        myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
+        myData.companyId = parseInt(document.getElementById('companyId').value);
 
-                //Always get hidden ids of invoice and company
-                myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
-                myData.companyId = parseInt(document.getElementById('companyId').value);
+        console.log(myData);
 
-                if(defaultFromCurrency!==document.getElementById('fromCurrency').value ||
-                defaultToCurrency!==document.getElementById('toCurrency').value &&
-                document.getElementById('exchangeRate').value === defaultExchangeRate){
-                  let base = $('#fromCurrency option:selected').text();
-                  let target = $('#toCurrency option:selected').text();
-
-                  myData.exchangeRate = fx.convert(1, {from: base, to: target});
-                 }
-                 console.log(myData);
-
-                postData('/find/update/execute', myData).then(() =>
-                {
-                    window.location = '/success/updated';
-                });
-            });
+        postData('/find/update/execute', myData).then(() =>
+        {
+            window.location = '/success/updated';
+        });
     });
 });

@@ -20,14 +20,13 @@ public class VatService {
 
     /**
      * This method is used when updating an invoice.
-     * @param id The id of the chosen vat record by user. This will be null if user enters rate manually
-     * @param manualRate The value of the rate to insert to DB. This will be null if user does not enter rate manually
+     * @param rate The value of the rate to insert to DB. This will be null if user does not enter rate manually
      * @return The appropriate Vat record to update the invoice with
      */
-    public Vat getRecordAndSaveIfNotExists(String id, String manualRate){
+    public Vat getRecordAndSaveIfNotExists(String rate){
+        Vat vat = getRecordWithRateOf(Float.valueOf(rate));
 
-        return (manualRate == null ? getRecord(Long.valueOf(id)) : save(new Vat(
-                null, IsApplicable.YES, Float.valueOf(manualRate) )));
+        return (vat != null ? vat : save(new Vat(null, IsApplicable.YES, Float.valueOf(rate) )));
     }
 
     /**
@@ -77,6 +76,16 @@ public class VatService {
     private Vat getRecordWithRateOfZero(){
 
         return vatRepo.findVatByVatRate(0F);
+    }
+
+    private Vat getRecordWithRateOf(Float rate){
+        try {
+            return vatRepo.findByAccurateVatRate(rate-0.0001f, rate+0.0001f);
+        }
+        catch(NullPointerException e){
+            System.out.println("Record with rate of '"+rate+"' does not exist in database.");
+            return null;
+        }
     }
 
 }

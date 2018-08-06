@@ -71,7 +71,7 @@ public class CreateController {
         Currency fromCurrency = currencyService.getRecord(invoiceDTO.getFromCurrency());
         Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());
         CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(
-                fromCurrency, toCurrency,new CurrencyRates());
+                fromCurrency, toCurrency,new CurrencyRates(), null);
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
                 invoiceDTO.getBaseCharge(), vat.getVatRate(),new CustodyCharge());
 
