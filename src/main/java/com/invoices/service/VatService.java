@@ -26,20 +26,15 @@ public class VatService {
     public Vat getRecordAndSaveIfNotExists(String rate){
         Vat vat = getRecordWithRateOf(Float.valueOf(rate));
 
-        return (vat != null ? vat : save(new Vat(null, IsApplicable.YES, Float.valueOf(rate) )));
+        return (vat != null
+                ? vat
+                : save( new Vat(null, IsApplicable.YES, Float.valueOf(rate) )));
     }
 
-    /**
-     * This method will check if the user selected vat to be applicable or not.
-     * If the user selected 'NO', as to 'Not Applicable', then whatever the
-     * vat rate, the method will return the rate with a value of zero (0).
-     * @param isApplicable if VAT is applicable to the issuing invoice.
-     * @param id the unique id of the record holding the selected rate.
-     * @return The appropriate 'vat' record from the database, based on the user's selections
-     */
-    public Vat determineVat(IsApplicable isApplicable, Long id){
 
-        return isApplicable == IsApplicable.NO ? getRecordWithRateOfZero() : getRecord(id);
+    public boolean isVatApplicable(IsApplicable isApplicable){
+
+        return isApplicable == IsApplicable.YES;
     }
 
     /**
@@ -73,7 +68,7 @@ public class VatService {
     /**
      * @return the record from the database that has a rate of 0.0%
      */
-    private Vat getRecordWithRateOfZero(){
+    public Vat getRecordWithRateOfZero(){
 
         return vatRepo.findVatByVatRate(0F);
     }

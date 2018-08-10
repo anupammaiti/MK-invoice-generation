@@ -26,8 +26,8 @@ public class ExchangeRateProviderHandler {
     /**
      * @param currencyCode The currency code of the symbol needed. e.g: 'USD', 'GBP', etc..
      * @return The symbol of the currency code passed as a parameter. Method will return an empty string,
-     * in case that the  currency code does not return any matches. 
-     * e.g. 'USD' = '$', 'QXZ' = '', 'EUR' = '€', 'GBP' = '£', etc..
+     * in case that the  currency code does not return any matches.
+     * e.g. USD -> '$', QXZ -> (empty string), EUR -> '€', GBP -> '£', etc..
      */
     public static String getCurrencySymbol(String currencyCode){
         HashMap currencyLocaleMap = getCurrencyLocaleMapping();
@@ -66,11 +66,8 @@ public class ExchangeRateProviderHandler {
         {
             provider = MonetaryConversions.getExchangeRateProvider();
         }
-        catch(Exception e)
-        {
-            System.out.print("Could not refresh providers list.\nCaused by: "
-                    + e.getMessage()+"\nStack Trace: ");
-            e.printStackTrace();
+        catch(Exception e) {
+            System.out.print("Could not refresh providers list.\nCaused by: " + e.getMessage());
         }
     }
 
@@ -82,14 +79,16 @@ public class ExchangeRateProviderHandler {
     private static HashMap<String, Locale> getCurrencyLocaleMapping() {
         HashMap<String, Locale> locales = new HashMap<>();
         for (Locale locale : Locale.getAvailableLocales()) {
-            try
-            {
+            try {
                 String currency = Currency.getInstance(locale).getCurrencyCode();
                 locales.put(currency, locale);
             }
-            catch (Exception e){
+            catch (IllegalArgumentException iae){
                 //silently catch exceptions caused by unknown locales.
-                //e.g: Locale.getDisplayCountry equals -> "." will throw an exception
+                //e.g: Locale.getDisplayCountry equals -> "." will throw IllegalArgumentException
+            }
+            catch (NullPointerException npe){
+                System.out.println("Tried to call getInstance() on Null 'Locale' object");
             }
         }
         return locales;

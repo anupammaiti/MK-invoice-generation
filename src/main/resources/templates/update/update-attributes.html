@@ -55,11 +55,11 @@
     <br>
 
     <!--COMPANY, ONLY IF EXISTS-->
+    <input type="hidden" id="companyId" th:value="${company} == null ? '' : ${company.getId()}"/>
     <div th:if="${company} != null">
         <b>Company</b>
         <input type="checkbox" name=editBox value="Edit" id="companyGroup"/>
         <br>
-        <input type="hidden" id="companyId" th:value="${company.getId()}"/>
         <span th:text="${company.getName()}"></span>
         <br>
         <span th:text="${company.getAddress()}"></span>
@@ -73,6 +73,7 @@
         <span th:text="${company.getCompanyLocation().getCountry()}"></span>
         <br>
         <div id="companyDiv" hidden>
+            <!--Adding <label></label> around input will fix the warning-->
             <p><input type="text" id="companyName" name="groupValue" th:value="${company.getName()}"> Name</p>
             <p><input type="text" id="companyAddress" name="groupValue" th:value="${company.getAddress()}"> Address</p>
             <p><input type="text" id="companyCity" name="groupValue" th:value="${company.getCity()}"> City</p>
@@ -217,6 +218,9 @@
 
     <br><br><br>
     <td><input type="button" value="Update" id="updateButton"></td>
+    <form action="/">
+        <input type="submit" value="Home"/>
+    </form>
 
 </div>
 </body>

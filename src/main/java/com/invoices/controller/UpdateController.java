@@ -20,7 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * This class is a controller responsible for managing the HTTP requests about invoice updates.
  * Updates made to an invoice, will be automatically propagated all the respective tables in the database,
  * by using the Hibernate framework.
- * @TODO user input for vat must be limited to 3 digits after decimal
+ * @TODO user input for vat MUST be limited to 3 digits after decimal
+ * @TODO allow user to enter new company, even if there is no in the portfolio of current invoice
  */
 
 @Controller
@@ -60,7 +61,7 @@ public class UpdateController {
         model.addAttribute("invoice", invoice);
         model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());
 
-        return "update-attributes";
+        return "update/update-attributes";
     }
 
     /**
@@ -71,19 +72,23 @@ public class UpdateController {
     @PostMapping("/find/update/execute")
     @ResponseBody
     public void executeUpdate(@RequestBody UpdateInvoiceDTO dto){
+        //Get the invoice that the user wants to update
         Invoice invoice = invoiceService.getInvoiceById(dto.getInvoiceId());
-
         Portfolio portfolio = portfolioService.getRecord(Long.valueOf(dto.getPortfolio()));
-        Client client = portfolio.getClient();
-        CompanyLocation location = companyLocationService.getRecordAndSave(dto.getCompanyCountry());
-        ClientCompanyInfo tempCompany = clientCompanyInfoService.getRecord(dto.getCompanyId());
-        tempCompany.setClient(client);
-        tempCompany.setCompanyLocation(location);
-        ClientCompanyInfo company = clientCompanyInfoService
-                .detectChangesAndApply(dto,tempCompany);
-        //set updated (or not) company to portfolio
-        portfolio.setClientCompanyInfo(company);
 
+        //if company id is null, don't update anything about company
+        if( dto.getCompanyId() != null) {
+            //The company object before it was updated, to check for changes
+            ClientCompanyInfo tempCompany = clientCompanyInfoService.getRecord(dto.getCompanyId());
+            //If location does not exist in database, then save it
+            CompanyLocation location = companyLocationService.getRecordAndSave(dto.getCompanyCountry());
+            tempCompany.setClient(portfolio.getClient());
+            tempCompany.setCompanyLocation(location);
+            ClientCompanyInfo company = clientCompanyInfoService
+                    .detectChangesAndApply(dto,tempCompany);
+            //set updated (or not) company to portfolio
+            portfolio.setClientCompanyInfo(company);
+        }
         Vat vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
         ServiceProvided serviceProvided = serviceProvidedService.getRecord(Long.valueOf(dto.getServiceProvided()));
         BankAccount bankAccount = bankAccountService.getRecord(Long.valueOf(dto.getBankAccount()));

@@ -4,32 +4,28 @@
     <meta charset="UTF-8">
     <title>Invoice Management</title>
 </head>
-<!--TODO ADD CSS ASAP TO ALL .HTML FILES-->
 <body>
+<form>
     <div>
         <!--Create-->
-        <form action="/select/create">
-            <input type="submit" value="Issue an Invoice"/>
-        </form>
+            <input type="submit" value="Issue an Invoice" formaction="/select/create"/> <br><br>
 
         <!--Read-->
-        <form action="/select/read">
             <input type="hidden" name="action" value="read"/>
-            <input type="submit" value="Find an Invoice"/>
-        </form>
+            <input type="submit" value="Find an Invoice" formaction="/select/read"/> <br><br>
 
         <!--Update-->
-        <form action="/select/update" >
             <input type="hidden" name="action" value="udpate"/>
-            <input type="submit" value="Update an Invoice"/>
-        </form>
+            <input type="submit" value="Update an Invoice" formaction="/select/update" /> <br><br>
 
         <!--Delete-->
-        <form action="/select/delete">
             <input type="hidden" name="action" value="delete"/>
-            <input type="submit" value="Delete an Invoice"/>
-        </form>
-    </div>
+            <input type="submit" value="Delete an Invoice" formaction="/select/delete"/> <br><br>
 
+        <!--Pdf-->
+            <input type="hidden" name="action" value="pdf"/>
+            <input type="submit" value="Convert an invoice to PDF" formaction="/select/pdf"/>
+    </div>
+</form>
 </body>
 </html>

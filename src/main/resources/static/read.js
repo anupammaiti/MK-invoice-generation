@@ -44,10 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
             id: document.getElementById('selectedInvoice').value
         };
 
-        postData('/find/read', data).then(() =>
-        {
-            //window.location = "read/read-invoice";
-        });
+        postData('/find/read', data);
         this.disabled = false;
     });
 });

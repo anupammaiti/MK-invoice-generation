@@ -18,13 +18,55 @@ const postData = (url = ``, data = {}) => {
 };
 
 /**
- * Will send value of objects back as json.
- * Each post request, will send the data to populate all object instances of
- * the required entities.
+ * Will send object holding values needed for an invoice back, as JSON.
+ * for validation library documentation, see https://jqueryvalidation.org/documentation/
  */
 document.addEventListener('DOMContentLoaded', function () {
+
+    jQuery.validator.addMethod("characterRange", function(value, element, options) {
+        let min = options[1];
+        let max = options[2];
+        return this.optional(element) || (value.length >= min && value.length <= max);
+    }, "* Minimum length is {1} and maximum is {2}");
+
+    jQuery.validator.addMethod("charRangeVat", function(value, element, options) {
+        let min = options[1];
+        let max = options[2];
+
+        return this.optional(element) || (value.length >= min && value.length <= max || value.length < 1);
+    }, "* Minimum length is {1} and maximum is {2}. Leave empty to ignore");
+
+    jQuery.validator.addMethod("checkDecimalPoint", function(value, element, options) {
+        let userInput = options[1];
+    });
+
+    /* example:
+    jQuery.validator.addMethod("myRule", $.validator.methods.required, "BLLLLLLLLLLLLLLLLL");
+    * usage:
+    rules:{ #element: {myRule:true}}
+    */
+
     document.getElementById('submitButton').addEventListener('click', function () {
         this.disabled = true;
+        let form = $("#myForm");
+        let manualVatRate = $('#manualVatRate');
+        let vatRate = $('#vat');
+
+        $(form).validate({
+            rules : {
+                invoiceNumber : {characterRange : [true, 5, 20] },
+                manualVatRate : {charRangeVat : [true, 3, 5]}
+            }
+        });
+        if(manualVatRate.val()==='') {
+            manualVatRate.rules('remove', 'required');
+            vatRate.rules('add', {required: true});
+        }
+        else if(manualVatRate.val()!=='') {
+            vatRate.rules('remove', 'required');
+            manualVatRate.rules('add', {required: true});
+        }
+
         let data = {
             invoiceType: document.getElementById('invoiceType').value,
             invoiceDate: new Date(document.getElementById('invoiceDate').value),
@@ -36,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
             year: parseInt(document.getElementById('year').value),
             portfolio: parseInt(document.getElementById('portfolio').value),
             vatApplicable: document.getElementById('vatApplicable').value,
-            vat: parseInt(document.getElementById('vat').value),
+            vatRate: manualVatRate === '' ? document.getElementById('vat').value : manualVatRate,
             serviceProvided: parseInt(document.getElementById('serviceProvided').value),
             bankAccount: parseInt(document.getElementById('bankAccount').value),
             fromCurrency: parseInt(document.getElementById('fromCurrency').value),
@@ -44,15 +86,13 @@ document.addEventListener('DOMContentLoaded', function () {
             baseCharge: parseFloat(document.getElementById('baseCharge').value)
         };
 
+        //If form is valid, send post http request
+        if(form.valid()){
+            form.submit();
+            postData('/generate-invoice', data);
+        }
 
-        /*
-        Sending the first post request to /portfolio controller
-        where a binary semaphore will ensure atomic access while
-        invoice is inserted
-        */
-        postData('/generate-invoice', data).then(() => {
-            window.location = "/success/created";
-            this.disabled = false;
-        })
+        console.log('Form is valid: '+form.valid());
+        this.disabled = false;
     })
 });

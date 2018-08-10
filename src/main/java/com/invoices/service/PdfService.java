@@ -20,11 +20,12 @@ import com.itextpdf.layout.Document;
 import com.itextpdf.layout.element.*;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * @author psoutzis
@@ -61,35 +62,94 @@ public class PdfService {
     }
 
     /**
+     * Method will create a File(), from the file-path it takes as input. It will write the bytes of the file to
+     * the output stream, so tha the user is prompted to download the file if he/she wishes to. The headers are
+     * initialized by the method, so the browser will expect a Pdf file.
+     * After the file is written to the http request's output stream, it will be deleted from the server.
+     * @param response Is the object where the servlet can store data it will send back
+     * @param filepath The path to the file to send with the http response
+     * @param storeOnServer Indicates if the file should be deleted after it is sent, or stored on server.
+     * Set to 'True' to keep on server and 'False' to delete.
+     */
+    public void sendBytesToBrowser(HttpServletResponse response, String filepath, boolean storeOnServer){
+        try {
+            //initialize file, http headers, content type, so that browser
+            //understands that it's receiving a pdf document
+            File file = new File(filepath);
+            response.setContentType("application/pdf");
+            response.setHeader("Content-disposition","attachment;filename=" + file.getName());
+            response.setHeader("Content-Length",String.valueOf(file.length()));
+
+            //Reads from file directly
+            FileInputStream fileInputStream = new FileInputStream(file);
+            DataOutputStream dataOutputStream = new DataOutputStream(response.getOutputStream());
+
+            //Set buffer capacity, so there is preferably only 1 loop when writing to output stream
+            int bufferCapacity;
+            if(file.length() > Integer.MAX_VALUE) bufferCapacity = Integer.MAX_VALUE;
+            else if(file.length() < Integer.MIN_VALUE) bufferCapacity = Integer.MIN_VALUE;
+            else bufferCapacity = (int)file.length();
+
+            byte[] buffer = new byte[bufferCapacity];
+            int len = 0;
+            while ((len = fileInputStream.read(buffer)) >= 0)
+                //Send to output stream, so user can receive with next http response
+                dataOutputStream.write(buffer, 0, len);
+            fileInputStream.close();
+            if(!storeOnServer)
+                deleteFile(file);
+        }
+        catch (IOException ioe){
+            ioe.printStackTrace();
+        }
+    }
+
+    /**
+     * Method uses java.nio.* library to delete a file (Files.delete(Path p)), purely for debugging purposes.
+     * One big difference of 'boolean File.delete()' and currently used 'void Files.delete(Path p)', is that
+     * when the latter fails, it will print a detailed error message instead of just true or false.
+     * @param file The file to delete from the system.
+     */
+    private void deleteFile(File file){
+        try{
+            Path thisFile = Paths.get(file.getAbsolutePath());
+            Files.delete(thisFile);
+        }
+        catch (IOException ioe){
+
+            System.out.println("Deleting file "+file.getName()+" failed because:\n"+ioe.getMessage());
+        }
+
+    }
+
+    /**
      * @param parentPath The parent directory of the PDF.
-     * @param documentNumber The unique number that will be used to generate this pdf's name.
+     * @param name The unique number that will be used to generate this pdf's name.
      * @return The path to this document.
      */
-    public String generatePdfPath(String parentPath, String documentNumber){
-        documentNumber = documentNumber.trim();
+    public String generatePdfPath(String parentPath, String name){
+        name = name.trim();
         parentPath = !parentPath.endsWith("/") ? parentPath+"/" : parentPath;
 
-        String path = parentPath + "invoice_" + documentNumber + ".pdf";
+        String path = parentPath + "invoice_" + name + ".pdf";
 
         return path;
     }
 
     /**
-     * Method will replace all whitespace or leading trail from customName with the '_' sign
+     * Method will replace all whitespace or leading trail from name with the '_' sign
      * @param parentPath The parent directory of the file.
-     * @param customName The name that the file will receive.
+     * @param name The name that the file will receive.
      * @param extension The file extension
      * @return The full path to this file
      */
-    public String generateCustomPath(String parentPath, String customName, String extension){
-        customName = customName.replaceAll(" ","_" );
+    public String generateCustomPdfPath(String parentPath, String name, String extension){
+        name = name.replaceAll(" ","_" );
         extension = extension.toLowerCase();
         extension = !extension.startsWith(".") ? "."+extension : extension;
         parentPath = !parentPath.endsWith("/") ? parentPath+"/" : parentPath;
 
-        String path = parentPath + customName + extension;
-
-        return path;
+        return parentPath + name + extension;
     }
 
     /**
@@ -100,7 +160,7 @@ public class PdfService {
      * @return the finalized object of type Document, which is the pdf file that was created at
      * the beginning of the method.
      */
-    public Document createPdf(Invoice invoice, String filename) {
+    public void createPdf(Invoice invoice, String filename) {
         Document document = null;
         try
         {
@@ -119,7 +179,6 @@ public class PdfService {
             System.out.println(ioe.getMessage());
             ioe.printStackTrace();
         }
-        return document;
     }
 
     /**

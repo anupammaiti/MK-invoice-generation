@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Generate PDF for Invoice</title>
+</head>
+
+<body>
+<form method="post" action="/generate-pdf">
+    <div th:replace="fragments/find-invoice :: body">Selection of an invoice</div>
+
+    <input type="submit" value="Convert"/>
+</form>
+<form action="/">
+    <input type="submit" value="Home"/>
+</form>
+
+</body>
+</html>

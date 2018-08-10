@@ -4,9 +4,11 @@
 
 <div th:fragment="body">
     <div>
-        <h2>SELECT AN INVOICE TO <span th:text="${#strings.toUpperCase(action)}"></span></h2>
+        <h2>SELECT AN INVOICE TO <span
+                th:text="${action} != 'pdf' ? ${#strings.toUpperCase(action)}  : 'CONVERT TO PDF'"></span></h2>
     </div>
-    <p>Select an Invoice to <span th:text="${action}"></span>:
+    <p>Select an Invoice to
+        <span th:text="${action} != 'pdf' ? ${action} : 'convert to pdf'"></span>:
         <select name="id" id="selectedInvoice">
             <option value=""> -- </option>
             <option th:each="invoice : ${invoices}"

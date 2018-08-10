@@ -66,7 +66,11 @@ public class CreateController {
         Portfolio portfolio = portfolioService.getRecord(invoiceDTO.getPortfolio());
         BankAccount bankAccount = bankAccountService.getRecord(invoiceDTO.getBankAccount());
         ServiceProvided service = serviceProvidedService.getRecord(invoiceDTO.getServiceProvided());
-        Vat vat = vatService.determineVat(vatApplicable, invoiceDTO.getVat());
+        Vat vat;
+        if(vatService.isVatApplicable(vatApplicable))
+            vat = vatService.getRecordAndSaveIfNotExists(invoiceDTO.getVatRate());
+        else
+            vat = vatService.getRecordWithRateOfZero();
 
         Currency fromCurrency = currencyService.getRecord(invoiceDTO.getFromCurrency());
         Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());

@@ -144,11 +144,16 @@ function setCheckboxFunctionality(checkboxes=[]){
  * Id of element is retrieved by removing the string 'Box' from the Id of current checkbox.
  * IF user checks box, they can edit value of corresponding element. If they uncheck the box,
  * element will be assigned its initial value.
+ *
+ * @see <a href="https://github.com/soutzis/MK-invoice-generation/blob/cbf6b3f12d86fa885ba5b8dd972fe0f49c0c1a1d/src/main/resources/static/update.js">
+ *     repository/update.js</a> for the version of update.js, where it used openexchangerate to automatically update rates.
  */
-
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.getElementsByName('editBox');
+    const defaultFromCurrency = document.getElementById('fromCurrency').value;
+    const defaultToCurrency = document.getElementById('toCurrency').value;
     const defaultExchangeRate = document.getElementById('exchangeRate').value;
+    const companyId = document.getElementById('companyId').value;
 
     setCheckboxFunctionality(checkboxes);
 
@@ -159,22 +164,25 @@ document.addEventListener('DOMContentLoaded', function () {
         const groupValues = document.getElementsByName('groupValue');
         const manualValues = document.getElementsByName('manualValue');
 
-        //validation
+        /*validation
         if(!$('#custodyCharge').val()){
             alert('empty field');
             $('#custodyCharge').focus();
             return;
-        }
+        }*/
+
         myData = setValuesToObj(newValues,myData,document);
         myData = setValuesToObj(groupValues,myData,document);
         myData = setManualValuesToObj(manualValues,myData,document, manualInputKeyword);
-        if (myData.exchangeRate === defaultExchangeRate)
+
+        //if user changed a currency, but left exchange rate as-is, then send null to calculate automatically
+        if (myData.exchangeRate === defaultExchangeRate &&
+            (myData.fromCurrency !== defaultFromCurrency || myData.toCurrency !== defaultToCurrency))
             myData.exchangeRate = null;
 
         //Always get hidden ids of invoice and company
         myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
-        myData.companyId = parseInt(document.getElementById('companyId').value);
-
+        myData.companyId = companyId === '' ? null : parseInt(companyId);
         console.log(myData);
 
         postData('/find/update/execute', myData).then(() =>
