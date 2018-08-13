@@ -1,3 +1,10 @@
+/*
+ * @see "https://github.com/soutzis/MK-invoice-generation
+ * /blob/cbf6b3f12d86fa885ba5b8dd972fe0f49c0c1a1d/src/main/resources/static/update.js"
+ * repository/update.js</a> for the version of update.js, where it used openexchangerate to
+ * automatically update exchange rate on client-side.
+ */
+
 const checkboxKeyword = 'Box';
 const manualInputKeyword = 'Manual';
 const textInputKeyword = 'Text';
@@ -76,12 +83,13 @@ function setCheckboxFunctionality(checkboxes=[]){
         {
             let divId = (checkboxes[i].id).replace(groupedValuesKeyword, divKeyword);
             let divElement = document.getElementById(divId);
-            let groupValues = divElement.children;
+            let groupValues = $('#'+divId +' :input').get();
+
             let groupElements = [];
             for(let k=0; k<groupValues.length; k++){
                 let obj = {
-                    id: (groupValues[k].firstChild).id,
-                    defaultValue: (groupValues[k].firstChild).value
+                    id: (groupValues[k]).id,
+                    defaultValue: (groupValues[k]).value
                 };
                 groupElements.push(obj);
             }
@@ -92,7 +100,7 @@ function setCheckboxFunctionality(checkboxes=[]){
                 else {
                     divElement.style.display = 'none';
                     groupElements.forEach((obj) =>{
-                        document.getElementById(obj.id).value = obj.defaultValue;
+                        (document.getElementById(obj.id)).value = obj.defaultValue;
                     });
                 }
             }
@@ -138,6 +146,7 @@ function setCheckboxFunctionality(checkboxes=[]){
     }
 }
 
+
 /**
  * The checkbox corresponding to an element should have the element's id as its own id, but with
  * the word box attached to it. e.g. element-> id="client" & checkbox-> id="clientBox"
@@ -145,8 +154,6 @@ function setCheckboxFunctionality(checkboxes=[]){
  * IF user checks box, they can edit value of corresponding element. If they uncheck the box,
  * element will be assigned its initial value.
  *
- * @see <a href="https://github.com/soutzis/MK-invoice-generation/blob/cbf6b3f12d86fa885ba5b8dd972fe0f49c0c1a1d/src/main/resources/static/update.js">
- *     repository/update.js</a> for the version of update.js, where it used openexchangerate to automatically update rates.
  */
 document.addEventListener('DOMContentLoaded', function () {
     const checkboxes = document.getElementsByName('editBox');
@@ -157,19 +164,154 @@ document.addEventListener('DOMContentLoaded', function () {
 
     setCheckboxFunctionality(checkboxes);
 
+    //Set a range of characters for the user input to have
+    jQuery.validator.addMethod("charRange", function(value, element, options) {
+        let min = options[1];
+        let max = options[2];
+
+        return this.optional(element) || (value.length >= min && value.length <= max);
+    }, "* Minimum length is {1} and maximum is {2}");
+
+    //Check for floating point number
+    jQuery.validator.addMethod("checkFloat", function(value, element) {
+
+        return this.optional(element) || (value.includes('.'));
+    }, "* This has to be a floating point number (Leave empty to ignore). <i>e.g. 0.20 or 150.0, etc..</i>");
+
+    //Set a limit for decimal points
+    jQuery.validator.addMethod("floatingLimit", function(value, element, options) {
+        let rightSide = value.split('.')[1];
+
+        return this.optional(element) || (rightSide.length <= options[1] || value.length < 1);
+    }, "* There can only be <u><b>{1}</b></u> digits after the decimal point");
+
+    //considering that user input will be used as float, se max limit of digits
+    jQuery.validator.addMethod("digitLimit", function(value, element) {
+        if(value.includes('.')){
+            return this.optional(element) || ( value.length <= 8);
+        }
+        else
+            return this.optional(element) || value.length <= 7;
+
+
+    }, "* Please limit the number of digits you enter to a maximum of '<u><b>7</b></u>'.");
+
+    //Disallow strange characters
+    jQuery.validator.addMethod("specialChars", function( value, element ) {
+        let regex = new RegExp("^[a-zA-Z0-9_#\-£$€]");
+
+        return this.optional(element) || regex.test(value);
+    },  "* Letters, numbers, dashes, underscores and ('#', '£', '$', '€') only");
+
+    //Disallow strange characters
+    jQuery.validator.addMethod("alphanumericOnly", function( value, element ) {
+        let regex = new RegExp("^[a-zA-Z0-9\-\.]");
+
+        return this.optional(element) || regex.test(value);
+    },  "* Enter only alphanumeric characters");
+
+    jQuery.validator.addMethod(
+        "customDateISO",
+        $.validator.methods.dateISO,
+        "Please enter a valid date. <i>(See allowed formats above)</i>.");
+
+    jQuery.validator.addMethod("checkYear", function( value, element, options ) {
+        let year = parseInt(value);
+
+        return this.optional(element) || year>=options[1] && year<=options[2] && value.length === 4;
+    },  "* Year must be in the format '<u>YYYY</u>' and can not be less than {1} or more than {2}");
+
+    jQuery.validator.addMethod("exchangeRateNote", $.validator.methods.required,
+        "* This field is required. See <b>Note</b> below.");
+
     //Script will set value of variable as null, if it is equal to an empty string
     document.getElementById('updateButton').addEventListener('click', function () {
         let myData = {};
-        const newValues = document.getElementsByName('newValue');
-        const groupValues = document.getElementsByName('groupValue');
-        const manualValues = document.getElementsByName('manualValue');
+        let form = $("#updateForm");
+        let invoiceNo = $("#invoiceNumber").attr("name");
+        let invoiceDate = $("#invoiceDate").attr("name");
+        let year = $("#year").attr("name");
+        let manualVatRateElement = $("#vatRateManual");
+        let vatRateElement = $("#vatRate");
+        let manualVatRate = manualVatRateElement.attr("name");
+        let exchangeRate = $("#exchangeRate").attr("name");
+        let baseCharge = $("#custodyCharge").attr("name");
+        let companyName = $("#companyName").attr("name");
+        let companyAddress = $("#companyAddress").attr("name");
+        let companyCity = $("#companyCity").attr("name");
+        let companyPostcode = $("#companyPostcode").attr("name");
+        let companyVatNumber = $("#companyVatNumber").attr("name");
 
-        /*validation
-        if(!$('#custodyCharge').val()){
-            alert('empty field');
-            $('#custodyCharge').focus();
-            return;
-        }*/
+        $(form).validate({
+            rules : {
+                [invoiceNo]:{
+                    specialChars: true,
+                    charRange: [true, 5, 20]
+                },
+                [invoiceDate]:{
+                    customDateISO: true
+                },
+                [year]:{
+                    number: true,
+                    checkYear: [true, 2007, (new Date()).getFullYear()]
+                },
+                [manualVatRate]:{
+                    number: true, //check if input is number
+                    checkFloat: true, //check if it is a floating point
+                    digitLimit: true,
+                    floatingLimit: [true, 3] //check if decimal points are not more than 3
+                },
+                [exchangeRate]:{
+                    exchangeRateNote: true,
+                    number: true,
+                    digitLimit: true
+                },
+                [baseCharge]:{
+                    number: true,
+                    digitLimit: true
+                },
+                [companyName]:{
+                    charRange: [true,1,50]
+                },
+                [companyAddress]:{
+                    alphanumericOnly: true,
+                    charRange: [true, 6, 99]
+                },
+                [companyCity]:{
+                    alphanumericOnly: true,
+                    charRange: [true,2,50]
+                },
+                [companyPostcode]:{
+                    alphanumericOnly: true,
+                    charRange: [true,4,20]
+                },
+                [companyVatNumber]:{
+                    alphanumericOnly: true,
+                    charRange: [true, 3, 20]
+                }
+            }
+        });
+
+        if(manualVatRateElement.val()!=='') {
+            vatRateElement.rules('remove', 'required');
+            manualVatRateElement.rules('add', {required: true});
+            console.log("manual vat-rate input required: TRUE");
+        }
+        if(manualVatRateElement.val()==='') {
+            manualVatRateElement.rules('remove', 'required');
+            vatRateElement.rules('add', {required: true});
+            console.log("manual vat-rate input required: FALSE");
+        }
+
+        let $newValueCollection = $(":input[name^='newValue']");
+        let $groupValueCollection = $(":input[name^='groupValue']");
+        let $manualValueCollection = $(":input[name^='manualValue']");
+
+
+        const newValues = $newValueCollection.get();
+        const groupValues = $groupValueCollection.get();
+        const manualValues = $manualValueCollection.get();
+
 
         myData = setValuesToObj(newValues,myData,document);
         myData = setValuesToObj(groupValues,myData,document);
@@ -183,11 +325,12 @@ document.addEventListener('DOMContentLoaded', function () {
         //Always get hidden ids of invoice and company
         myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
         myData.companyId = companyId === '' ? null : parseInt(companyId);
+        myData.vatRate = parseFloat(myData.vatRate); //convert to float before sending
         console.log(myData);
 
-        postData('/find/update/execute', myData).then(() =>
-        {
-            window.location = '/success/updated';
-        });
+        if(form.valid()){
+            form.submit();
+            postData('/find/update/execute', myData);
+        }
     });
 });

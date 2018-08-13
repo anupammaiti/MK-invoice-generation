@@ -9,7 +9,9 @@ import lombok.Getter;
  */
 @Getter
 public class UpdateInvoiceDTO {
-    /* foreign keys - unique id */
+
+
+    /* primary/foreign keys */
     private Long invoiceId;
     private Long companyId;
     private String portfolio;
@@ -17,7 +19,7 @@ public class UpdateInvoiceDTO {
     private String toCurrency;
     private String serviceProvided;
     private String bankAccount;
-    /* ************************* */
+    /* ******************** */
 
     /* date of invoice */
     private String invoiceDate;
@@ -42,9 +44,9 @@ public class UpdateInvoiceDTO {
     /* *********** */
 
     /* Other */
+    private Float vatRate;
     private String invoiceNumber;
     private String year;
-    private String vatRate;
     private String custodyCharge;
     private String exchangeRate;
     /* ***** */

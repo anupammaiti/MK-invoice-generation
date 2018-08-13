@@ -257,7 +257,8 @@ public class PdfService {
         float bottomPos = pageHeight/1.69230f;
         float elementWidth = pageWidth/4f;
         float leftGrowth = pageWidth/3.27272f;
-        float xRateBottom = pageHeight/2.18181f;
+        float vatDetailsBottom = pageHeight/2.18181f;
+        float xRateBottom = vatDetailsBottom-50;
 
         ListItem column1Item = new ListItem();
         ListItem column2Item = new ListItem();
@@ -334,6 +335,12 @@ public class PdfService {
         column3List.add(column3Item);
         column3List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
 
+        List vatDetails = defaultList();
+        vatDetails.add("Reverse Charge: "+invoice.getReverseCharge().toString());
+        vatDetails.add("VAT Exempt: "+invoice.getVatExempt().toString());
+        vatDetails.add(linebreak);
+        vatDetails.setFixedPosition(leftPos,vatDetailsBottom ,null );
+
         xRateItem.add(xRateTitleParagraph);
         xRateItem.add(xRateBodyParagraph);
         xRateList.add(xRateItem);
@@ -350,6 +357,7 @@ public class PdfService {
         document.add(column1List);
         document.add(column2List);
         document.add(column3List);
+        document.add(vatDetails);
         document.add(xRateList);
         document.add(logoParagraph);
         document.add(mgroupParagraph);

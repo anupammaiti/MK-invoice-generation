@@ -23,24 +23,57 @@ const postData = (url = ``, data = {}) => {
  */
 document.addEventListener('DOMContentLoaded', function () {
 
-    jQuery.validator.addMethod("characterRange", function(value, element, options) {
+    //Set a range of characters for the user input to have
+    jQuery.validator.addMethod("charRange", function(value, element, options) {
         let min = options[1];
         let max = options[2];
+
         return this.optional(element) || (value.length >= min && value.length <= max);
     }, "* Minimum length is {1} and maximum is {2}");
 
-    jQuery.validator.addMethod("charRangeVat", function(value, element, options) {
-        let min = options[1];
-        let max = options[2];
+    //Check for floating point number
+    jQuery.validator.addMethod("checkFloat", function(value, element) {
 
-        return this.optional(element) || (value.length >= min && value.length <= max || value.length < 1);
-    }, "* Minimum length is {1} and maximum is {2}. Leave empty to ignore");
+        return this.optional(element) || (value.includes('.'));
+    }, "* This has to be a floating point number (Leave empty to ignore). <i>e.g. 0.20 or 150.0, etc..</i>");
 
-    jQuery.validator.addMethod("checkDecimalPoint", function(value, element, options) {
-        let userInput = options[1];
-    });
+    //Set a limit for decimal points
+    jQuery.validator.addMethod("floatingLimit", function(value, element, options) {
+        let rightSide = value.split('.')[1];
 
-    /* example:
+        return this.optional(element) || (rightSide.length <= options[1] || value.length < 1);
+    }, "* There can only be <u><b>{1}</b></u> digits after the decimal point");
+
+    //considering that user input will be used as float, se max limit of digits
+    jQuery.validator.addMethod("digitLimit", function(value, element) {
+        if(value.includes('.')){
+            return this.optional(element) || ( value.length <= 8);
+        }
+        else
+            return this.optional(element) || value.length <= 7;
+
+
+    }, "* Please limit the number of digits you enter to a maximum of '<u><b>7</b></u>'.");
+
+    //Disallow strange characters
+    jQuery.validator.addMethod("specialChars", function( value, element ) {
+        let regex = new RegExp("^[a-zA-Z0-9_#\-£$€]");
+
+        return this.optional(element) || regex.test(value);
+    },  "* Letters, numbers, dashes, underscores and ('#', '£', '$', '€') only");
+
+    jQuery.validator.addMethod("checkYear", function( value, element, options ) {
+        let year = parseInt(value);
+
+        return this.optional(element) || year>=options[1] && year<=options[2] && value.length === 4;
+    },  "* Year must be in the format '<u>YYYY</u>' and can not be less than {1} or more than {2}");
+
+    jQuery.validator.addMethod(
+        "customDateISO",
+        $.validator.methods.dateISO,
+        "Please enter a valid date. <i>(Allowed formats -> <u>yyyy/mm/dd</u> or <u>yyyy-mm-dd</u>)</i>");
+
+    /* example for changing messages of pre-existing methods:
     jQuery.validator.addMethod("myRule", $.validator.methods.required, "BLLLLLLLLLLLLLLLLL");
     * usage:
     rules:{ #element: {myRule:true}}
@@ -54,17 +87,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
         $(form).validate({
             rules : {
-                invoiceNumber : {characterRange : [true, 5, 20] },
-                manualVatRate : {charRangeVat : [true, 3, 5]}
+                invoiceDate: {
+                    customDateISO: true
+                },
+                invoiceNumber: {
+                    specialChars: true,
+                    charRange : [true, 5, 20] //min and max range of input
+                },
+                year: {
+                    number: true,
+                    checkYear: [true, 2007, (new Date()).getFullYear()]
+                },
+                manualVatRate: {
+                    number: true, //check if input is number
+                    checkFloat: true, //check if it is a floating point
+                    digitLimit:true, //keep in floating point memory boundaries
+                    floatingLimit: [true, 3] //check if decimal points are not more than 3
+                },
+                baseCharge: {
+                    number: true,
+                    digitLimit: true
+                }
             }
         });
+
+
         if(manualVatRate.val()==='') {
             manualVatRate.rules('remove', 'required');
             vatRate.rules('add', {required: true});
+            //console.log("manual vat-rate input required: FALSE");
         }
-        else if(manualVatRate.val()!=='') {
+        if(manualVatRate.val()!=='') {
             vatRate.rules('remove', 'required');
             manualVatRate.rules('add', {required: true});
+            //console.log("manual vat-rate input required: TRUE");
         }
 
         let data = {
@@ -78,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
             year: parseInt(document.getElementById('year').value),
             portfolio: parseInt(document.getElementById('portfolio').value),
             vatApplicable: document.getElementById('vatApplicable').value,
-            vatRate: manualVatRate === '' ? document.getElementById('vat').value : manualVatRate,
+            vatRate: manualVatRate==='' ?parseFloat(document.getElementById('vat').value) :parseFloat(manualVatRate),
             serviceProvided: parseInt(document.getElementById('serviceProvided').value),
             bankAccount: parseInt(document.getElementById('bankAccount').value),
             fromCurrency: parseInt(document.getElementById('fromCurrency').value),
@@ -92,7 +148,6 @@ document.addEventListener('DOMContentLoaded', function () {
             postData('/generate-invoice', data);
         }
 
-        console.log('Form is valid: '+form.valid());
         this.disabled = false;
     })
 });

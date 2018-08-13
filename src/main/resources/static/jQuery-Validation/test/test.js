@@ -941,8 +941,8 @@ QUnit.test( "findByName()", function( assert ) {
 
 QUnit.test( "focusInvalid()", function( assert ) {
 
-	// TODO when using custom focusin, this is triggered just once
-	// TODO when using 1.4 focusin, triggered twice; fix once not testing against 1.3 anymore
+	// TODO_later when using custom focusin, this is triggered just once
+	// TODO_later when using 1.4 focusin, triggered twice; fix once not testing against 1.3 anymore
 	// assert.expect( 1 );
 	var inputs = $( "#testForm1 input" ).focus( function() {
 			assert.equal( this, inputs[ 0 ], "focused first element" );

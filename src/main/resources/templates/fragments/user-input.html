@@ -4,7 +4,7 @@
 
 <!--FRAGMENTS THAT WILL PRODUCE A DROP DOWN FROM ALL RECORDS IN DATABASE-->
 <div th:fragment="portfolio">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="element : ${portfolios}"
                 th:selected="${element.getId()} == ${invoice.getPortfolio().getId()}"
                 th:value="${element.getId()}"
@@ -14,7 +14,7 @@
 </div>
 
 <div th:fragment="serviceProvided">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="service : ${services}"
                 th:selected="${service.getServiceName()} == ${invoice.getServiceProvided().getServiceName()}"
                 th:value="${service.getId()}"
@@ -24,7 +24,7 @@
 </div>
 
 <div th:fragment="fromCurrency">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="ccy : *{currencies}"
                 th:selected="${invoice.getCurrencyRates().getFromCurrency().getCurrencyId()} == ${ccy.getCurrencyId()}"
                 th:value="${ccy.getCurrencyId()}"
@@ -34,7 +34,7 @@
 </div>
 
 <div th:fragment="toCurrency">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="ccy : *{currencies}"
                 th:selected="${invoice.getCurrencyRates().getToCurrency().getCurrencyId()} == ${ccy.getCurrencyId()}"
                 th:value="${ccy.getCurrencyId()}"
@@ -44,7 +44,7 @@
 </div>
 
 <div th:fragment="bankAccount">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="account : ${bankAccounts}"
                 th:selected="${invoice.getBankAccount().getId()} == ${account.getId()}"
                 th:value="${account.getId()}"
@@ -56,7 +56,7 @@
 
 <!--ENUM-FRAGMENTS -> THAT WILL PRODUCE A DROPDOWN MENU BASED ON ENUMS-->
 <div th:fragment="invoiceType">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="invoiceType : ${invoiceTypeValues}"
                 th:selected="${invoiceType} == ${invoice.getInvoiceType()}"
                 th:value="${invoiceType}"
@@ -66,7 +66,7 @@
 </div>
 
 <div th:fragment="frequency">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="frequency : ${frequencyValues}"
                 th:selected="${frequency} == ${invoice.getFrequency()}"
                 th:value="${frequency}"
@@ -76,7 +76,7 @@
 </div>
 
 <div th:fragment="period">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="period : ${periodValues}"
                 th:selected="${period} == ${invoice.getPeriod()}"
                 th:value="${period}"
@@ -87,7 +87,7 @@
 
 <!--selected example: invoice.getVatExempt() It is the value from current invoice-->
 <div th:fragment="binaryChoice">
-    <select th:id="${name}" name="newValue">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="option : ${isApplicableValues}"
                 th:selected="${option} == ${selected}"
                 th:value="${option}"
@@ -99,34 +99,37 @@
 
 <!--MANUAL TEXT INPUT AND CUSTOMISED FRAGMENTS-->
 <div th:fragment="simpleTextInput">
-    <input type="text" th:id="${name}" name="newValue" th:value="${value}">
+    <input type="text" th:id="${name}" th:name="'newValue'+${name}" required th:value="${value}">
 </div>
 
 <div th:fragment="exchangeRate">
     <span><i>(OPTIONAL)</i></span><br>
-    <input type="text" th:id="${name}" name="newValue" th:value="${invoice.getCurrencyRates().getExchangeRate()}">
-    <i><span>(<b><u>NOTE</u></b>: If you changed any currency, you are not obliged to enter the rate manually,
-        it will be automatically generated.)</span></i>&emsp;
+    <input type="text" th:id="${name}" th:name="'newValue'+${name}" th:value="${invoice.getCurrencyRates().getExchangeRate()}">
+    <br>
+    <i><span>(<b><u>NOTE</u></b>: If you changed any currency, you are not obliged to enter the rate manually.
+        Just untick the box and it will be automatically generated.)</span></i>&emsp;
 </div>
 
 <div th:fragment="date">
-    <input type="text" th:id="${name}" name="newValue" th:value="${invoice.getInvoiceDate()}">
-    <i><span> Enter new date in <u>this</u> format: <b>"yyyy/mm/dd"</b></span></i>
+    <i><span>Enter new date in <u>one</u> of the formats: <b>'yyyy/mm/dd'</b> or <b>'yyyy-mm-dd'</b></span></i>
+    <br>
+    <input type="text" th:id="${name}" th:name="'newValue'+${name}" required th:value="${invoice.getInvoiceDate()}">
 </div>
 
 <div th:fragment="vatRate">
-    <select th:id="${name}" name="newValue">
+    <br>
+    <span>Choose VAT rate from dropdown list</span><br>
+    <select th:id="${name}" th:name="'newValue'+${name}">
         <option th:each="option : ${vatRecords}"
                 th:selected="${option.getVatId()} == ${invoice.getVat().getVatId()}"
                 th:value="${option.getVatRate()}"
                 th:text="${option.getVatRate()}">
         </option>
     </select>
-    <span> Choose VAT rate from dropdown list</span><br><br>
-    <input type="text" th:id="${name+'Manual'}" name="manualValue" value="">
-    <span> Or enter rate manually, like: <i>"<u>0.19</u>"</i> or <i>"<u>0.1805</u>"</i></span><br>
-    <span><i>(<u>Note</u>: If you enter rate manually, it will override your selection from the dropdown list).</i></span>
-
+    <br><br>
+    <span>Or enter rate manually, like: <i>"<u>0.19</u>"</i> or <i>"<u>0.188</u>"</i></span><br>
+    <span><i>(<u>Note</u>: If you enter rate manually, it will override your selection from the dropdown list).</i></span><br>
+    <input type="text" th:id="${name+'Manual'}" th:name="'manualValue'+${name}" value="">
 </div>
 <!-----------------------------end-of-manual-input-fragments-------------------------------------------->
 

@@ -19,16 +19,17 @@ public class VatService {
     @Autowired private VatRepo vatRepo;
 
     /**
-     * This method is used when updating an invoice.
-     * @param rate The value of the rate to insert to DB. This will be null if user does not enter rate manually
-     * @return The appropriate Vat record to update the invoice with
+     * This method is used when updating or creating an invoice. It checks if a record with the vat rate passed as an
+     * argument exists in the database and returns it. If it doesn't it inserts a new record for that rate.
+     * @param rate The value of the rate to get from db (or insert as a new record for it, if it doesn't exist).
+     * @return The Vat record containing the rate requested.
      */
-    public Vat getRecordAndSaveIfNotExists(String rate){
-        Vat vat = getRecordWithRateOf(Float.valueOf(rate));
+    public Vat getRecordAndSaveIfNotExists(Float rate){
+        Vat vat = getRecordWithRateOf(rate);
 
         return (vat != null
                 ? vat
-                : save( new Vat(null, IsApplicable.YES, Float.valueOf(rate) )));
+                : save( new Vat(null, IsApplicable.YES, rate )));
     }
 
 

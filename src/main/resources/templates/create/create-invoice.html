@@ -7,6 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/create.js" type="application/javascript"></script>
     <script src="/jQuery-Validation/dist/jquery.validate.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/validation-styling.css">
 </head>
 <body>
 <h1>Invoice Form</h1>
@@ -15,7 +16,7 @@
     <!--Using thymeleaf to iterate over the array -->
     <!--TYPE OF INVOICE-->
     <div>
-    <p>Invoice Type:
+    <p><b>Invoice Type</b>:
         <select id="invoiceType" name="invoiceType" required>
             <option value=''> -- </option>
             <option th:each="invoiceType : ${invoiceTypeValues}"
@@ -27,7 +28,7 @@
     </div>
     <!--CODE OF PORTFOLIO-->
     <div>
-        <p>Portfolio:
+        <p><b>Portfolio</b>:
             <select id="portfolio" name="portfolio" required>
                 <option value=""> -- </option>
                 <option th:each="code : ${portfolios}"
@@ -38,12 +39,13 @@
         </p>
     </div>
     <!--DATE OF INVOICE ISSUE-->
-    <p>Invoice Date: <input type="text" id="invoiceDate" name="invoiceDate" required></p>
+    <span><i>Enter new date in <u>one</u> of the formats: <b>'yyyy/mm/dd'</b> or <b>'yyyy-mm-dd'</b></i><br>
+    <b>Invoice Date</b>: <input type="text" id="invoiceDate" name="invoiceDate" required></span>
     <!--THE NUMBER OF INVOICE-->
-    <p>Invoice Number: <input type="text" id="invoiceNumber" name="invoiceNumber" required/></p>
+    <p><b>Invoice Number</b>: <input type="text" id="invoiceNumber" name="invoiceNumber" required/></p>
     <!--VAT EXEMPT-->
     <div>
-        <p>VAT Exempt:
+        <p><b>VAT Exempt</b>:
             <select id="vatExempt" name="vatExempt" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"
@@ -55,7 +57,7 @@
     </div>
     <!--REVERSE CHARGE-->
     <div>
-        <p>Reverse Charge:
+        <p><b>Reverse Charge</b>:
             <select id="reverseCharge" name="reverseCharge" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"
@@ -67,7 +69,7 @@
     </div>
     <!--SERVICE CHARGED-->
     <div>
-        <p>Service to charge for:
+        <p><b>Service to charge for</b>:
             <select id="serviceProvided" name="serviceProvided" required>
                 <option value=""> -- </option>
                 <option th:each="service : ${services}"
@@ -79,7 +81,7 @@
     </div>
     <!--FREQUENCY-->
     <div>
-        <p>Frequency:
+        <p><b>Frequency</b>:
             <select id="frequency" name="frequency" required>
                 <option value=""> -- </option>
                 <option th:each="freq : ${frequencyValues}"
@@ -91,7 +93,7 @@
     </div>
     <!--PERIOD-->
     <div>
-        <p>Period:
+        <p><b>Period</b>:
             <select id="period" name="period" required>
                 <option value=""> -- </option>
                 <option th:each="period : ${periodValues}"
@@ -102,10 +104,10 @@
         </p>
     </div>
     <!--YEAR-->
-    <p>Year: <input type="text" id="year" name="year" required/></p>
+    <p><b>Year</b>: <input type="text" id="year" name="year" required/></p>
     <!--VAT APPLICABLE TO INVOICE-->
     <div>
-        <p>VAT Applicable:
+        <p><b>VAT Applicable</b>:
             <select id="vatApplicable" name="vatApplicable" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"
@@ -123,7 +125,6 @@
                 <option th:each="rate : ${vatRecords}"
                         th:value="${rate.getVatRate()}"
                         th:text="${rate.getVatRate()}">
-                    <!--<select type="hidden" id="vatRate" id="vatRate" th:value="${rate.getVatRate}"></select>-->
                 </option>
             </select>
         </span>
@@ -133,7 +134,7 @@
 
     <!--CURRENCY OF PORTFOLIO-->
     <div>
-        <p>Currency for invoice to be issued in:
+        <p><b>Currency for invoice to be issued in</b>:
             <select id="fromCurrency" name="fromCurrency" required>
                 <option value=""> -- </option>
                 <option th:each="ccy : ${currencies}"
@@ -143,13 +144,13 @@
             </select>
         </p>
     </div>
-    <!--CHARGE AMOUNT. VAT VALUE AND TOTAL SHOULD BE AUTO-GENERATED-->
-    <p>Amount to charge: <input type="text"  id="baseCharge" name="baseCharge" required/>
-        Enter the fee amount without VAT</p>
+    <!--CHARGE AMOUNT. VAT VALUE AND TOTAL SHOULD IS AUTO-GENERATED-->
+    <span><b>Amount to charge</b><i> (Fee amount without VAT)</i>:
+        <input type="text"  id="baseCharge" name="baseCharge" required/></span>
 
     <!--EXCHANGE RATE-->
     <div>
-        <p>Currency to be converted to:
+        <p><b>Currency to be converted to</b>:
             <select id="toCurrency" name="toCurrency" required>
                 <option value=""> -- </option>
                 <option th:each="ccy : ${currencies}"
@@ -162,7 +163,7 @@
 
     <!--AVAILABLE BANK ACCOUNTS OF COMPANY-->
     <div>
-        <p>Bank Account to be paid:
+        <p><b>Bank Account to be paid</b>:
             <select id="bankAccount" name="bankAccount" required>
                 <option value=""> -- </option>
                 <option th:each="account : ${bankAccounts}"

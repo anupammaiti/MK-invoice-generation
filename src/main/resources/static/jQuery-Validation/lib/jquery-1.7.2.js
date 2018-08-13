@@ -3153,8 +3153,6 @@ jQuery.event = {
 
 		// Handle a global trigger
 		if ( !elem ) {
-
-			// TODO: Stop taunting the data cache; remove global events and always attach to document
 			cache = jQuery.cache;
 			for ( i in cache ) {
 				if ( cache[ i ].events && cache[ i ].events[ type ] ) {
@@ -4509,7 +4507,7 @@ var Expr = Sizzle.selectors = {
 				Sizzle.error( match[0] );
 			}
 
-			// TODO: Move to normal caching system
+			//todo_later: Move to normal caching system
 			match[0] = done++;
 
 			return match;

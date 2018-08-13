@@ -56,34 +56,38 @@ public class CreateController {
      * This method will listen for a post request and will receive all relevant attributes for the
      * creation of an invoice in JSON format.
      * The method will finally save the invoice to the database.
-     * @param invoiceDTO a Data Transfer Object (DTO), to hold all necessary information to create an invoice.
+     * @param dto a Data Transfer Object (DTO), to hold all necessary information to create an invoice.
      */
     @PostMapping(value = "/generate-invoice")
     @ResponseBody
-    public void generateInvoice(@RequestBody InvoiceDTO invoiceDTO) {
+    public void generateInvoice(@RequestBody InvoiceDTO dto) {
 
-        IsApplicable vatApplicable = IsApplicable.valueOf(invoiceDTO.getVatApplicable());
-        Portfolio portfolio = portfolioService.getRecord(invoiceDTO.getPortfolio());
-        BankAccount bankAccount = bankAccountService.getRecord(invoiceDTO.getBankAccount());
-        ServiceProvided service = serviceProvidedService.getRecord(invoiceDTO.getServiceProvided());
+        IsApplicable vatApplicable = IsApplicable.valueOf(dto.getVatApplicable());
+        IsApplicable vatExempt = IsApplicable.valueOf(dto.getVatExempt());
+        IsApplicable reverseCharge = IsApplicable.valueOf(dto.getReverseCharge());
+        Portfolio portfolio = portfolioService.getRecord(dto.getPortfolio());
+        BankAccount bankAccount = bankAccountService.getRecord(dto.getBankAccount());
+        ServiceProvided service = serviceProvidedService.getRecord(dto.getServiceProvided());
         Vat vat;
-        if(vatService.isVatApplicable(vatApplicable))
-            vat = vatService.getRecordAndSaveIfNotExists(invoiceDTO.getVatRate());
+        if(vatService.isVatApplicable(vatExempt) || vatService.isVatApplicable(reverseCharge))
+            vat = vatService.getRecordWithRateOfZero();
+        else if(vatService.isVatApplicable(vatApplicable))
+            vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
         else
             vat = vatService.getRecordWithRateOfZero();
 
-        Currency fromCurrency = currencyService.getRecord(invoiceDTO.getFromCurrency());
-        Currency toCurrency = currencyService.getRecord(invoiceDTO.getToCurrency());
+        Currency fromCurrency = currencyService.getRecord(dto.getFromCurrency());
+        Currency toCurrency = currencyService.getRecord(dto.getToCurrency());
         CurrencyRates currencyRates = currencyRatesService.generateExchangeRate(
                 fromCurrency, toCurrency,new CurrencyRates(), null);
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
-                invoiceDTO.getBaseCharge(), vat.getVatRate(),new CustodyCharge());
+                dto.getBaseCharge(), vat.getVatRate(),new CustodyCharge());
 
-        Invoice invoice = new Invoice(null, InvoiceType.valueOf(invoiceDTO.getInvoiceType()),
-                invoiceDTO.getInvoiceNumber(), InvoiceFrequency.valueOf(invoiceDTO.getFrequency()),
-                InvoicePeriod.valueOf(invoiceDTO.getPeriod()), invoiceDTO.getInvoiceDate(),
-                invoiceDTO.getYear(), IsApplicable.valueOf(invoiceDTO.getReverseCharge()),
-                IsApplicable.valueOf(invoiceDTO.getVatExempt()), service, bankAccount,
+        Invoice invoice = new Invoice(null, InvoiceType.valueOf(dto.getInvoiceType()),
+                dto.getInvoiceNumber(), InvoiceFrequency.valueOf(dto.getFrequency()),
+                InvoicePeriod.valueOf(dto.getPeriod()), dto.getInvoiceDate(),
+                dto.getYear(), IsApplicable.valueOf(dto.getReverseCharge()),
+                IsApplicable.valueOf(dto.getVatExempt()), service, bankAccount,
                 currencyRates, vat, portfolio, custodyCharge);
 
         invoiceService.save(invoice);

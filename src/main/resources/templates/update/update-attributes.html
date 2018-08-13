@@ -5,12 +5,12 @@
     <title>Update Invoice</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="/update.js" type="application/javascript"></script>
+    <script src="/jQuery-Validation/dist/jquery.validate.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/validation-styling.css">
     <!--<script src="http://openexchangerates.github.io/money.js/money.js" type="application/javascript"></script>-->
 </head>
 <body>
-<div>
-    <!--TODO a) Compare, in client-side, VAT rate input by user with DB and if exists, throw validation error -->
-    <!--TODO b) If user changes one of the currencies and doesn't input an exchange rate, generate automatically-->
+<form id="updateForm" action="/success/updated">
     <!--INVOICE ID-->
     <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
 
@@ -74,18 +74,24 @@
         <br>
         <div id="companyDiv" hidden>
             <!--Adding <label></label> around input will fix the warning-->
-            <p><input type="text" id="companyName" name="groupValue" th:value="${company.getName()}"> Name</p>
-            <p><input type="text" id="companyAddress" name="groupValue" th:value="${company.getAddress()}"> Address</p>
-            <p><input type="text" id="companyCity" name="groupValue" th:value="${company.getCity()}"> City</p>
-            <p><input type="text" id="companyPostcode" name="groupValue" th:value="${company.getPostcode()}"> Postal code</p>
-            <p><input type="text" id="companyVatNumber" name="groupValue" th:value="${company.getVatNumber()}"> VAT number</p>
-            <p><select id="companyCountry" name="groupValue">
+            <span><br>Name<br>
+                <input type="text" id="companyName" name="groupValueName" th:value="${company.getName()}" required><br></span>
+            <span>Address<br>
+                <input type="text" id="companyAddress" name="groupValueAddress" th:value="${company.getAddress()}" required><br></span>
+            <span>City<br>
+                <input type="text" id="companyCity" name="groupValueCity" th:value="${company.getCity()}" required><br></span>
+            <span>Postal Code<br>
+                <input type="text" id="companyPostcode" name="groupValuePostcode" th:value="${company.getPostcode()}" required><br></span>
+            <span>VAT Number<br>
+                <input type="text" id="companyVatNumber" name="groupValueVatNumber" th:value="${company.getVatNumber()}" required><br></span>
+            <span>Country<br>
+                <select id="companyCountry" name="groupValueCountry" required>
                 <option th:each="country : ${countries}"
                         th:selected="${country} == ${company.getCompanyLocation().getCountry()}"
                         th:value="${country}"
                         th:text="${country}">
                 </option>
-            </select> Country</p>
+            </select></span>
         </div>
     </div>
     <br>
@@ -218,10 +224,9 @@
 
     <br><br><br>
     <td><input type="button" value="Update" id="updateButton"></td>
-    <form action="/">
-        <input type="submit" value="Home"/>
-    </form>
-
-</div>
+</form>
+<form action="/">
+    <input type="submit" value="Home"/>
+</form>
 </body>
 </html>
