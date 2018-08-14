@@ -21,6 +21,11 @@ public class ReadController {
 
     @Autowired InvoiceService invoiceService;
 
+    /**
+     * @param invoiceIdString The primary key of the invoice to view (received as a String).
+     * @param model The Model component that will render all needed values to the view.
+     * @return The html file with the loaded information, to represent an Invoice-type object (invoice).
+     */
     @PostMapping(value = "/find/read")
     public String findInvoice(@RequestParam("id") String invoiceIdString, Model model){
         Long invoiceId = Long.valueOf(invoiceIdString);
@@ -35,12 +40,12 @@ public class ReadController {
                 .getCurrencySymbol(xRate.getToCurrency().getCurrencyCode());
         Float base = ExchangeRateProviderHandler
                 .convertToCurrency(charge.getChargeExcludingVat(),xRate.getExchangeRate());
-        Float vatValue = ExchangeRateProviderHandler
+        Float vatCharge = ExchangeRateProviderHandler
                 .convertToCurrency(charge.getVatCharge(),xRate.getExchangeRate());
-        Float target = ExchangeRateProviderHandler
+        Float total = ExchangeRateProviderHandler
                 .convertToCurrency(charge.getChargeIncludingVat(),xRate.getExchangeRate());
         //creating a new CustodyCharge object for converted currency
-        CustodyCharge convertedCharge = new CustodyCharge(null,base,vatValue,target);
+        CustodyCharge convertedCharge = new CustodyCharge(null,vatCharge,total,base);
 
         model.addAttribute("invoice", invoice);
         model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());

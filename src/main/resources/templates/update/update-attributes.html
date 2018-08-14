@@ -12,6 +12,7 @@
 <body>
 <form id="updateForm" action="/success/updated">
     <!--INVOICE ID-->
+    <input type="hidden" th:value="*{invoiceNumberList}" id="invoiceNumberList">
     <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
 
     <!--INVOICE NUMBER-->

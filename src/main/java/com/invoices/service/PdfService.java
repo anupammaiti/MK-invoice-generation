@@ -32,6 +32,7 @@ import java.nio.file.Paths;
  * This class is responsible for generating PDF files, based on an invoice.
  * To create a pdf document, you have to call createPdf method.
  */
+//TODO CYRILLIC CHARACTERS NOT SUPPORTED. FU BRUNO LOWAGIE. FU ITEXT
 @Service
 public class PdfService {
 
@@ -184,7 +185,7 @@ public class PdfService {
     /**
      * This method adds all the text and images to the document, while the document is open().
      * @param invoice The invoice to get information from
-     * @param document The document to add elements at (text, images, watermarks, etc..)
+     * @param document The document to add elements at ( i.e. text, images, watermarks, etc..)
      * @param pageSize An object of type PageSize, that holds dimensional information about the document's page(s).
      * @return The populated document, in human-readable format
      * @throws MalformedURLException thrown by Image-type objects
@@ -194,11 +195,15 @@ public class PdfService {
     {
         float pageHeight = pageSize.getHeight();
         float pageWidth = pageSize.getWidth();
+        document.setTopMargin(10);
+        document.setBottomMargin(5);
+        document.setRightMargin(5);
 
         ClientCompanyInfo company = invoice.getPortfolio().getClientCompanyInfo();
         CustodyCharge charges = invoice.getCustodyCharge();
         String currencyCodeFrom = invoice.getCurrencyRates().getFromCurrency().getCurrencyCode();
         String currencyCodeTo = invoice.getCurrencyRates().getToCurrency().getCurrencyCode();
+        System.out.println(currencyCodeTo);
         String currencySymbolFrom = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeFrom);
         String currencySymbolTo = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeTo);
         final String linebreak = "\n\n";
@@ -206,9 +211,11 @@ public class PdfService {
         final String MGROUP_LOGO = IMAGE_PARENT+"mgroup_logo.png";
 
         Image mkLogo = new Image(ImageDataFactory.create(MK_LOGO));
+        mkLogo.scaleToFit(365,240 );
+        mkLogo.setOpacity(0.20f);
+
         Image mgroupLogo = new Image(ImageDataFactory.create(MGROUP_LOGO));
-        mkLogo.scaleToFit(200,100 );
-        mgroupLogo.setAutoScale(true);
+        mgroupLogo.scaleToFit(250,150 );
 
         List numberAndDate = defaultList();
         String date = String.valueOf(invoice.getInvoiceDate());
@@ -258,7 +265,8 @@ public class PdfService {
         float elementWidth = pageWidth/4f;
         float leftGrowth = pageWidth/3.27272f;
         float vatDetailsBottom = pageHeight/2.18181f;
-        float xRateBottom = vatDetailsBottom-50;
+        float xRateBottom = vatDetailsBottom-30;
+        float bankDetailsBottom = vatDetailsBottom-293;
 
         ListItem column1Item = new ListItem();
         ListItem column2Item = new ListItem();
@@ -336,8 +344,16 @@ public class PdfService {
         column3List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
 
         List vatDetails = defaultList();
-        vatDetails.add("Reverse Charge: "+invoice.getReverseCharge().toString());
-        vatDetails.add("VAT Exempt: "+invoice.getVatExempt().toString());
+        Paragraph vatParagraph= new Paragraph(new Text("Reverse Charge").setBold().setUnderline())
+                .add(": "+invoice.getReverseCharge().toString());
+        ListItem reverseChargeItem = new ListItem();
+        reverseChargeItem.add(vatParagraph);
+        vatDetails.add(reverseChargeItem);
+        vatParagraph= new Paragraph(new Text("VAT Exempt").setBold().setUnderline())
+                .add(": "+invoice.getVatExempt().toString());
+        ListItem vatExemptItem = new ListItem();
+        vatExemptItem.add(vatParagraph);
+        vatDetails.add(vatExemptItem);
         vatDetails.add(linebreak);
         vatDetails.setFixedPosition(leftPos,vatDetailsBottom ,null );
 
@@ -346,10 +362,73 @@ public class PdfService {
         xRateList.add(xRateItem);
         xRateList.setFixedPosition(leftPos, xRateBottom, null);
 
+        List bankDetails = defaultList().setFontSize(12);
+        ListItem headerItem = new ListItem();
+        Paragraph headerParagraph = new Paragraph(new Text("THIS INVOICE IS NOW PAYABLE").setBold().setUnderline());
+        headerItem.add(headerParagraph);
+        bankDetails.add(headerItem);
+        bankDetails.add("Settlement of our note of fee can be arranged by direct transfer to:");
+
+        Paragraph bankParagraph = new Paragraph(new Text("Bank Account").setBold())
+                .add(": "+invoice.getBankAccount().getBank().getName()+" - "+invoice.getBankAccount().getName());
+        ListItem bankNameItem = new ListItem();
+        bankNameItem.add(bankParagraph);
+        bankDetails.add(bankNameItem);
+
+        Paragraph swiftCodeParagraph = defaultParagraph();
+        swiftCodeParagraph.add(new Text("SWIFT code").setBold())
+                .add(": "+invoice.getBankAccount().getSwiftCode());
+        ListItem swiftCodeItem = new ListItem();
+        swiftCodeItem.add(swiftCodeParagraph);
+        bankDetails.add(swiftCodeItem);
+
+        Paragraph euroAccountParagraph = new Paragraph(new Text("EURO account number").setBold())
+                .add(": "+invoice.getBankAccount().getEuroAccNum());
+        ListItem euroAccItem = new ListItem();
+        euroAccItem.add(euroAccountParagraph);
+        bankDetails.add("\n");
+        bankDetails.add(euroAccItem);
+
+        Paragraph euroIbanParagraph = defaultParagraph();
+        euroIbanParagraph.add(new Text("IBAN").setBold())
+                .add(": "+invoice.getBankAccount().getEuroIban());
+        ListItem euroIbanItem = new ListItem();
+        euroIbanItem.add(euroIbanParagraph);
+        bankDetails.add(euroIbanItem);
+
+        Paragraph usdAccountParagraph = new Paragraph(new Text("U.S. Dollars account number").setBold())
+                .add(": "+invoice.getBankAccount().getUsdAccNum());
+        ListItem usdAccItem = new ListItem();
+        usdAccItem.add(usdAccountParagraph);
+        bankDetails.add("\n");
+        bankDetails.add(usdAccItem);
+
+        Paragraph usdIbanParagraph = defaultParagraph();
+        usdIbanParagraph.add(new Text("IBAN").setBold())
+                .add(": "+invoice.getBankAccount().getSwiftCode());
+        ListItem usdIbanItem = new ListItem();
+        usdIbanItem.add(usdIbanParagraph);
+        bankDetails.add(usdIbanItem);
+        bankDetails.add(linebreak);
+        bankDetails.setFixedPosition(leftPos,bankDetailsBottom ,null );
+
+        List mkAddressList = defaultList().setFontSize(8).setItalic();
+        mkAddressList.add("MeritKapital Ltd.");
+        mkAddressList.add("Eftapaton Court");
+        mkAddressList.add("256, Makarios Avenue");
+        mkAddressList.add("CY-3105 Limassol, Cyprus");
+        mkAddressList.add("P.O. Box: 53180");
+        mkAddressList.add("CY-3301 Limassol, Cyprus");
+        mkAddressList.add("Tel: +357 25 85 79 00");
+        mkAddressList.add("Fax: +357 25 34 03 27");
+        mkAddressList.add("info@meritkapital.com");
+        mkAddressList.add("www.meritkapital.com");
+        mkAddressList.setFixedPosition(460, 715, 120);
+
         logoParagraph.add(mkLogo);
-        logoParagraph.setFixedPosition(321, 780, null);//top right corner
+        logoParagraph.setFixedPosition(130, 750, null);//top right corner
         mgroupParagraph.add(mgroupLogo);
-        mgroupParagraph.setFixedPosition(70, 75, null);//bottom of page
+        mgroupParagraph.setFixedPosition(175, 40, null);//bottom of page
 
         document.add(numberAndDate);
         document.add(companyInfoList);
@@ -359,8 +438,10 @@ public class PdfService {
         document.add(column3List);
         document.add(vatDetails);
         document.add(xRateList);
+        document.add(bankDetails);
         document.add(logoParagraph);
         document.add(mgroupParagraph);
+        document.add(mkAddressList);
 
         return document;
     }

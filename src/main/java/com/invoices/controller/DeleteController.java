@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class DeleteController {
     @Autowired InvoiceService invoiceService;
 
+    /**
+     * Method will delete the invoice that it received as a JSON
+     * @param invoice is the Invoice-type object to delete from the database
+     */
     @PostMapping("/find/delete")
     @ResponseBody
     public void deleteInvoice(@RequestBody Invoice invoice){

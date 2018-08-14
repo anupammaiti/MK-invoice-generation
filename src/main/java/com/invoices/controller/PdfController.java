@@ -5,8 +5,6 @@ import com.invoices.service.InvoiceService;
 import com.invoices.service.PdfService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,8 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author psoutzis
- * This controller will be responsible of using Invoice Template to
- * generate invoices into PDF format
+ * This controller is responsible for generating a PDF representing the requested invoice.
+ * <u>NOTE</u>: If you need to store the pdf files locally, change the MACRO variable 'STORE_PDF_ON_SERVER'
+ * to <b>True</b>.
  */
 @Controller
 public class PdfController {
@@ -25,6 +24,12 @@ public class PdfController {
     private final String PDF_PARENT = "C:/Users/psoutzis/Desktop/myFolder/projects/invoices/src/main/resources/pdf";
     private final boolean STORE_PDF_ON_SERVER = false;
 
+    /**
+     * Method will send the bytes of the newly created .pdf file to the browser, making it available for download.
+     * It will delete the file from local storage afterwards.
+     * @param id Is the primary key of the invoice to generate a PDF from.
+     * @param response Is the HTTP response that will write the pdf bytes to the browser
+     */
     @PostMapping(value = "/generate-pdf")
     @ResponseBody
     public void generatePdf(@RequestParam ("id") String id, HttpServletResponse response) {

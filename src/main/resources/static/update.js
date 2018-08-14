@@ -161,8 +161,20 @@ document.addEventListener('DOMContentLoaded', function () {
     const defaultToCurrency = document.getElementById('toCurrency').value;
     const defaultExchangeRate = document.getElementById('exchangeRate').value;
     const companyId = document.getElementById('companyId').value;
+    const existingInvoices = $('#invoiceNumberList').val().split(',');
 
     setCheckboxFunctionality(checkboxes);
+
+    jQuery.validator.addMethod("duplicateChecker", function(value, element) {
+        let invoiceNumArray = existingInvoices;
+        let isLegalNumber = true;
+
+        invoiceNumArray.forEach((number)=>{
+            if(value===number) isLegalNumber = false;
+        });
+
+        return this.optional(element) || isLegalNumber;
+    }, "* This invoice number <b><u>already exists</u></b> in the database.");
 
     //Set a range of characters for the user input to have
     jQuery.validator.addMethod("charRange", function(value, element, options) {
@@ -246,7 +258,8 @@ document.addEventListener('DOMContentLoaded', function () {
             rules : {
                 [invoiceNo]:{
                     specialChars: true,
-                    charRange: [true, 5, 20]
+                    charRange: [true, 1, 20],
+                    duplicateChecker: true
                 },
                 [invoiceDate]:{
                     customDateISO: true

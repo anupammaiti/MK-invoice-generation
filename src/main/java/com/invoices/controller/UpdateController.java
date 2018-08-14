@@ -15,11 +15,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author psoutzis, email: soutzis.petros@gmail.com
  * This class is a controller responsible for managing the HTTP requests about invoice updates.
- * Updates made to an invoice, will be automatically propagated all the respective tables in the database,
- * by using the Hibernate framework.
+ * Updates made to an invoice, will be automatically propagated to all the respective tables in the database,
+ * by using "Cascading" of the Hibernate framework.
  */
 
 @Controller
@@ -40,7 +43,7 @@ public class UpdateController {
      * @param id the id of the invoice to update.
      * @param model is the model that will hold data to be displayed by the view
      * @return the page where the user will make their invoice-changes at
-     * WARNING: Html and JavaScript code depends on the NAMING of MODEL VARIABLES. Renaming could lead to bugs.
+     * <b>WARNING</b>: Html and JavaScript code depends on the NAMING of MODEL VARIABLES. Renaming could lead to bugs.
      */
     @PostMapping(value = "/find/update")
     public String findToUpdate(@RequestParam ("id") String id, Model model){
@@ -58,6 +61,14 @@ public class UpdateController {
         model.addAttribute("countries", companyLocationService.getCountriesList());
         model.addAttribute("invoice", invoice);
         model.addAttribute("company", invoice.getPortfolio().getClientCompanyInfo());
+
+        List<Invoice> allInvoices = invoiceService.getInvoices();
+        List<String> invoiceNumberList = new ArrayList<>();
+        allInvoices.forEach(inv -> invoiceNumberList.add(inv.getInvoiceNumber()));
+        String invoiceNumbers = String.join(",", invoiceNumberList);
+
+        //add all the existing invoice numbers, to prevent user from entering a duplicate
+        model.addAttribute("invoiceNumberList", invoiceNumbers);
 
         return "update/update-attributes";
     }
@@ -87,7 +98,12 @@ public class UpdateController {
             //set updated (or not) company to portfolio
             portfolio.setClientCompanyInfo(company);
         }
-        Vat vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
+        Vat vat;
+        if(vatService.determineVatRate(dto.getVatApplicable(),dto.getVatExempt() ,dto.getReverseCharge()))
+            vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
+        else
+            vat = vatService.getRecordWithRateOfZero();
+
         ServiceProvided serviceProvided = serviceProvidedService.getRecord(Long.valueOf(dto.getServiceProvided()));
         BankAccount bankAccount = bankAccountService.getRecord(Long.valueOf(dto.getBankAccount()));
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(

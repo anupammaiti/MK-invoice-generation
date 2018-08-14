@@ -40,25 +40,28 @@
     +'-'+invoice.getYear()+'.'}"></span>
     <br><br>
 </div>
-<!--TODO: THIS NEEDS TO BE ALIGNED-->
 <div th:fragment="charge">
-    <b><span>Fee</span></b>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <b><span>VAT@</span></b>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <b><span>Total</span></b>
+    <b><span class="fee-header">Fee</span></b>
+
+    <b><span class="vat-header">VAT@<span th:text="${invoice.getVat().getVatRate()}"></span></span></b>
+
+    <b><span class="total-header">Total</span></b>
     <br>
-    <span th:text="${currencySymbolFrom+charge.getChargeExcludingVat()}"></span>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <span th:text="${currencySymbolFrom+charge.getVatCharge()}"></span>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <span th:text="${currencySymbolFrom+charge.getChargeIncludingVat()}"></span>
+    <span class="fee-from" th:text="${currencySymbolFrom+charge.getChargeExcludingVat()}"></span>
+
+    <span class="vat-from" th:text="${currencySymbolFrom+charge.getVatCharge()}"></span>
+
+    <span class="total-from" th:text="${currencySymbolFrom+charge.getChargeIncludingVat()}"></span>
     <br>
-    <span th:text="${currencySymbolTo+convertedCharge.getChargeExcludingVat()}"></span>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <span th:text="${currencySymbolTo+convertedCharge.getVatCharge()}"></span>
-    &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;
-    <span th:text="${currencySymbolTo+convertedCharge.getChargeIncludingVat()}"></span>
+    <span class="fee-to" th:text="${currencySymbolTo+convertedCharge.getChargeExcludingVat()}"></span>
+
+    <span class="vat-to" th:text="${currencySymbolTo+convertedCharge.getVatCharge()}"></span>
+
+    <span class="total-to" th:text="${currencySymbolTo+convertedCharge.getChargeIncludingVat()}"></span>
+    <br><br>
+    <span><u><b>VAT Exempt</b></u>: <span th:text="${invoice.getVatExempt().toString()}"></span></span>
+    <br>
+    <span><u><b>Reverse Charge</b></u>: <span th:text="${invoice.getReverseCharge().toString()}"></span></span>
     <br><br>
     <u><b><span>Exchange Rate</span></b></u>
     <br>

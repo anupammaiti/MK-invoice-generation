@@ -1,6 +1,7 @@
 package com.invoices.controller;
 
 import com.invoices.domain.*;
+import com.invoices.domain.Currency;
 import com.invoices.dto.InvoiceDTO;
 import com.invoices.enumerations.InvoiceFrequency;
 import com.invoices.enumerations.InvoicePeriod;
@@ -14,6 +15,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.*;
 
 /**
  * @author psoutzis
@@ -34,7 +37,7 @@ public class CreateController {
     @Autowired VatService vatService;
 
     /**
-     * @param model will all required objects/attributes to the view
+     * @param model will all required objects/attributes for the app to function, to the view
      * @return the page where user can create an invoice
      */
     @GetMapping("/select/create")
@@ -49,6 +52,15 @@ public class CreateController {
         model.addAttribute("vatRecords", vatService.getVatRecords());
         model.addAttribute("bankAccounts", bankAccountService.getBankAccounts());
 
+        List<Invoice> invoices = invoiceService.getInvoices();
+        List<String> invoiceNumberList = new ArrayList<>();
+        //Get all invoice numbers in a list of Strings.
+        invoices.forEach(inv -> invoiceNumberList.add(inv.getInvoiceNumber()));
+        //Concatenate all Strings from list and separate them with a coma (,)
+        String invoiceNumbers = String.join(",", invoiceNumberList);
+        //add the created String to the view and use it to prevent user from entering a duplicate.
+        model.addAttribute("invoiceNumberList", invoiceNumbers);
+
         return "create/create-invoice";
     }
 
@@ -62,16 +74,12 @@ public class CreateController {
     @ResponseBody
     public void generateInvoice(@RequestBody InvoiceDTO dto) {
 
-        IsApplicable vatApplicable = IsApplicable.valueOf(dto.getVatApplicable());
-        IsApplicable vatExempt = IsApplicable.valueOf(dto.getVatExempt());
-        IsApplicable reverseCharge = IsApplicable.valueOf(dto.getReverseCharge());
         Portfolio portfolio = portfolioService.getRecord(dto.getPortfolio());
         BankAccount bankAccount = bankAccountService.getRecord(dto.getBankAccount());
         ServiceProvided service = serviceProvidedService.getRecord(dto.getServiceProvided());
         Vat vat;
-        if(vatService.isVatApplicable(vatExempt) || vatService.isVatApplicable(reverseCharge))
-            vat = vatService.getRecordWithRateOfZero();
-        else if(vatService.isVatApplicable(vatApplicable))
+        //If VAT has to be applied, get the appropriate record if it exists (or save and return it)
+        if(vatService.determineVatRate(dto.getVatApplicable(),dto.getVatExempt() ,dto.getReverseCharge()))
             vat = vatService.getRecordAndSaveIfNotExists(dto.getVatRate());
         else
             vat = vatService.getRecordWithRateOfZero();
@@ -83,12 +91,14 @@ public class CreateController {
         CustodyCharge custodyCharge = custodyChargeService.generateCustodyCharge(
                 dto.getBaseCharge(), vat.getVatRate(),new CustodyCharge());
 
+        //Finally, construct the appropriate Invoice-type object
         Invoice invoice = new Invoice(null, InvoiceType.valueOf(dto.getInvoiceType()),
                 dto.getInvoiceNumber(), InvoiceFrequency.valueOf(dto.getFrequency()),
                 InvoicePeriod.valueOf(dto.getPeriod()), dto.getInvoiceDate(),
                 dto.getYear(), IsApplicable.valueOf(dto.getReverseCharge()),
                 IsApplicable.valueOf(dto.getVatExempt()), service, bankAccount,
                 currencyRates, vat, portfolio, custodyCharge);
+
 
         invoiceService.save(invoice);
     }

@@ -15,6 +15,7 @@
 <form id="myForm" action="/success/created">
     <!--Using thymeleaf to iterate over the array -->
     <!--TYPE OF INVOICE-->
+    <input type="hidden" th:value="*{invoiceNumberList}" id="invoiceNumberList">
     <div>
     <p><b>Invoice Type</b>:
         <select id="invoiceType" name="invoiceType" required>
@@ -45,7 +46,8 @@
     <p><b>Invoice Number</b>: <input type="text" id="invoiceNumber" name="invoiceNumber" required/></p>
     <!--VAT EXEMPT-->
     <div>
-        <p><b>VAT Exempt</b>:
+        <p><i>Setting VAT exemption to "<u>YES</u>", will automatically set the VAT rate of the invoice to <b>0</b></i><br>
+        <b>VAT Exempt</b>:
             <select id="vatExempt" name="vatExempt" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"
@@ -57,7 +59,9 @@
     </div>
     <!--REVERSE CHARGE-->
     <div>
-        <p><b>Reverse Charge</b>:
+        <p><i>Setting reverse charge to "<u>YES</u>", will automatically set the VAT rate of the invoice to <b>0</b></i>
+            <br>
+        <b>Reverse Charge</b>:
             <select id="reverseCharge" name="reverseCharge" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"
@@ -107,7 +111,9 @@
     <p><b>Year</b>: <input type="text" id="year" name="year" required/></p>
     <!--VAT APPLICABLE TO INVOICE-->
     <div>
-        <p><b>VAT Applicable</b>:
+        <p><i>Changing invoice VAT applicability to "<u>NO</u>", will automatically set the VAT rate of the invoice to <b>0</b></i>
+            <br>
+        <b>VAT Applicable</b>:
             <select id="vatApplicable" name="vatApplicable" required>
                 <option value=""> -- </option>
                 <option th:each="option : ${isApplicableValues}"

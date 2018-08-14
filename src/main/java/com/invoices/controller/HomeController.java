@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class HomeController {
     @Autowired private InvoiceService invoiceService;
 
+    /**
+     * Directs user to the home page.
+     * @return The "HomePage"
+     */
     @GetMapping("/")
     public String init(){
 

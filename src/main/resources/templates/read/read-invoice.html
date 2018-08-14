@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>View Invoice</title>
+    <link rel="stylesheet" href="/css/view-invoice-as-html.css">
 </head>
 <body bgcolor="#FFE5CC">
 <div>
@@ -15,11 +16,15 @@
     <br>
 
 
-    <form action="/">
-        <div>
-            <input type="submit" value="Home" name="submit"/>
-        </div>
-    </form>
+    <div>
+        <form action="/">
+                <input type="submit" value="Home" name="submit"/>
+        </form>
+
+        <form action="/select/read">
+            <input type="submit" value="View another" name="submit"/>
+        </form>
+    </div>
 </div>
 </body>
 </html>

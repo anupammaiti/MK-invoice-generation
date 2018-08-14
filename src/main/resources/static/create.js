@@ -22,6 +22,18 @@ const postData = (url = ``, data = {}) => {
  * for validation library documentation, see https://jqueryvalidation.org/documentation/
  */
 document.addEventListener('DOMContentLoaded', function () {
+    const existingInvoices = $('#invoiceNumberList').val().split(',');
+
+    jQuery.validator.addMethod("duplicateChecker", function(value, element) {
+        let invoiceNumArray = existingInvoices;
+        let isLegalNumber = true;
+
+        invoiceNumArray.forEach((number)=>{
+            if(value===number) isLegalNumber = false;
+        });
+
+        return this.optional(element) || isLegalNumber;
+    }, "* This invoice number <b><u>already exists</u></b> in the database.");
 
     //Set a range of characters for the user input to have
     jQuery.validator.addMethod("charRange", function(value, element, options) {
@@ -92,7 +104,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 invoiceNumber: {
                     specialChars: true,
-                    charRange : [true, 5, 20] //min and max range of input
+                    charRange : [true, 1, 20], //min and max range of input
+                    duplicateChecker: true
                 },
                 year: {
                     number: true,

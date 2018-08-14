@@ -32,8 +32,15 @@ public class VatService {
                 : save( new Vat(null, IsApplicable.YES, rate )));
     }
 
+    public boolean determineVatRate(String isApplicable, String isExempt, String chargeReversed) {
+        IsApplicable vatApplicable = IsApplicable.valueOf(isApplicable);
+        IsApplicable vatExempt = IsApplicable.valueOf(isExempt);
+        IsApplicable reverseCharge = IsApplicable.valueOf(chargeReversed);
 
-    public boolean isVatApplicable(IsApplicable isApplicable){
+        return !(isVatApplicable(vatExempt) || isVatApplicable(reverseCharge) ||!isVatApplicable(vatApplicable));
+    }
+
+    private boolean isVatApplicable(IsApplicable isApplicable){
 
         return isApplicable == IsApplicable.YES;
     }
