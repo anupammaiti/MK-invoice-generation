@@ -10,6 +10,7 @@ import javax.persistence.*;
 
 /**
  * This entity represents a VAT rate. e.g: 0.19 or 0.19078
+ * @author psoutzis
  */
 @Entity
 @Table(name = "vat")

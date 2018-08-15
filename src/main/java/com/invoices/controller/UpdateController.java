@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author psoutzis, email: soutzis.petros@gmail.com
  * This class is a controller responsible for managing the HTTP requests about invoice updates.
  * Updates made to an invoice, will be automatically propagated to all the respective tables in the database,
  * by using "Cascading" of the Hibernate framework.
+ * @author psoutzis, email: soutzis.petros@gmail.com
  */
 
 @Controller

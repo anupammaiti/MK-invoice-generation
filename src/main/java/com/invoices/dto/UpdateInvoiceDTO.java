@@ -3,9 +3,9 @@ package com.invoices.dto;
 import lombok.Getter;
 
 /**
- * @author psoutzis
  * A Data Transfer Object (DTO), that will be used to temporarily hold the data
  * relevant to an invoice update.
+ * @author psoutzis
  */
 @Getter
 public class UpdateInvoiceDTO {

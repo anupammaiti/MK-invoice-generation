@@ -10,9 +10,10 @@ import javax.persistence.*;
 /**
  * This Entity holds the rates of currencies, for the date that an invoice was issued
  * E.g: An invoice is issued on the 10th of July 2018, 10:00 a.m. The rates needed
- * by the application will be fetched, for the given date & time and will be stored to
+ * by the application will be fetched, for the given date and time and will be stored to
  * the database. This is the parent table, so an invoice record will have a foreign key
  * mapping it to the appropriate currency rate record.
+ * @author psoutzis
  */
 @Entity
 @Table(name = "currency_rates")

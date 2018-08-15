@@ -9,8 +9,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 /**
- * @author psoutzis
  * This entity represents the country that a given company is located at.
+ * @author psoutzis
  */
 
 @Entity

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 
 /**
- * @author psoutzis
  * Service that will handle mainly changes, made to an invoice's ClientCompanyInfo object.
+ * @author psoutzis
  */
 @Service
 public class ClientCompanyInfoService {

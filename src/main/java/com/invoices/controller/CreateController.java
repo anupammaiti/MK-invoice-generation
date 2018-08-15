@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.*;
 
 /**
- * @author psoutzis
  * This Controller is responsible for the creation of an invoice, based on
  * user input.
+ * @author psoutzis
  */
 
 @Controller
@@ -37,7 +37,7 @@ public class CreateController {
     @Autowired VatService vatService;
 
     /**
-     * @param model will all required objects/attributes for the app to function, to the view
+     * @param model will add all the required objects/attributes for the app to function, to the view
      * @return the page where user can create an invoice
      */
     @GetMapping("/select/create")

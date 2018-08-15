@@ -6,9 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * @author psoutzis
  * This class is annotated as a service.
  * It is the service bean for the CustodyCharge entity
+ * @author psoutzis
  */
 @Service
 public class CustodyChargeService {
@@ -36,16 +36,27 @@ public class CustodyChargeService {
         return baseValue+vatCharge;
     }
 
+    /**
+     *
+     * @param baseValue The amount of money that the invoice addressee has to pay, without VAT.
+     * @param vatRate The rate of VAT.
+     * @param custodyCharge A CustodyCharge object (new or to be updated).
+     * @return The created (or updated) CustodyCharge object.
+     */
     public CustodyCharge generateCustodyCharge(Float baseValue, Float vatRate, CustodyCharge custodyCharge){
         Float vatCharge = calculateVatCharge(baseValue, vatRate);
         Float total = calculateTotalCharge(baseValue, vatCharge);
         CustodyCharge generatedCustodyCharge = new CustodyCharge(
                 custodyCharge.getCustodyChargeId(),vatCharge, total, baseValue);
-        save(generatedCustodyCharge);
 
-        return generatedCustodyCharge;
+        return save(generatedCustodyCharge);
     }
 
+    /**
+     * Method will insert a record in the <i>"custody_charges"</i> table(or update an existing record).
+     * @param custodyCharge The CustodyCharge object to 'save'.
+     * @return The CustodyCharge object, representing the newly inserted/updated CustodyCharge record.
+     */
     private CustodyCharge save(CustodyCharge custodyCharge){
 
         return custodyChargeRepo.save(custodyCharge);

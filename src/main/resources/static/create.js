@@ -20,10 +20,13 @@ const postData = (url = ``, data = {}) => {
 /**
  * Will send object holding values needed for an invoice back, as JSON.
  * for validation library documentation, see https://jqueryvalidation.org/documentation/
+ * @author petros soutzis
  */
 document.addEventListener('DOMContentLoaded', function () {
+    //invoice number of existing records
     const existingInvoices = $('#invoiceNumberList').val().split(',');
 
+    //Checks if user entered invoice number that already exists
     jQuery.validator.addMethod("duplicateChecker", function(value, element) {
         let invoiceNumArray = existingInvoices;
         let isLegalNumber = true;
@@ -136,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function () {
             //console.log("manual vat-rate input required: TRUE");
         }
 
+        //The data to send so that the DTO can be populated
         let data = {
             invoiceType: document.getElementById('invoiceType').value,
             invoiceDate: new Date(document.getElementById('invoiceDate').value),

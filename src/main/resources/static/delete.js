@@ -17,10 +17,16 @@ const postData = (url = ``, data = {}) => {
         .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
+/**
+ *
+ * @author petros soutzis
+ */
 document.addEventListener('DOMContentLoaded', function () {
     //POST REQUEST TO DELETE INVOICE CONTROLLER
     document.getElementById('deleteButton').addEventListener('click', function (){
         this.disabled = true;
+
+        //the primary key of the invoice to delete
         let data = {
             id: document.getElementById('selectedInvoice').value
         };

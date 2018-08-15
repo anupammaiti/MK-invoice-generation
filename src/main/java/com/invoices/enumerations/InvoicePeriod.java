@@ -3,6 +3,10 @@ package com.invoices.enumerations;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * This enumeration represents the 'Period' options of an invoice
+ * @author psoutzis
+ */
 @AllArgsConstructor
 public enum InvoicePeriod {
     ONE("1"),

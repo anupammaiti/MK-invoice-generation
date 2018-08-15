@@ -9,11 +9,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
 
+/**
+ * This class is the service responsible for CompanyLocation-type objects
+ * @author psoutzis
+ */
 @Service
 public class CompanyLocationService {
 
     @Autowired CompanyLocationRepo companyLocationRepo;
 
+    /**
+     * @return An alphabetically sorted collection (ArrayList) of all the known countries in the world.
+     */
     public ArrayList<String> getCountriesList(){
         ArrayList<String> countries = new ArrayList<>();
         String[] countryCodes = Locale.getISOCountries();
@@ -27,6 +34,12 @@ public class CompanyLocationService {
         return countries;
     }
 
+    /**
+     *
+     * @param country The country-name to add to the database
+     * @return The (saved) CompanyLocation-type object that was just inserted, representing the country
+     * that was passed as an argument.
+     */
     public CompanyLocation getRecordAndSave(String country){
         country = country.toUpperCase();
         CompanyLocation location = companyLocationRepo.findCompanyLocationByCountry(country);

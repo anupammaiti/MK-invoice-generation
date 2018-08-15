@@ -28,11 +28,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * @author psoutzis
  * This class is responsible for generating PDF files, based on an invoice.
  * To create a pdf document, you have to call createPdf method.
+ * <b><u>WARNING</u></b>: Cyrillic characters are not supported by default in <i>iText7</i> when creating
+ * a PDF file. A font that supports <u>Windows-1251 8-bit character encoding</u> is needed
+ * to cover languages that use the Cyrillic script.
+ * @author psoutzis
  */
-//TODO CYRILLIC CHARACTERS NOT SUPPORTED. FU BRUNO LOWAGIE. FU ITEXT
 @Service
 public class PdfService {
 
@@ -85,7 +87,7 @@ public class PdfService {
             FileInputStream fileInputStream = new FileInputStream(file);
             DataOutputStream dataOutputStream = new DataOutputStream(response.getOutputStream());
 
-            //Set buffer capacity, so there is preferably only 1 loop when writing to output stream
+            //Set buffer capacity, so there is preferably only 1 loop iteration when writing to output stream
             int bufferCapacity;
             if(file.length() > Integer.MAX_VALUE) bufferCapacity = Integer.MAX_VALUE;
             else if(file.length() < Integer.MIN_VALUE) bufferCapacity = Integer.MIN_VALUE;
@@ -132,9 +134,7 @@ public class PdfService {
         name = name.trim();
         parentPath = !parentPath.endsWith("/") ? parentPath+"/" : parentPath;
 
-        String path = parentPath + "invoice_" + name + ".pdf";
-
-        return path;
+        return parentPath + "invoice_" + name + ".pdf";
     }
 
     /**
@@ -158,11 +158,9 @@ public class PdfService {
      * If the pages must have a white background (default), just remove the addEvenHandler() line.
      * @param invoice The invoice to model as a PDF file.
      * @param filename The path where the pdf file is going to be stored.
-     * @return the finalized object of type Document, which is the pdf file that was created at
-     * the beginning of the method.
      */
     public void createPdf(Invoice invoice, String filename) {
-        Document document = null;
+        Document document;
         try
         {
             OutputStream outputStream = new FileOutputStream(new File(filename));
@@ -171,7 +169,7 @@ public class PdfService {
             pdfDoc.addEventHandler(PdfDocumentEvent.START_PAGE, new PageBackgroundEvent());
             PageSize pageSize = pdfDoc.getDefaultPageSize();
             document = new Document(pdfDoc, pageSize);
-            document = populateDocument(invoice, document, pageSize);
+            populateDocument(invoice, document, pageSize);
             document.close();
 
         }
@@ -187,10 +185,9 @@ public class PdfService {
      * @param invoice The invoice to get information from
      * @param document The document to add elements at ( i.e. text, images, watermarks, etc..)
      * @param pageSize An object of type PageSize, that holds dimensional information about the document's page(s).
-     * @return The populated document, in human-readable format
      * @throws MalformedURLException thrown by Image-type objects
      */
-    private Document populateDocument(Invoice invoice, Document document, PageSize pageSize)
+    private void populateDocument(Invoice invoice, Document document, PageSize pageSize)
             throws MalformedURLException
     {
         float pageHeight = pageSize.getHeight();
@@ -203,9 +200,13 @@ public class PdfService {
         CustodyCharge charges = invoice.getCustodyCharge();
         String currencyCodeFrom = invoice.getCurrencyRates().getFromCurrency().getCurrencyCode();
         String currencyCodeTo = invoice.getCurrencyRates().getToCurrency().getCurrencyCode();
-        System.out.println(currencyCodeTo);
         String currencySymbolFrom = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeFrom);
         String currencySymbolTo = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeTo);
+
+        //If either of currency symbols are equal to 'руб', then change to the official symbol
+        if(currencySymbolFrom.equalsIgnoreCase("руб")) currencySymbolFrom = "₽";
+        if(currencySymbolTo.equalsIgnoreCase("руб")) currencySymbolTo = "₽";
+
         final String linebreak = "\n\n";
         final String MK_LOGO = IMAGE_PARENT+"meritkapital.png";
         final String MGROUP_LOGO = IMAGE_PARENT+"mgroup_logo.png";
@@ -442,8 +443,6 @@ public class PdfService {
         document.add(logoParagraph);
         document.add(mgroupParagraph);
         document.add(mkAddressList);
-
-        return document;
     }
 
     /**

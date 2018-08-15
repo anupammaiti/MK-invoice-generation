@@ -8,23 +8,26 @@
 <form>
     <div>
         <!--Create-->
-            <input type="submit" value="Issue an Invoice" formaction="/select/create"/> <br><br>
+            <input type="submit" value="Issue an Invoice" formaction="/select/create"/> <br>
 
         <!--Read-->
             <input type="hidden" name="action" value="read"/>
-            <input type="submit" value="Find an Invoice" formaction="/select/read"/> <br><br>
+            <input type="submit" value="Find an Invoice" formaction="/select/read"/> <br>
 
         <!--Update-->
             <input type="hidden" name="action" value="udpate"/>
-            <input type="submit" value="Update an Invoice" formaction="/select/update" /> <br><br>
+            <input type="submit" value="Update an Invoice" formaction="/select/update" /> <br>
 
         <!--Delete-->
             <input type="hidden" name="action" value="delete"/>
-            <input type="submit" value="Delete an Invoice" formaction="/select/delete"/> <br><br>
+            <input type="submit" value="Delete an Invoice" formaction="/select/delete"/> <br>
 
         <!--Pdf-->
             <input type="hidden" name="action" value="pdf"/>
-            <input type="submit" value="Convert an invoice to PDF" formaction="/select/pdf"/>
+            <input type="submit" value="Convert an invoice to PDF" formaction="/select/pdf"/><br>
+
+        <!--Documentation-->
+            <br><br><input type="submit" value="Documentation" formaction="/documentation"/>
     </div>
 </form>
 </body>

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * @author Petros Soutzis
  * Controller class responsible for deleting an invoice from that database.
+ * @author Petros Soutzis
  */
 @Controller
 public class DeleteController {

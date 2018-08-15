@@ -11,10 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * @author Petros Soutzis
  * This class is the controller responsible for retrieving all relevant data to the invoice
  * and adding them to the View, where they will be rendered to an appropriate user-friendly view,
  * similar to the previous style of the company's invoices.
+ * @author Petros Soutzis
  */
 @Controller
 public class ReadController {

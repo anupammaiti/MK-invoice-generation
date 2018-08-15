@@ -9,9 +9,9 @@ import javax.persistence.*;
 import java.util.List;
 
 /**
- * @author psoutzis
  * This entity represents the MeritKapital bank accounts.
  * It holds information such as name of the account, iban, account number, swift code.
+ * @author psoutzis
  */
 
 @Entity

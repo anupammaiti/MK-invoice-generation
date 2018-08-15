@@ -11,11 +11,11 @@ import javax.money.NumberValue;
 import javax.money.convert.ExchangeRate;
 
 /**
- * @author psoutzis
  * This class is annotated as a service.
  * It is the service bean for the CurrencyRate entity
- * It uses java's Currency & Money API for fetching exchange rates
- * through an http request.
+ * It uses java's Currency and Money API for fetching exchange rates
+ * through http requests.
+ * @author psoutzis
  */
 @Service
 public class CurrencyRatesService {
@@ -43,7 +43,7 @@ public class CurrencyRatesService {
     }
 
     /**
-     * Method will take a parameter CurrencyRates and add a Currency From and a Currency To
+     * Method will take a parameter CurrencyRates and add a Currency '<b>From</b>' and a Currency '<b>To</b>'
      * @param from the Currency object to save to the CurrencyRates object. (Currency to convert from)
      * @param to the Currency object to save to the CurrencyRates object. (Currency to convert to)
      * @param currencyRates the CurrencyRates object to modify
@@ -54,10 +54,10 @@ public class CurrencyRatesService {
     }
 
     /**
-     * This method will be called whenever an invoice is issued, so the
-     * current exchange rate is added to the passed CurrencyRates object.
-     * @param currencyRates the object to store at, the fx rate that will be fetched.
-     * @return the record holding current exchange rate
+     * This method will be called whenever the exchange rate between two currencies <i>(Base and Target)</i> needs
+     * to be added or updated.
+     * The exchange rate generated, is added to the passed CurrencyRates object.
+     * @param currencyRates the object to store the exchange rate at.
      */
     private void setCurrentRate(CurrencyRates currencyRates){
         String baseCurrency = currencyRates.getFromCurrency().getCurrencyCode();

@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * @author psoutzis
  * This class is a component and will be auto-detected at
  * system initialization. It is responsible for keeping an updated file for exchange rates
  * It has a static ExchangeRateProvider, which uses the default providers that are offered
- * through Java's Monetary & Currency APIs. Class will update the provider with new data everyday
+ * through Java's Monetary and Currency APIs. Class will update the provider with new data everyday
  * at 8:00, 16:00 and 17:00 with a scheduled cron task.
+ * @author psoutzis
  */
 @Component
 public class ExchangeRateProviderHandler {
@@ -26,8 +26,10 @@ public class ExchangeRateProviderHandler {
     /**
      * @param currencyCode The currency code of the symbol needed. e.g: 'USD', 'GBP', etc..
      * @return The symbol of the currency code passed as a parameter. Method will return an empty string,
-     * in case that the  currency code does not return any matches.
-     * e.g. USD -> '$', QXZ -> (empty string), EUR -> '€', GBP -> '£', etc..
+     * in case that the  currency code does not return any matches.<br>
+     * e.g:<br><u>USD</u> -> '<b>$</b>',<br><u>QXZ</u> -> (<b>empty string</b>),<br><u>EUR</u> ->
+     * '<b>&euro;</b>',<br>
+     * <u>GBP</u> -> '<b>&#x20A4;</b>',<br><u>RUB</u> -> '<b>&#x20BD;</b>', etc..
      */
     public static String getCurrencySymbol(String currencyCode){
         HashMap currencyLocaleMap = getCurrencyLocaleMapping();

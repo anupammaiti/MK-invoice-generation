@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * @author psoutzis
  * This controller is responsible for generating a PDF representing the requested invoice.
  * <u>NOTE</u>: If you need to store the pdf files locally, change the MACRO variable 'STORE_PDF_ON_SERVER'
  * to <b>True</b>.
+ * @author psoutzis
  */
 @Controller
 public class PdfController {

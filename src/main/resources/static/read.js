@@ -36,6 +36,11 @@ const getData = (url = ``) => {
         .catch(error => console.error(`Fetch Error =\n`, error));
 };
 
+
+/**
+ *
+ * @author petros soutzis
+ */
 document.addEventListener('DOMContentLoaded', function () {
     //POST REQUEST TO VIEW INVOICE CONTROLLER
     document.getElementById('readButton').addEventListener('click', function () {

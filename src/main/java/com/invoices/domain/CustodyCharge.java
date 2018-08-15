@@ -8,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * @author psoutzis
  * This entity represents the fee that will be paid to a MeritKapital bank account.
  * custody_charge_excl_vat is the original fee to be paid to MK.
  *
@@ -17,6 +16,7 @@ import javax.persistence.*;
  * custody_charge_incl_vat = 1190
  *
  * An invoice will always have a mapping in the custody_charges table.
+ * @author PetrosSoutzis
  */
 @Entity
 @Table(name = "custody_charges")

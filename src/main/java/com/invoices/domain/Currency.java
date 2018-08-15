@@ -8,9 +8,9 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * @author psoutzis
  * The Currency entity represents the currency that an invoice will be issued in.
  * E.g: an invoice could be issued in United States Dollars or Euros. (USD, EUR)
+ * @author psoutzis
  */
 @Table(name = "currencies")
 @Entity

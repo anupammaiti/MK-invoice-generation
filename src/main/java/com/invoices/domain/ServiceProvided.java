@@ -12,6 +12,7 @@ import java.util.List;
 /**
  * This entity represents the service that is provided to the client and for which
  * they will be charged for.
+ * @author soutzis
  */
 @Entity
 @Table(name = "services")

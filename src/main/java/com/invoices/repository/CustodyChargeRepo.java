@@ -5,10 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author psoutzis
  * The repository for the Custody charge Entity
+ * @author psoutzis
  */
 @Repository
-public interface CustodyChargeRepo extends
-        JpaRepository<CustodyCharge, Long> {
+public interface CustodyChargeRepo extends JpaRepository<CustodyCharge, Long> {
 }

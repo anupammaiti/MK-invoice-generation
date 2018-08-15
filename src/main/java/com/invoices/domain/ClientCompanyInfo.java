@@ -8,8 +8,8 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * @author psoutzis
  * This entity holds information about a client's company(s). Location, name, etc..
+ * @author psoutzis
  */
 
 @Entity

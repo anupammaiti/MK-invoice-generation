@@ -13,8 +13,8 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
+ * This class represents a record in the invoices table. (An Invoice)
  * @author psoutzis
- * This class represents a record in the invoices table.
  */
 @Entity
 @Table(name = "invoices")

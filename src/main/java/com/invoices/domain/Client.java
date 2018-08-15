@@ -8,9 +8,9 @@ import lombok.Setter;
 import javax.persistence.*;
 
 /**
- * @author psoutzis
  * This class represents the Client entity. A client can have 0 - many companies, but
  * a client should always have at least one corresponding portfolio.
+ * @author psoutzis
  */
 
 @Entity

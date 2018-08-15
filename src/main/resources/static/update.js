@@ -1,9 +1,13 @@
-/*
- * @see "https://github.com/soutzis/MK-invoice-generation
- * /blob/cbf6b3f12d86fa885ba5b8dd972fe0f49c0c1a1d/src/main/resources/static/update.js"
- * repository/update.js</a> for the version of update.js, where it used openexchangerate to
- * automatically update exchange rate on client-side.
+/**
+ *
+ * @author Petros Soutzis
  */
+
+ // @see "https://github.com/soutzis/MK-invoice-generation
+ // /blob/cbf6b3f12d86fa885ba5b8dd972fe0f49c0c1a1d/src/main/resources/static/update.js"
+ // repository/update.js</a> for the version of update.js, where it used openexchangerate to
+ // automatically update exchange rate on client-side.
+
 
 const checkboxKeyword = 'Box';
 const manualInputKeyword = 'Manual';
@@ -38,9 +42,9 @@ const postData = (url = ``, data = {}) => {
 
 /**
  *
- * @param array
- * @param data
- * @param doc
+ * @param array Is the array of elements to use to extract data.
+ * @param data Is the object to store data to.
+ * @param doc The document that elements reside at.
  */
 function setValuesToObj(array = [], data={}, doc){
     array.forEach(function(arrayElement){
@@ -76,6 +80,11 @@ function setManualValuesToObj(array=[], data={}, doc, keyword){
     return data;
 }
 
+/**
+ * Function to add functionality to checkboxes. If a checkbox is checked, it will let the user set a new
+ * value for the corresponding element
+ * @param checkboxes An array of all the checkboxes on the document
+ */
 function setCheckboxFunctionality(checkboxes=[]){
     for(let i=0; i<checkboxes.length; i++){
         //This conditional is entered only if the checkbox will trigger a "set" of inputs
@@ -161,10 +170,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const defaultToCurrency = document.getElementById('toCurrency').value;
     const defaultExchangeRate = document.getElementById('exchangeRate').value;
     const companyId = document.getElementById('companyId').value;
+
+    //invoice number of existing records
     const existingInvoices = $('#invoiceNumberList').val().split(',');
 
     setCheckboxFunctionality(checkboxes);
 
+    //Checks if user entered invoice number that already exists
     jQuery.validator.addMethod("duplicateChecker", function(value, element) {
         let invoiceNumArray = existingInvoices;
         let isLegalNumber = true;
@@ -208,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     }, "* Please limit the number of digits you enter to a maximum of '<u><b>7</b></u>'.");
 
-    //Disallow strange characters
+    //Disallow strange characters, but allow #, £, $, €, _
     jQuery.validator.addMethod("specialChars", function( value, element ) {
         let regex = new RegExp("^[a-zA-Z0-9_#\-£$€]");
 
@@ -222,11 +234,13 @@ document.addEventListener('DOMContentLoaded', function () {
         return this.optional(element) || regex.test(value);
     },  "* Enter only alphanumeric characters");
 
+    //allow only valid ISO date format inputs
     jQuery.validator.addMethod(
         "customDateISO",
         $.validator.methods.dateISO,
         "Please enter a valid date. <i>(See allowed formats above)</i>.");
 
+    //allow only valid 'YEAR' values
     jQuery.validator.addMethod("checkYear", function( value, element, options ) {
         let year = parseInt(value);
 
@@ -234,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
     },  "* Year must be in the format '<u>YYYY</u>' and can not be less than {1} or more than {2}");
 
     jQuery.validator.addMethod("exchangeRateNote", $.validator.methods.required,
-        "* This field is required. See <b>Note</b> below.");
+        "* This field is required. See the <b>note</b> below.");
 
     //Script will set value of variable as null, if it is equal to an empty string
     document.getElementById('updateButton').addEventListener('click', function () {
@@ -305,6 +319,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
 
+        //Toggle required between vatRate and manualVatRate. Only one of them should be required.
         if(manualVatRateElement.val()!=='') {
             vatRateElement.rules('remove', 'required');
             manualVatRateElement.rules('add', {required: true});
@@ -316,16 +331,17 @@ document.addEventListener('DOMContentLoaded', function () {
             console.log("manual vat-rate input required: FALSE");
         }
 
+        //Get collection of elements based on the keyword that their name starts with.
         let $newValueCollection = $(":input[name^='newValue']");
         let $groupValueCollection = $(":input[name^='groupValue']");
         let $manualValueCollection = $(":input[name^='manualValue']");
 
-
+        //Convert collections to arrays
         const newValues = $newValueCollection.get();
         const groupValues = $groupValueCollection.get();
         const manualValues = $manualValueCollection.get();
 
-
+        //Dynamically populate the 'myData' object
         myData = setValuesToObj(newValues,myData,document);
         myData = setValuesToObj(groupValues,myData,document);
         myData = setManualValuesToObj(manualValues,myData,document, manualInputKeyword);
@@ -338,7 +354,8 @@ document.addEventListener('DOMContentLoaded', function () {
         //Always get hidden ids of invoice and company
         myData.invoiceId = parseInt(document.getElementById('invoiceId').value);
         myData.companyId = companyId === '' ? null : parseInt(companyId);
-        myData.vatRate = parseFloat(myData.vatRate); //convert to float before sending
+        //Convert vatRate to a Float.
+        myData.vatRate = parseFloat(myData.vatRate);
         console.log(myData);
 
         if(form.valid()){

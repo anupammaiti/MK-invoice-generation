@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * @author psoutzis
  * This class is annotated as a service.
  * It is the service bean for the Vat entity
+ * @author psoutzis
  */
 @Service
 public class VatService {
@@ -19,8 +19,8 @@ public class VatService {
     @Autowired private VatRepo vatRepo;
 
     /**
-     * This method is used when updating or creating an invoice. It checks if a record with the vat rate passed as an
-     * argument exists in the database and returns it. If it doesn't it inserts a new record for that rate.
+     * This method is used when updating or creating an invoice. It checks if a record with the vat rate passed as
+     * an argument exists in the database and returns it. If it doesn't it inserts a new record for that rate.
      * @param rate The value of the rate to get from db (or insert as a new record for it, if it doesn't exist).
      * @return The Vat record containing the rate requested.
      */
@@ -32,6 +32,13 @@ public class VatService {
                 : save( new Vat(null, IsApplicable.YES, rate )));
     }
 
+    /**
+     * @param isApplicable If VAT <u>is applicable</u> to the invoice <i>('YES' equals true)</i>.
+     * @param isExempt If Invoice is <u>eligible for VAT exemption</u> <i>('YES' equals true)</i>.
+     * @param chargeReversed If VAT of the invoice <u>can be reversibly charged</u> <i>('YES' equals true)</i>.
+     * @return <i>False</i> if <i><u>isExempt</u></i> or <i><u>chargeReversed</u></i> are equal to
+     * <i>'<b>YES</b>'</i>. Also return <i>False</i> if <i><u>isApplicable</u></i> is equal to <i>'<b>NO</b>'</i>.
+     */
     public boolean determineVatRate(String isApplicable, String isExempt, String chargeReversed) {
         IsApplicable vatApplicable = IsApplicable.valueOf(isApplicable);
         IsApplicable vatExempt = IsApplicable.valueOf(isExempt);
@@ -40,6 +47,11 @@ public class VatService {
         return !(isVatApplicable(vatExempt) || isVatApplicable(reverseCharge) ||!isVatApplicable(vatApplicable));
     }
 
+    /**
+     *
+     * @param isApplicable Is equal to either "<b>YES</b>" or "<b>NO</b>".
+     * @return <i>True</i> if argument is equal to <u>YES</u>, otherwise return <i>False</i>.
+     */
     private boolean isVatApplicable(IsApplicable isApplicable){
 
         return isApplicable == IsApplicable.YES;
@@ -81,6 +93,11 @@ public class VatService {
         return vatRepo.findVatByVatRate(0F);
     }
 
+    /**
+     *
+     * @param rate The rate of the record to fetch <i>(<u>attribute</u>: <b>"vat_rate"</b>)</i>.
+     * @return The record with the vat rate equal to the argument, only if it exists in the database.
+     */
     private Vat getRecordWithRateOf(Float rate){
         try {
             return vatRepo.findByAccurateVatRate(rate-0.0001f, rate+0.0001f);

@@ -5,8 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author psoutzis
  * The repository for the CurrencyRates Entity
+ * @author psoutzis
  */
 @Repository
 public interface CurrencyRatesRepo extends JpaRepository<CurrencyRates, Long> {
