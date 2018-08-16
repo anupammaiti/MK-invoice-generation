@@ -15,6 +15,26 @@
     <input type="hidden" th:value="*{invoiceNumberList}" id="invoiceNumberList">
     <input type="hidden" th:value="${invoice.getId()}" id="invoiceId"/>
 
+    <!--INVOICE SENT-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Sent to client',
+         displayToUser = ${invoice.getInvoiceStatus().getSent()},
+         selected = ${invoice.getInvoiceStatus().getSent()},
+         name = 'sent'
+       )">
+    </div>
+    <br>
+
+    <!--INVOICE PAID-->
+    <div th:replace="fragments/update-choices :: chooseFromList
+       ( description = 'Paid',
+         displayToUser = ${invoice.getInvoiceStatus().getPaid()},
+         selected = ${invoice.getInvoiceStatus().getPaid()},
+         name = 'paid'
+       )">
+    </div>
+    <br>
+
     <!--INVOICE NUMBER-->
     <div th:replace="fragments/update-choices :: simpleText
        ( description = 'Invoice Number',

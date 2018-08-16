@@ -151,13 +151,17 @@ document.addEventListener('DOMContentLoaded', function () {
             year: parseInt(document.getElementById('year').value),
             portfolio: parseInt(document.getElementById('portfolio').value),
             vatApplicable: document.getElementById('vatApplicable').value,
-            vatRate: manualVatRate==='' ?parseFloat(document.getElementById('vat').value) :parseFloat(manualVatRate),
+            //vatRate: manualVatRate.val()==='' ? parseFloat(vatRate.val()) : parseFloat(manualVatRate),
+            vatRate: document.getElementById('manualVatRate').value===''
+                ? parseFloat(document.getElementById('vat').value)
+                : parseFloat(document.getElementById('manualVatRate').value),
             serviceProvided: parseInt(document.getElementById('serviceProvided').value),
             bankAccount: parseInt(document.getElementById('bankAccount').value),
             fromCurrency: parseInt(document.getElementById('fromCurrency').value),
             toCurrency: parseInt(document.getElementById('toCurrency').value),
             baseCharge: parseFloat(document.getElementById('baseCharge').value)
         };
+        console.log(data);
 
         //If form is valid, send post http request
         if(form.valid()){

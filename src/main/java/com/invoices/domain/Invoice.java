@@ -79,8 +79,11 @@ public class Invoice {
     @JoinColumn(name = "portfolio_id")
     private Portfolio portfolio;
 
-
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "custody_charge_id")
     private CustodyCharge custodyCharge;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id")
+    private InvoiceStatus invoiceStatus;
 }

@@ -14,6 +14,10 @@
             <input type="hidden" name="action" value="read"/>
             <input type="submit" value="Find an Invoice" formaction="/select/read"/> <br>
 
+        <!--View-Collective-Data-->
+            <input type="hidden" name="action" value="view-collective-data"/>
+            <input type="submit" value="View List of Invoices" formaction="/select/view-collective-data"/> <br>
+
         <!--Update-->
             <input type="hidden" name="action" value="udpate"/>
             <input type="submit" value="Update an Invoice" formaction="/select/update" /> <br>
@@ -27,7 +31,7 @@
             <input type="submit" value="Convert an invoice to PDF" formaction="/select/pdf"/><br>
 
         <!--Documentation-->
-            <br><br><input type="submit" value="Documentation" formaction="/documentation"/>
+            <br><br><a href="/javadocs/index.html" target="_blank">Documentation</a>
     </div>
 </form>
 </body>

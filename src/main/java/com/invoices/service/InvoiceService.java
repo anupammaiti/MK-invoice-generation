@@ -96,13 +96,14 @@ public class InvoiceService {
      * @param currencyRates The new exchange rate and currency (ies) that the invoice will have.
      */
     public void updateInvoice(Long id,
-                                 UpdateInvoiceDTO dto,
-                                 Portfolio portfolio,
-                                 ServiceProvided serviceProvided,
-                                 BankAccount bankAccount,
-                                 Vat vat,
-                                 CustodyCharge custodyCharge,
-                                 CurrencyRates currencyRates){
+                              UpdateInvoiceDTO dto,
+                              Portfolio portfolio,
+                              ServiceProvided serviceProvided,
+                              BankAccount bankAccount,
+                              Vat vat,
+                              CustodyCharge custodyCharge,
+                              CurrencyRates currencyRates,
+                              InvoiceStatus status){
 
         Invoice invoice = getInvoiceById(id);
         invoice.setInvoiceType(InvoiceType.valueOf(dto.getInvoiceType()));
@@ -120,6 +121,7 @@ public class InvoiceService {
         invoice.setVat(vat);
         invoice.setCustodyCharge(custodyCharge);
         invoice.setCurrencyRates(currencyRates);
+        invoice.setInvoiceStatus(status);
 
         save(invoice);
     }

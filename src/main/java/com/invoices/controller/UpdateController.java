@@ -38,6 +38,7 @@ public class UpdateController {
     @Autowired ClientCompanyInfoService clientCompanyInfoService;
     @Autowired CustodyChargeService custodyChargeService;
     @Autowired CurrencyRatesService currencyRatesService;
+    @Autowired InvoiceStatusService invoiceStatusService;
 
     /**
      * @param id the id of the invoice to update.
@@ -85,6 +86,10 @@ public class UpdateController {
         Invoice invoice = invoiceService.getInvoiceById(dto.getInvoiceId());
         Portfolio portfolio = portfolioService.getRecord(Long.valueOf(dto.getPortfolio()));
 
+        IsApplicable sent = IsApplicable.valueOf(dto.getSent());
+        IsApplicable paid = IsApplicable.valueOf(dto.getPaid());
+        InvoiceStatus status = invoiceStatusService.determineStatus(sent, paid);
+
         //if company id is null, don't update anything about company
         if( dto.getCompanyId() != null) {
             //The company object before it was updated, to check for changes
@@ -115,7 +120,7 @@ public class UpdateController {
                 fromCurrency,toCurrency,invoice.getCurrencyRates(), exchangeRate);
 
         invoiceService.updateInvoice(
-                invoice.getId(), dto, portfolio, serviceProvided, bankAccount, vat, custodyCharge,currencyRates);
+                invoice.getId(), dto, portfolio, serviceProvided, bankAccount, vat, custodyCharge,currencyRates,status);
     }
 
 

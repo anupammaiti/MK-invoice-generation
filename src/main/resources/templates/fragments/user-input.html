@@ -65,6 +65,26 @@
     </select>
 </div>
 
+<div th:fragment="sent">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
+        <option th:each="option : ${isApplicableValues}"
+                th:selected="${option} == ${selected}"
+                th:value="${option}"
+                th:text="${option}">
+        </option>
+    </select>
+</div>
+
+<div th:fragment="paid">
+    <select th:id="${name}" th:name="'newValue'+${name}" required>
+        <option th:each="option : ${isApplicableValues}"
+                th:selected="${option} == ${selected}"
+                th:value="${option}"
+                th:text="${option}">
+        </option>
+    </select>
+</div>
+
 <div th:fragment="frequency">
     <select th:id="${name}" th:name="'newValue'+${name}" required>
         <option th:each="frequency : ${frequencyValues}"

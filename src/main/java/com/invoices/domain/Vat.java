@@ -30,7 +30,4 @@ public class Vat {
 
     @Column(name = "vat_rate")
     private Float vatRate;
-
-    /*@OneToMany(mappedBy = "vat")
-    private List<Invoice> invoiceList;*/
 }

@@ -44,15 +44,6 @@ public class HomeController {
     }
 
     /**
-     * @return The index page of the full contents of the documentation
-     */
-    @GetMapping("/documentation")
-    public String viewJavaDocs(){
-
-        return "/JavaDocs/com.invoices/index.html";
-    }
-
-    /**
      *
      * @param model The Model component that will add content to the view
      * @param result What action has the user completed

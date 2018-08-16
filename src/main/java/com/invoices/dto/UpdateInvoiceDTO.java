@@ -32,6 +32,8 @@ public class UpdateInvoiceDTO {
     private String invoiceType;
     private String frequency;
     private String period;
+    private String sent;
+    private String paid;
     /* *********** */
 
     /* company info */

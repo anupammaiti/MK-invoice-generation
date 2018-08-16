@@ -29,7 +29,7 @@ public class ExchangeRateProviderHandler {
      * in case that the  currency code does not return any matches.<br>
      * e.g:<br><u>USD</u> -> '<b>$</b>',<br><u>QXZ</u> -> (<b>empty string</b>),<br><u>EUR</u> ->
      * '<b>&euro;</b>',<br>
-     * <u>GBP</u> -> '<b>&#x20A4;</b>',<br><u>RUB</u> -> '<b>&#x20BD;</b>', etc..
+     * <u>GBP</u> -> '<b>&#x20A4;</b>',<br><u>RUB</u> -> '<b>руб.</b>',<br><u>JPY</u> -> '<b>&yen;</b>', etc..
      */
     public static String getCurrencySymbol(String currencyCode){
         HashMap currencyLocaleMap = getCurrencyLocaleMapping();

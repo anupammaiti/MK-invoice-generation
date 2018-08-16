@@ -3,13 +3,17 @@ package com.invoices.service;
 import com.invoices.domain.ClientCompanyInfo;
 import com.invoices.domain.CustodyCharge;
 import com.invoices.domain.Invoice;
+import com.invoices.enumerations.IsApplicable;
 import com.invoices.utils.ExchangeRateProviderHandler;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.kernel.colors.Color;
+import com.itextpdf.kernel.colors.ColorConstants;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.events.Event;
 import com.itextpdf.kernel.events.IEventHandler;
 import com.itextpdf.kernel.events.PdfDocumentEvent;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -29,10 +33,11 @@ import java.nio.file.Paths;
 
 /**
  * This class is responsible for generating PDF files, based on an invoice.
- * To create a pdf document, you have to call createPdf method.
- * <b><u>WARNING</u></b>: Cyrillic characters are not supported by default in <i>iText7</i> when creating
- * a PDF file. A font that supports <u>Windows-1251 8-bit character encoding</u> is needed
- * to cover languages that use the Cyrillic script.
+ * To create a pdf document, you have to call createPdf method.<br><br>
+ * <b><u>WARNING</u></b>: Unicode characters, (i.e. currency symbols, or cyrillic script characters)
+ * are not supported by default in <i>iText7</i> when creating
+ * a PDF file. A font that supports <u>Windows-1251 8-bit character encoding</u> is needed,
+ * to support Unicode standard characters and symbols.
  * @author psoutzis
  */
 @Service
@@ -41,6 +46,9 @@ public class PdfService {
     private final float LEADING_SPACE = 0.45f;//space between paragraphs
     private final String IMAGE_PARENT =
             "C:/Users/psoutzis/Desktop/myFolder/projects/invoices/src/main/resources/static/images/";
+    private final String FONT_PARENT = 
+            "C:/Users/psoutzis/Desktop/myFolder/projects/invoices/src/main/resources/static/fonts/";
+
 
     /**
      * PageBackgroundEvent is an inner class, needed to add colour to the PDF pages.
@@ -166,7 +174,8 @@ public class PdfService {
             OutputStream outputStream = new FileOutputStream(new File(filename));
             PdfWriter writer = new PdfWriter(outputStream);
             PdfDocument pdfDoc = new PdfDocument(writer);
-            pdfDoc.addEventHandler(PdfDocumentEvent.START_PAGE, new PageBackgroundEvent());
+            //add the background colour (Uncomment to give a pink-salmon background colour to pdf)
+            //pdfDoc.addEventHandler(PdfDocumentEvent.START_PAGE, new PageBackgroundEvent());
             PageSize pageSize = pdfDoc.getDefaultPageSize();
             document = new Document(pdfDoc, pageSize);
             populateDocument(invoice, document, pageSize);
@@ -181,6 +190,27 @@ public class PdfService {
     }
 
     /**
+     * This method will create a PdfFont that supports the Cyrillic Script.<br>
+     * <i>( Windows-1251 8-bit character encoding ).</i>
+     * @param filepath The .ttf file to use as the font.
+     * @return The PdfFont, using the .ttf file specified.
+     */
+    private PdfFont createUnicodeSupportedFont(final String filepath){
+        PdfFont font = null;
+        try
+        {
+            font = PdfFontFactory.createFont(filepath, "Identity-H", true);
+        }
+        catch (IOException ioe)
+        {
+            System.out.println("Font could not be created.\nCause: "+ioe.getMessage()+"\nStack trace:");
+            ioe.printStackTrace();
+        }
+
+        return font;
+    }
+
+    /**
      * This method adds all the text and images to the document, while the document is open().
      * @param invoice The invoice to get information from
      * @param document The document to add elements at ( i.e. text, images, watermarks, etc..)
@@ -190,84 +220,104 @@ public class PdfService {
     private void populateDocument(Invoice invoice, Document document, PageSize pageSize)
             throws MalformedURLException
     {
+        final String linebreak = "\n\n";
+        final String MK_LOGO = IMAGE_PARENT+"meritkapital.png";
+        final String MK_SHORT_LOGO = IMAGE_PARENT+"mk_short_logo.png";
+        final String STRAIGHT_LINE = IMAGE_PARENT+"line.png";
+        final String ARIAL_UNICODE = FONT_PARENT+"arialuni.ttf";
+        PdfFont unicodeSupportedFont = createUnicodeSupportedFont(ARIAL_UNICODE);
+        document.setTopMargin(10);
+        document.setBottomMargin(2);
+        document.setRightMargin(0);
+
+        //Variables to be used for positioning text blocks (Lists)
         float pageHeight = pageSize.getHeight();
         float pageWidth = pageSize.getWidth();
-        document.setTopMargin(10);
-        document.setBottomMargin(5);
-        document.setRightMargin(5);
+        float leftPos = pageWidth/15.5f;
+        float elementWidth = pageWidth/4f;
+        float leftGrowth = pageWidth/3.27272f;
+        float vatDetailsBottom = 380;
+        float xRateBottom = 410;
+        float bankDetailsBottom = 100;
+        float descriptionListBottom = 542;
+        float chargesColumnsBottom = 447;
+
+        /*
+        //DEBUGGING
+        System.out.println("Page height: "+pageHeight+"\nPage width: "+pageWidth);
+        System.out.println("BottomPos: "+bottomPos);
+        System.out.println("Line image width = "+straightLine.getImageScaledWidth()+"\nLine image height = "+
+                straightLine.getImageScaledHeight());
+        */
 
         ClientCompanyInfo company = invoice.getPortfolio().getClientCompanyInfo();
         CustodyCharge charges = invoice.getCustodyCharge();
         String currencyCodeFrom = invoice.getCurrencyRates().getFromCurrency().getCurrencyCode();
         String currencyCodeTo = invoice.getCurrencyRates().getToCurrency().getCurrencyCode();
-        String currencySymbolFrom = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeFrom);
-        String currencySymbolTo = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeTo);
+        String currencySymbolFrom;
+        String currencySymbolTo;
+        //The newest Russian Ruble symbol -> "₽" (\u20BD) is not supported by arialuni or arialunicodems fonts.
+        currencySymbolFrom = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeFrom);
+        currencySymbolTo = ExchangeRateProviderHandler.getCurrencySymbol(currencyCodeTo);
 
-        //If either of currency symbols are equal to 'руб', then change to the official symbol
-        if(currencySymbolFrom.equalsIgnoreCase("руб")) currencySymbolFrom = "₽";
-        if(currencySymbolTo.equalsIgnoreCase("руб")) currencySymbolTo = "₽";
-
-        final String linebreak = "\n\n";
-        final String MK_LOGO = IMAGE_PARENT+"meritkapital.png";
-        final String MGROUP_LOGO = IMAGE_PARENT+"mgroup_logo.png";
-
+        //Images and their configuration (opacity, scaling, etc)
         Image mkLogo = new Image(ImageDataFactory.create(MK_LOGO));
-        mkLogo.scaleToFit(365,240 );
-        mkLogo.setOpacity(0.20f);
+        mkLogo.scaleToFit(250,180 );
+        //mkLogo.setOpacity(0.20f);
 
-        Image mgroupLogo = new Image(ImageDataFactory.create(MGROUP_LOGO));
-        mgroupLogo.scaleToFit(250,150 );
+        Image mkShortLogo = new Image(ImageDataFactory.create(MK_SHORT_LOGO));
+        mkShortLogo.scaleToFit(100,75 );
 
+        Image straightLine = new Image(ImageDataFactory.create(STRAIGHT_LINE));
+        straightLine.setAutoScale(true);
+
+        //Text block containing the Invoice Number and Invoice Date
         List numberAndDate = defaultList();
         String date = String.valueOf(invoice.getInvoiceDate());
-        ListItem invoiceNumber = getBoldElement("Invoice No: ",invoice.getInvoiceNumber());
-        ListItem invoiceDate = getBoldElement("Invoice Date: ",date);
+        ListItem invoiceNumber = getBoldElement("Invoice Number: ",invoice.getInvoiceNumber());
+        ListItem invoiceDate = getBoldElement("Date: ",date);
+        ListItem mkVatNumber = getBoldElement("MeritKapital VAT Number: ","10189316M");
         numberAndDate.add(invoiceNumber);
-        numberAndDate.add(invoiceDate).add(linebreak);
+        numberAndDate.add(invoiceDate);
+        numberAndDate.add(mkVatNumber);
 
+        //Text block with information about the company
         List companyInfoList = defaultList();
         if(company!=null) {
             ListItem companyName = getBoldElement(company.getName(), "");
             companyInfoList.add(companyName);
             companyInfoList.add(company.getAddress());
-            companyInfoList.add(company.getCity()+" "+company.getPostcode());
+            companyInfoList.add(company.getCity()+", "+company.getPostcode());
             companyInfoList.add(company.getCompanyLocation().getCountry());
-            ListItem vatNumber = getBoldElement("VAT No: ",company.getVatNumber());
-            companyInfoList.add(vatNumber).add(linebreak);
+            ListItem vatNumber = getBoldElement("VAT Number: ",company.getVatNumber());
+            companyInfoList.add(vatNumber).add("\n");
         }
         else{
             ListItem clientName = getBoldElement(invoice.getPortfolio().getClient().getClientName(), "");
-            companyInfoList.add(clientName).add(linebreak);
+            companyInfoList.add(clientName).add("\n");
         }
+        companyInfoList.setFixedPosition(leftPos,570 ,null );
 
+        //Text block containing the invoice description
         List descriptionList = defaultList();
         ListItem description = new ListItem();
-        Paragraph descPar = defaultParagraph().add("Fee for ");
-        Paragraph descPar2 = defaultParagraph();
+        Paragraph descPar = defaultParagraph().setFontSize(10);
         Text service = new Text(invoice.getServiceProvided().getServiceName()).setItalic();
         Text frequency = new Text(invoice.getFrequency().getDescription()).setItalic();
         Text period = new Text(invoice.getPeriod().getDescription()).setItalic();
         Text year = new Text(String.valueOf(invoice.getYear())).setItalic();
         Text title = new Text("Description").setBold().setUnderline();
-        descPar.add(service).add(" services provided, as per agreement for");
-        descPar2.add(frequency).add(" - ").add(period).add(" - ").add(year);
+        descPar.add(service).add(" fee for services provided, as per agreement for ");
+        descPar.add(frequency).add(" - ").add(period).add(" - ").add(year);
         description.add(new Paragraph().add(title));
         description.add(descPar);
-        description.add(descPar2);
-        descriptionList.add(description).add(linebreak);
+        descriptionList.add(description);
+        descriptionList.setFixedPosition(leftPos, descriptionListBottom,null );
 
         List column1List = defaultList();
         List column2List = defaultList();
         List column3List = defaultList();
         List xRateList = defaultList();
-
-        float leftPos = pageWidth/15.5f;
-        float bottomPos = pageHeight/1.69230f;
-        float elementWidth = pageWidth/4f;
-        float leftGrowth = pageWidth/3.27272f;
-        float vatDetailsBottom = pageHeight/2.18181f;
-        float xRateBottom = vatDetailsBottom-30;
-        float bankDetailsBottom = vatDetailsBottom-293;
 
         ListItem column1Item = new ListItem();
         ListItem column2Item = new ListItem();
@@ -284,15 +334,15 @@ public class PdfService {
         Paragraph column1To = defaultParagraph();
         Paragraph column2To = defaultParagraph();
         Paragraph column3To = defaultParagraph();
-        Paragraph xRateTitleParagraph = defaultParagraph();
         Paragraph xRateBodyParagraph = new Paragraph();
         Paragraph logoParagraph = new Paragraph();
         Paragraph mgroupParagraph = new Paragraph();
+        Paragraph topLineParagraph = defaultParagraph();
+        Paragraph bottomLineParagraph = defaultParagraph();
 
-        Text chargeTitle = new Text("Fee").setBold();
+        Text chargeTitle = new Text("Net").setBold();
         Text vatTitle = new Text("VAT@"+invoice.getVat().getVatRate()).setBold();
         Text totalTitle = new Text("Total").setBold();
-        Text xRateTitle = new Text("Exchange Rate").setBold().setUnderline();
 
         column1Title.add(chargeTitle);
         column2Title.add(vatTitle);
@@ -301,6 +351,7 @@ public class PdfService {
         Float baseCharge = charges.getChargeExcludingVat();
         Float vatCharge = charges.getVatCharge();
         Float totalCharge = charges.getChargeIncludingVat();
+
         Float exchangeRate = invoice.getCurrencyRates().getExchangeRate();
         column1From.add(currencySymbolFrom).add(String.valueOf(baseCharge));
         column2From.add(currencySymbolFrom).add(String.valueOf(vatCharge));
@@ -311,20 +362,32 @@ public class PdfService {
         column1To.add(currencySymbolTo).add(String.valueOf(baseCharge));
         column2To.add(currencySymbolTo).add(String.valueOf(vatCharge));
         column3To.add(currencySymbolTo).add(String.valueOf(totalCharge));
+        //Set a font that supports unicode format, so currency symbols don't produce bad output on the pdf
+        setFontToParagraphs(
+                unicodeSupportedFont,
+                column1From,
+                column2From,
+                column3From);
+
+        setFontToParagraphs(
+                unicodeSupportedFont,
+                column1To,
+                column2To,
+                column3To);
 
         String exchangeRateToPrint = "1 "+currencyCodeFrom+" = "+exchangeRate+" "+currencyCodeTo;
         Text xRateItalic = new Text(exchangeRateToPrint).setItalic();
 
-        xRateTitleParagraph.add(xRateTitle);
         xRateBodyParagraph.add("Exchange rate @ ");
         xRateBodyParagraph.add(xRateItalic);
 
+        //Text block containing charges (Net, Vat, Vat included.) in issued and converted currency
         column1Item.add(column1Title);
         column1Item.add(newLineParagraph);
         column1Item.add(column1From);
         column1Item.add(column1To);
         column1List.add(column1Item);
-        column1List.setFixedPosition(leftPos,bottomPos, elementWidth);
+        column1List.setFixedPosition(leftPos, chargesColumnsBottom, elementWidth);
 
         float adjacentListLeft = leftPos+leftGrowth;
 
@@ -333,7 +396,7 @@ public class PdfService {
         column2Item.add(column2From);
         column2Item.add(column2To);
         column2List.add(column2Item);
-        column2List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
+        column2List.setFixedPosition(adjacentListLeft, chargesColumnsBottom, elementWidth);
 
         adjacentListLeft += leftGrowth;
 
@@ -342,27 +405,28 @@ public class PdfService {
         column3Item.add(column3From);
         column3Item.add(column3To);
         column3List.add(column3Item);
-        column3List.setFixedPosition(adjacentListLeft, bottomPos, elementWidth);
+        column3List.setFixedPosition(adjacentListLeft, chargesColumnsBottom, elementWidth);
 
+        //Text block showing VAT Exempt and Reverse Charge applicability
         List vatDetails = defaultList();
-        Paragraph vatParagraph= new Paragraph(new Text("Reverse Charge").setBold().setUnderline())
-                .add(": "+invoice.getReverseCharge().toString());
-        ListItem reverseChargeItem = new ListItem();
-        reverseChargeItem.add(vatParagraph);
-        vatDetails.add(reverseChargeItem);
-        vatParagraph= new Paragraph(new Text("VAT Exempt").setBold().setUnderline())
-                .add(": "+invoice.getVatExempt().toString());
-        ListItem vatExemptItem = new ListItem();
-        vatExemptItem.add(vatParagraph);
-        vatDetails.add(vatExemptItem);
-        vatDetails.add(linebreak);
+        Paragraph vatParagraph;
+        if(invoice.getReverseCharge() == IsApplicable.YES)
+            vatParagraph= new Paragraph(new Text("Reverse Charge").setBold());
+        else if(invoice.getVatExempt() == IsApplicable.YES)
+            vatParagraph= new Paragraph(new Text("VAT Exempt").setBold());
+        else
+            vatParagraph = new Paragraph("");
+        ListItem vatItem = new ListItem();
+        vatItem.add(vatParagraph);
+        vatDetails.add(vatItem);
         vatDetails.setFixedPosition(leftPos,vatDetailsBottom ,null );
 
-        xRateItem.add(xRateTitleParagraph);
+        //Text block containing exchange rate indication
         xRateItem.add(xRateBodyParagraph);
         xRateList.add(xRateItem);
         xRateList.setFixedPosition(leftPos, xRateBottom, null);
 
+        //Text block with bank account details that invoice can be paid at.
         List bankDetails = defaultList().setFontSize(12);
         ListItem headerItem = new ListItem();
         Paragraph headerParagraph = new Paragraph(new Text("THIS INVOICE IS NOW PAYABLE").setBold().setUnderline());
@@ -397,7 +461,7 @@ public class PdfService {
         euroIbanItem.add(euroIbanParagraph);
         bankDetails.add(euroIbanItem);
 
-        Paragraph usdAccountParagraph = new Paragraph(new Text("U.S. Dollars account number").setBold())
+        Paragraph usdAccountParagraph = new Paragraph(new Text("USD account number").setBold())
                 .add(": "+invoice.getBankAccount().getUsdAccNum());
         ListItem usdAccItem = new ListItem();
         usdAccItem.add(usdAccountParagraph);
@@ -413,7 +477,9 @@ public class PdfService {
         bankDetails.add(linebreak);
         bankDetails.setFixedPosition(leftPos,bankDetailsBottom ,null );
 
+        //Text block containing the company information (top right corner of pdf)
         List mkAddressList = defaultList().setFontSize(8).setItalic();
+        mkAddressList.setFontColor(ColorConstants.DARK_GRAY);
         mkAddressList.add("MeritKapital Ltd.");
         mkAddressList.add("Eftapaton Court");
         mkAddressList.add("256, Makarios Avenue");
@@ -424,13 +490,27 @@ public class PdfService {
         mkAddressList.add("Fax: +357 25 34 03 27");
         mkAddressList.add("info@meritkapital.com");
         mkAddressList.add("www.meritkapital.com");
-        mkAddressList.setFixedPosition(460, 715, 120);
+        mkAddressList.setFixedPosition(470, 670, 120);
 
+        //Note for inquiries at the bottom of the document
+        Paragraph bottomNoteParagraph = defaultParagraph().setFontSize(6.7f).setItalic();
+        bottomNoteParagraph.add("MeritKapital Ltd. (#077/06), For inquiries contact us at: invoices@meritkapital.com");
+        bottomNoteParagraph.setFixedPosition(15,15 ,null );
+
+        //positioning of images
         logoParagraph.add(mkLogo);
-        logoParagraph.setFixedPosition(130, 750, null);//top right corner
-        mgroupParagraph.add(mgroupLogo);
-        mgroupParagraph.setFixedPosition(175, 40, null);//bottom of page
+        logoParagraph.setFixedPosition(25, 785, null);//top left corner
+        mgroupParagraph.add(mkShortLogo);
+        mgroupParagraph.setFixedPosition(490, 15, null);//bottom right corner
+        topLineParagraph.add(straightLine);
+        topLineParagraph.setFixedPosition(25, 500, null); //straight line above custody charges
+        bottomLineParagraph.add(straightLine);
+        bottomLineParagraph.setFixedPosition(25, 350,null); //straight line below custody charges
 
+        //Add everything to the document (PDF File)
+        document.add(logoParagraph);
+        document.add(new Paragraph(linebreak));
+        document.add(new Paragraph().add(new Text("INVOICE")).add(linebreak).setFontSize(18));
         document.add(numberAndDate);
         document.add(companyInfoList);
         document.add(descriptionList);
@@ -440,9 +520,21 @@ public class PdfService {
         document.add(vatDetails);
         document.add(xRateList);
         document.add(bankDetails);
-        document.add(logoParagraph);
         document.add(mgroupParagraph);
         document.add(mkAddressList);
+        document.add(bottomNoteParagraph);
+        document.add(topLineParagraph);
+        document.add(bottomLineParagraph);
+    }
+
+    /**
+     * This method will add a specified font to a (variable) number of Paragraphs
+     * @param font The font to add to the paragraphs
+     * @param paragraphs The number of paragraphs that will have their font changed.
+     */
+    private void setFontToParagraphs(PdfFont font, Paragraph... paragraphs){
+        for(Paragraph p : paragraphs)
+            p.setFont(font);
     }
 
     /**

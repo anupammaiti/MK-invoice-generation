@@ -35,6 +35,7 @@ public class CreateController {
     @Autowired CurrencyService currencyService;
     @Autowired CurrencyRatesService currencyRatesService;
     @Autowired VatService vatService;
+    @Autowired InvoiceStatusService invoiceStatusService;
 
     /**
      * @param model will add all the required objects/attributes for the app to function, to the view
@@ -97,7 +98,7 @@ public class CreateController {
                 InvoicePeriod.valueOf(dto.getPeriod()), dto.getInvoiceDate(),
                 dto.getYear(), IsApplicable.valueOf(dto.getReverseCharge()),
                 IsApplicable.valueOf(dto.getVatExempt()), service, bankAccount,
-                currencyRates, vat, portfolio, custodyCharge);
+                currencyRates, vat, portfolio, custodyCharge, invoiceStatusService.getUnsentUnpaid());
 
 
         invoiceService.save(invoice);
