@@ -10,10 +10,7 @@ import com.invoices.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +43,8 @@ public class UpdateController {
      * @return the page where the user will make their invoice-changes at
      * <b>WARNING</b>: Html and JavaScript code depends on the NAMING of MODEL VARIABLES. Renaming could lead to bugs.
      */
-    @PostMapping(value = "/find/update")
-    public String findToUpdate(@RequestParam ("id") String id, Model model){
+    @GetMapping(value = "/find/update/{id}")
+    public String updateSpecific(@PathVariable("id") String id, Model model){
         Long invoiceId = Long.valueOf(id);
         Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         model.addAttribute("invoiceTypeValues", InvoiceType.values());
@@ -72,6 +69,65 @@ public class UpdateController {
         model.addAttribute("invoiceNumberList", invoiceNumbers);
 
         return "update/update-attributes";
+    }
+
+    /**
+     * Method will change the type of an invoice to <i>REAL</i>
+     * @param id The primary key of the invoice to update
+     * @param model The model component
+     * @return The list with all invoices, but with the updated data
+     */
+    @GetMapping("/make-real/{realInvId}")
+    public String makeInvoiceReal(@PathVariable("realInvId") String id, Model model){
+        Invoice invoice = invoiceService.getInvoiceById(Long.valueOf(id));
+        invoice.setInvoiceType(InvoiceType.REAL);
+        invoiceService.save(invoice);
+
+        model.addAttribute("invoices", invoiceService.getInvoices());
+        model.addAttribute("noEnum", IsApplicable.NO);
+        model.addAttribute("realEnum", InvoiceType.REAL);
+
+        return "select-invoice-view-collective-data.html";
+    }
+
+    /**
+     * Method will change the 'Sent' status of an invoice to <i>YES</i>
+     * @param id The primary key of the invoice to update
+     * @param model The model component
+     * @return The list with all invoices, but with the updated data
+     */
+    @GetMapping("/mark-sent/{markSentId}")
+    public String markInvoiceSent(@PathVariable("markSentId") String id, Model model){
+        Invoice invoice = invoiceService.getInvoiceById(Long.valueOf(id));
+        InvoiceStatus status = invoice.getInvoiceStatus();
+        invoice.setInvoiceStatus(invoiceStatusService.determineStatus(IsApplicable.YES,status.getPaid()));
+        invoiceService.save(invoice);
+
+        model.addAttribute("invoices", invoiceService.getInvoices());
+        model.addAttribute("noEnum", IsApplicable.NO);
+        model.addAttribute("realEnum", InvoiceType.REAL);
+
+        return "select-invoice-view-collective-data.html";
+    }
+
+    /**
+     * Method will change the 'Paid' status of an invoice to <i>YES</i>
+     * @param id The primary key of the invoice to update
+     * @param model The model component
+     * @return The list with all invoices, but with the updated data
+     */
+    @GetMapping("/mark-paid/{markPaidId}")
+    public String markInvoicePaid(@PathVariable("markPaidId") String id, Model model){
+        Invoice invoice = invoiceService.getInvoiceById(Long.valueOf(id));
+        InvoiceStatus status = invoice.getInvoiceStatus();
+        invoice.setInvoiceStatus(invoiceStatusService.determineStatus(status.getSent(),IsApplicable.YES));
+        invoiceService.save(invoice);
+
+        model.addAttribute("invoices", invoiceService.getInvoices());
+        model.addAttribute("noEnum", IsApplicable.NO);
+        model.addAttribute("realEnum", InvoiceType.REAL);
+
+        return "select-invoice-view-collective-data.html";
     }
 
     /**

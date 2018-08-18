@@ -1,5 +1,7 @@
 package com.invoices.controller;
 
+import com.invoices.enumerations.InvoiceType;
+import com.invoices.enumerations.IsApplicable;
 import com.invoices.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -7,7 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-//TODO add functionality for user to enter a custom description of the invoice
+import java.util.ArrayList;
 
 /**
  * This class is the controller responsible for handling requests for
@@ -38,6 +40,8 @@ public class HomeController {
     @GetMapping("/select/{action}")
     public String userSelection(Model model, @PathVariable("action") String action){
         model.addAttribute("invoices", invoiceService.getInvoices());
+        model.addAttribute("noEnum", IsApplicable.NO);
+        model.addAttribute("realEnum", InvoiceType.REAL);
         model.addAttribute("action", action);
 
         return "select-invoice-"+action+".html";

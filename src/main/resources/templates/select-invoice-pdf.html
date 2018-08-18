@@ -3,14 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Generate PDF for Invoice</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/jQuery-Validation/dist/jquery.validate.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/validation-styling.css">
 </head>
 
 <body>
-<form method="post" action="/generate-pdf">
+<form id="myForm" method="post" action="/generate-pdf">
     <div th:replace="fragments/find-invoice :: body">Selection of an invoice</div>
 
     <input type="submit" value="Convert"/>
 </form>
+<script>
+    // just for the demos, avoids form submit
+    jQuery.validator.setDefaults({
+        success: "valid"
+    });
+    $( "#myForm" ).validate({
+        rules: {
+            field: {
+                required: true
+            }
+        }
+    });
+</script>
 <form action="/">
     <input type="submit" value="Home"/>
 </form>

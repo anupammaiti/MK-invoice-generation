@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <title th:text="${#strings.capitalize(action) + ' Invoice'}">TITLE</title>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/jQuery-Validation/dist/jquery.validate.js" type="application/javascript"></script>
+    <script src="/validate-single-selection.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="/css/validation-styling.css">
 </head>
 
 
 <body>
-<form method="post" action="/find/update">
+<form id="myForm" method="get">
     <div th:replace="fragments/find-invoice :: body">Selection of an invoice</div>
 
-    <input type="submit" value="Select"/>
+    <input type="button" id="btn" value="Select" th:formaction="${'/find/update/'}" />
 </form>
 <form action="/">
     <input type="submit" value="Home"/>

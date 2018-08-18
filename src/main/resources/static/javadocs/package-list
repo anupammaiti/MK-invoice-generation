@@ -1,8 +1,0 @@
-com.invoices
-com.invoices.controller
-com.invoices.domain
-com.invoices.dto
-com.invoices.enumerations
-com.invoices.repository
-com.invoices.service
-com.invoices.utils

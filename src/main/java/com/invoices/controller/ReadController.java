@@ -27,7 +27,7 @@ public class ReadController {
      * @return The html file with the loaded information, to represent an Invoice-type object (invoice).
      */
     @PostMapping(value = "/find/read")
-    public String findInvoice(@RequestParam("id") String invoiceIdString, Model model){
+    public String readPdfElementsInBrowser(@RequestParam("id") String invoiceIdString, Model model){
         Long invoiceId = Long.valueOf(invoiceIdString);
         final Invoice invoice = invoiceService.getInvoiceById(invoiceId);
         CurrencyRates xRate = invoice.getCurrencyRates();
@@ -57,6 +57,22 @@ public class ReadController {
         model.addAttribute("convertedCharge", convertedCharge);
 
         return "read/read-invoice";
+    }
+
+    /**
+     * Method will filter the results, to display only invoices that their date is between the dates specified by user.
+     * @param fromDate Minimum date to display
+     * @param toDate Maximum date to display
+     * @param model Model component to add data to the view
+     * @return The invoices that have a date, within the boundaries specified by the user
+     */
+    @GetMapping(value = "/find/filter")
+    public String filterResultsByDate(@RequestParam("fromDate") String fromDate,
+                                      @RequestParam("toDate") String toDate,
+                                      Model model){
+        model.addAttribute("invoices", invoiceService.getInvoicesByDateBetween(fromDate, toDate));
+
+        return "select-invoice-view-collective-data.html";
     }
 
 }

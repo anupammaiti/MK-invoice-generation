@@ -24,16 +24,18 @@ public class InvoiceStatusService {
      */
     public InvoiceStatus determineStatus(IsApplicable sent, IsApplicable paid){
         if(sent == IsApplicable.NO && paid==IsApplicable.NO)
-            return getUnsentUnpaid();
+            return getUnsentUnpaid();//has not been sent and has not been paid
         else if(sent == IsApplicable.YES && paid == IsApplicable.NO)
-            return getSentUnpaid();
+            return getSentUnpaid();//has been sent, but has not been paid
+        else if(sent == IsApplicable.NO && paid == IsApplicable.YES)
+            return getUnsentPaid();//has not been sent, but has been paid
         else
-            return getSentPaid();
+            return getSentPaid();//was sent and paid for
     }
 
     /**
      * Method returns status of the invoice as unpaid and unsent.
-     * @return The record who has paid and sent both set as IsApplicable.NO.
+     * @return The record who has paid and sent both set as IsApplicable.NO
      */
     public InvoiceStatus getUnsentUnpaid(){
 
@@ -42,11 +44,20 @@ public class InvoiceStatusService {
 
     /**
      * Method returns status of the invoice as sent, but still unpaid.
-     * @return The record who has sent as IsApplicable.YES and paid set as IsApplicable.NO.
+     * @return The record who has sent as IsApplicable.YES and paid set as IsApplicable.NO
      */
     private InvoiceStatus getSentUnpaid(){
 
         return invoiceStatusRepo.getInvoiceStatusBySentAndPaid(IsApplicable.YES,IsApplicable.NO);
+    }
+
+    /**
+     * Method returns status of the invoice as unsent, but paid.
+     * @return The record who has sent as IsApplicable.NO and paid set as IsApplicable.YES
+     */
+    private InvoiceStatus getUnsentPaid(){
+
+        return invoiceStatusRepo.getInvoiceStatusBySentAndPaid(IsApplicable.NO,IsApplicable.YES);
     }
 
     /**

@@ -2,16 +2,112 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Invoices</title>
+    <title>All Invoices</title>
+    <link rel="stylesheet" href="/css/view-collection-of-invoices.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/invoice-list-actions.js" type="application/javascript"></script>
 </head>
 <body>
+<div th:if="${invoices == null}">
+    <span>There are no invoices matching your selection!</span><br>
+    <span>Please make sure you have entered the <u>correct</u> dates
+        or that the database is <u>not empty</u>.</span>
+</div>
 <div th:if="${invoices != null}">
-    <h1>Result</h1>
-    <ol>
-        <th:block th:object="${invoices}">
-            <li th:each="item : ${invoices}" th:text="${item.getInvoiceNumber()}"></li>
-        </th:block>
-    </ol>
+    <h1>INVOICES</h1>
+
+    <form>
+        <div>
+            <h4>FILTER INVOICES BY DATE</h4>
+            <span>From: </span><input type="date" name="fromDate" id="fromDate">
+            <span>To:  </span><input type="date" name="toDate" id="toDate"><br><br>
+        </div>
+        <input type="submit" value="Filter" id="date-filter" formaction="/find/filter">
+        <input type="submit" value="Show All" id="reset-results" formaction="/select/view-collective-data">
+    </form>
+    <br><br>
+
+    <!--TABLE WITH RESULTS-->
+    <form method="get">
+    <table id="invoice-list" class="table table-striped">
+        <thead>
+        <tr class="header-row">
+            <th><b><u>Invoice Type</u></b></th>
+            <th><b><u>Invoice Number</u></b></th>
+            <th><b><u>Date</u></b></th>
+            <th><b><u>Client</u></b></th>
+            <th><b><u>Agreement</u></b></th>
+            <th><b><u>Amount</u></b></th>
+            <th><b><u>Currency</u></b></th>
+            <th><b><u>Paid</u></b></th>
+            <th><b><u>Sent to Client</u></b></th>
+            <th><b><u>Country</u></b></th>
+            <th><b><u>VAT Number</u></b></th>
+            <th><b><u>Actions</u></b></th>
+        </tr>
+        </thead>
+        <!----------BODY------------>
+        <!--Could pass invoices as a Map and paint bg colour based on key-value (odd or even)-->
+        <tbody>
+        <tr class="body-row" th:each="inv : ${invoices}">
+            <td th:text="${inv.getInvoiceType()}"></td>
+            <td th:text="${inv.getInvoiceNumber()}"></td>
+            <td th:text="${inv.getInvoiceDate()}"></td>
+            <td th:text="${inv.getPortfolio().getClient().getClientName()}"></td>
+            <td>
+                    <b>
+                        <span th:text="${
+                            #strings.capitalizeWords(#strings.toLowerCase(inv.getServiceProvided().getServiceName()))}">
+                        </span>
+                    </b>
+                <br>
+                    <span th:text="${
+                       #strings.capitalizeWords(#strings.toLowerCase(inv.getFrequency().getDescription())
+                       +' - '+#strings.toLowerCase(inv.getPeriod().getDescription()))
+                       +' - '+inv.getYear()}">
+                    </span>
+            </td>
+            <td th:text="${inv.getCustodyCharge().getChargeIncludingVat()}"></td>
+            <td th:text="${inv.getCurrencyRates().getFromCurrency().getCurrencyCode()}"></td>
+            <td th:text="${inv.getInvoiceStatus().getPaid()}"></td>
+            <td th:text="${inv.getInvoiceStatus().getSent()}"></td>
+            <td th:text="${inv.getPortfolio().getClientCompanyInfo().getCompanyLocation().getCountry()}"></td>
+            <td th:text="${inv.getPortfolio().getClientCompanyInfo().getVatNumber()}"></td>
+            <td>
+                <!--If real invoice and not sent, show mark as sent button-->
+                <span th:if="${inv.getInvoiceStatus().getSent()==noEnum and inv.getInvoiceType()==realEnum}">
+                    <input type="submit"
+                           name="markSentId"
+                           value="Mark as Sent"
+                           th:formaction="${'/mark-sent/'+inv.getId()}">
+                </span>
+                <!--If real invoice and not paid, show mark as paid button-->
+                <span th:if="${inv.getInvoiceStatus().getPaid()==noEnum and inv.getInvoiceType()==realEnum}">
+                    <input type="submit"
+                           name="markPaidId"
+                           value="Mark as Paid"
+                           th:formaction="${'/mark-paid/'+inv.getId()}">
+                </span>
+                <!--If not real invoice, show make real, update, delete button-->
+                <span th:if="${inv.getInvoiceType()!=realEnum}">
+                    <!--<input type="hidden" name="action" value="view-collective-data"/>-->
+                    <input type="submit"
+                           name="realInvId"
+                           value="Make REAL"
+                           th:formaction="${'/make-real/'+inv.getId()}"><br>
+                    <input type="button" value="Delete" class="delete" th:name="${inv.getId()}"><br>
+                    <input type="submit"
+                           name="id"
+                           value="Edit"
+                           th:formaction="${'/find/update/'+inv.getId()}">
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+        <br><br>
+        <input type="submit" value="Home" formaction="/"/>
+    </form>
 </div>
 </body>
 </html>

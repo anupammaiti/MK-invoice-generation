@@ -35,6 +35,16 @@ public class InvoiceService {
     }
 
     /**
+     * @param fromDate The minimum date an invoice can have
+     * @param toDate The maximum date an invoice can have
+     * @return List of invoices, that have dates which are within the boundaries passed as parameters.
+     */
+    public List<Invoice> getInvoicesByDateBetween(String fromDate, String toDate){
+
+        return invoiceRepo.getInvoicesByDateBetween(convertDate(fromDate),convertDate(toDate));
+    }
+
+    /**
      * This method will delete a record from the database.
      * @param id The primary key of the record to delete from the database
      */

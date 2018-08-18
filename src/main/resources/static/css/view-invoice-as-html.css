@@ -4,33 +4,33 @@ span.fee-header {
 
 /*Column for VAT charges header*/
 span.vat-header {
-    position: fixed;
+    position: absolute;
     left:360px;
 }
 
 span.vat-from {
-    position: fixed;
+    position: absolute;
     left:360px;
 }
 
 span.vat-to {
-    position: fixed;
+    position: absolute;
     left:360px;
 }
 
 /*Column for Total Charges*/
 span.total-header {
-    position: fixed;
+    position: absolute;
     left: 800px;
 }
 
 span.total-from {
-    position: fixed;
+    position: absolute;
     left: 800px;
 }
 
 span.total-to {
-    position: fixed;
+    position: absolute;
     left: 800px;
 }
 

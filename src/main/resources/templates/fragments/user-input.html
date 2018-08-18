@@ -131,9 +131,9 @@
 </div>
 
 <div th:fragment="date">
-    <i><span>Enter new date in <u>one</u> of the formats: <b>'yyyy/mm/dd'</b> or <b>'yyyy-mm-dd'</b></span></i>
+    <!--<i><span>Enter new date in <u>one</u> of the formats: <b>'yyyy/mm/dd'</b> or <b>'yyyy-mm-dd'</b></span></i>-->
     <br>
-    <input type="text" th:id="${name}" th:name="'newValue'+${name}" required th:value="${invoice.getInvoiceDate()}">
+    <input type="date" th:id="${name}" th:name="'newValue'+${name}" required th:value="${invoice.getInvoiceDate()}">
 </div>
 
 <div th:fragment="vatRate">

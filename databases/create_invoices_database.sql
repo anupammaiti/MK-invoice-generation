@@ -1,3 +1,4 @@
+-- we don't know how to generate schema invoices (class Schema) :(
 create table banks
 (
 	bank_id bigint auto_increment
@@ -27,7 +28,7 @@ create table client_companies_info
 	company_id bigint auto_increment
 		primary key,
 	company_name varchar(50) null,
-	vat_number varchar(20) not null,
+	vat_number varchar(20) null,
 	address varchar(100) null,
 	city varchar(50) null,
 	postcode varchar(20) not null,
@@ -81,6 +82,15 @@ create table custody_charges
 
 alter table custody_charges
 	add primary key (custody_charge_id)
+;
+
+create table invoice_status
+(
+	status_id bigint auto_increment
+		primary key,
+	paid varchar(3) not null,
+	sent varchar(3) not null
+)
 ;
 
 create table mk_bank_accounts
@@ -166,12 +176,13 @@ create table invoices
 	date_issued date null,
 	reverse_charge varchar(3) null,
 	vat_exempt varchar(3) null,
-	service_id bigint null,
 	bank_acc_id bigint null,
 	vat_id bigint null,
 	portfolio_id bigint null,
 	currency_rate_id bigint null,
 	custody_charge_id bigint null,
+	service_id bigint null,
+	status_id bigint null,
 	constraint invoice_number
 		unique (invoice_number),
 	constraint invoices_ibfk_1
@@ -185,7 +196,9 @@ create table invoices
 	constraint invoices_ibfk_7
 		foreign key (currency_rate_id) references currency_rates (rate_id),
 	constraint invoices_ibfk_8
-		foreign key (custody_charge_id) references custody_charges (custody_charge_id)
+		foreign key (custody_charge_id) references custody_charges (custody_charge_id),
+	constraint invoices_ibfk_9
+		foreign key (status_id) references invoice_status (status_id)
 )
 ;
 

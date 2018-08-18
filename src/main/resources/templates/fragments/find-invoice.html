@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
-
 <div th:fragment="body">
     <div>
         <h2>SELECT AN INVOICE TO <span
@@ -9,7 +8,7 @@
     </div>
     <p>Select an Invoice to
         <span th:text="${action} != 'pdf' ? ${action} : 'convert to pdf'"></span>:
-        <select name="id" id="selectedInvoice">
+        <select name="id" id="selectedInvoice" required>
             <option value=""> -- </option>
             <option th:each="invoice : ${invoices}"
                     th:value="${invoice.getId()}"

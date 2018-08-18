@@ -1,0 +1,19 @@
+td{
+    padding: 18px;
+    font-size: 16px;
+}
+
+th{
+    padding: 18px;
+    font-size: 20px;
+}
+
+table#invoice-list .body-row:nth-child(even) {
+    background-color: bisque;
+}
+table#invoice-list .body-row:nth-child(odd) {
+    background-color:#EEEEEE;
+}
+.header-row{
+    background-color: #99CCFF;
+}

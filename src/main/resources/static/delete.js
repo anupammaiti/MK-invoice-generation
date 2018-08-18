@@ -22,19 +22,26 @@ const postData = (url = ``, data = {}) => {
  * @author petros soutzis
  */
 document.addEventListener('DOMContentLoaded', function () {
-    //POST REQUEST TO DELETE INVOICE CONTROLLER
-    document.getElementById('deleteButton').addEventListener('click', function (){
-        this.disabled = true;
+    let form = $('#myForm');
 
+    document.getElementById("deleteButton").addEventListener('click', function (){
+        $(form).validate({
+            rules:{
+                id: {
+                    required: true
+                }
+            }
+        });
         //the primary key of the invoice to delete
         let data = {
             id: document.getElementById('selectedInvoice').value
         };
 
-        postData('/find/delete', data).then(() =>
-        {
-            window.location = "/success/deleted";
-        });
-        this.disabled = false;
+        if(form.valid()){
+            postData('/find/delete', data).then(() =>
+            {
+                window.location = "/success/deleted";
+            });
+        }
     });
 });

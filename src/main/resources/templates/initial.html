@@ -8,30 +8,25 @@
 <form>
     <div>
         <!--Create-->
-            <input type="submit" value="Issue an Invoice" formaction="/select/create"/> <br>
-
-        <!--Read-->
-            <input type="hidden" name="action" value="read"/>
-            <input type="submit" value="Find an Invoice" formaction="/select/read"/> <br>
-
+            <input type="submit" value="ISSUE INVOICE" formaction="/select/create"/> <br>
         <!--View-Collective-Data-->
-            <input type="hidden" name="action" value="view-collective-data"/>
-            <input type="submit" value="View List of Invoices" formaction="/select/view-collective-data"/> <br>
+            <!--<input type="hidden" name="action" value="view-collective-data"/>-->
+            <input type="submit" name="action" value="LIST ALL INVOICES" formaction="/select/view-collective-data"/><br>
 
         <!--Update-->
-            <input type="hidden" name="action" value="udpate"/>
-            <input type="submit" value="Update an Invoice" formaction="/select/update" /> <br>
+            <input type="submit" name="action" value="UPDATE INVOICE" formaction="/select/update"/> <br>
 
         <!--Delete-->
-            <input type="hidden" name="action" value="delete"/>
-            <input type="submit" value="Delete an Invoice" formaction="/select/delete"/> <br>
+            <input type="submit" name="action" value="DELETE INVOICE" formaction="/select/delete"/> <br>
 
         <!--Pdf-->
-            <input type="hidden" name="action" value="pdf"/>
-            <input type="submit" value="Convert an invoice to PDF" formaction="/select/pdf"/><br>
+            <input type="submit" name="action" value="CONVERT TO PDF" formaction="/select/pdf"/><br>
 
+        <!--Read-->
+            <br><br>
+            <input type="submit" name="action" value="View single invoice in browser" formaction="/select/read"/><br>
         <!--Documentation-->
-            <br><br><a href="/javadocs/index.html" target="_blank">Documentation</a>
+            <a href="/javadocs/index.html" target="_blank">Documentation</a>
     </div>
 </form>
 </body>
